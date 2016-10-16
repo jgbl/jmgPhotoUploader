@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">jmgphotouploader</string>
+    <string name="action_settings">settings</string>
+    <string name="action_search">search</string>
+    <string name="btn_add">add</string>
+    <string name="action_resetdatabase">reset database</string>
+    <string name="LoginLive">Login Live</string>
+    <string name="btnClose">Close</string>
+    <string name="action_refresh">refresh</string>
+
+</resources>

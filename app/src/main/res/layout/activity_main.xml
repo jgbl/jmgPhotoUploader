@@ -1,0 +1,31 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#000000"
+    android:id="@+id/list"
+    android:scrollbars="vertical"
+    android:verticalScrollbarPosition="right">
+<!--
+    <jmgphotoprinterandroid.controls.ZoomExpandableListView
+        android:id="@+id/lvItems"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:divider="#b5b5b5"
+        android:dividerHeight="1dp"
+        android:clickable="true"
+        android:listSelector="@drawable/list_selector"
+        android:longClickable="true" />
+    -->
+<!--
+
+
+        android:listSelector="@layout/list_selector"
+    <ImageView
+        android:src="@android:drawable/ic_menu_gallery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/img" />
+    -->
+</LinearLayout>

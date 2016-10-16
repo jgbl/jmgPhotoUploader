@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.jmg.jmgphotouploader._MainActivity" >
+    <!-- Search, should appear as action button -->
+    <item android:id="@+id/action_refresh"
+          android:icon="@drawable/search"
+          android:title="@string/action_refresh"
+          android:showAsAction="ifRoom" />
+    <!-- Settings, should always be in the overflow -->
+    <item android:id="@+id/action_settings"
+          android:title="@string/action_settings"
+          android:showAsAction="never" />
+    <item android:id="@+id/action_resetdatabase"
+          android:title="@string/action_resetdatabase"
+          android:showAsAction="never" />
+</menu>

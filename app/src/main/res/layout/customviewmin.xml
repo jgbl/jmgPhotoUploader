@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
+    android:focusable="false"
+    android:padding="1dp"
+    android:id="@+id/ImageList">
+<!--android:background="#FFDAFF7F"-->
+    <ImageView
+        android:id="@+id/Image"
+        android:layout_height="78dp"
+        android:layout_width="78dp"
+        android:padding="1dp"
+        android:src="@drawable/res"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:clickable="false"
+        android:layout_alignParentLeft="true"
+        android:longClickable="false" />
+    <LinearLayout
+        android:id="@+id/Text"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:focusable="false"
+        android:layout_marginLeft="80dp">
+        <TextView
+            android:id="@+id/Text1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".30"
+            android:textColor="#ffec5a00"
+            android:textSize="20dp"
+            android:textStyle="italic"
+            android:text="Testing 1234 Testing 1234"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:clickable="false"
+            android:longClickable="false"
+            android:layout_gravity="center_vertical" />
+        <TextView
+            android:id="@+id/Text2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".20"
+            android:textSize="14dp"
+            android:textColor="#ff48eb02"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:clickable="false"
+            android:text="1024x1024"
+            android:longClickable="false"
+            android:layout_gravity="center_vertical" />
+    </LinearLayout>
+</RelativeLayout>
