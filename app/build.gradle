@@ -11,9 +11,15 @@ apply plugin: 'com.android.application'
     }
 
     buildTypes {
-        release {
+        debug {
+            debuggable true
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+        release {
+            debuggable false
+            minifyEnabled true
+            //proguardFile 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
         }
     }
 }
