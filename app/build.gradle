@@ -18,8 +18,8 @@ apply plugin: 'com.android.application'
         release {
             debuggable false
             minifyEnabled true
-            //proguardFile 'proguard-rules.txt'
-            proguardFiles getDefaultProguardFile('proguard-android.txt') //,'proguard.cfg'
+            //proguardFile 'proguard.cfg'
+            proguardFiles getDefaultProguardFile('proguard-android.txt') ,'proguard.cfg'
         }
     }
 }
