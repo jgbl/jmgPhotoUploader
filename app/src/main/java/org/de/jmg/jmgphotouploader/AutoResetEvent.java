@@ -1,4 +1,4 @@
-package com.jmg.jmgphotouploader;
+package org.de.jmg.jmgphotouploader;
 
 
 

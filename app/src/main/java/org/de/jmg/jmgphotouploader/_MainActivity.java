@@ -1,4 +1,4 @@
-package com.jmg.jmgphotouploader;
+package org.de.jmg.jmgphotouploader;
 
 
 import android.net.Uri;
@@ -12,7 +12,7 @@ import android.view.*;
 import android.widget.*;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.provider.*;
-import com.jmg.jmgphotouploader.Controls.*;
+import org.de.jmg.jmgphotouploader.Controls.*;
 import com.microsoft.live.LiveAuthClient;
 import com.microsoft.live.LiveAuthException;
 import com.microsoft.live.LiveAuthListener;

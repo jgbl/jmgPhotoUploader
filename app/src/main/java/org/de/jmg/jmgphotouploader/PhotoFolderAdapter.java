@@ -1,4 +1,4 @@
-package com.jmg.jmgphotouploader;
+package org.de.jmg.jmgphotouploader;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,8 +30,8 @@ import android.widget.*;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-import com.jmg.jmgphotouploader.ImgFolder.Type;
-import com.jmg.jmgphotouploader.Controls.ZoomExpandableListview;
+import org.de.jmg.jmgphotouploader.ImgFolder.Type;
+import org.de.jmg.jmgphotouploader.Controls.ZoomExpandableListview;
 //import com.facebook.*;
 //import com.facebook.android.Facebook;
 //import com.sromku.simple.*;

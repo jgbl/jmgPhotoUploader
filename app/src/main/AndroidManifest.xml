@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.jmg.jmgphotouploader"
-    android:versionCode="20"
-    android:versionName="1.120" android:installLocation="auto">
+    package="org.de.jmg.jmgphotouploader"
+    android:versionCode="29"
+    android:versionName="1.129" android:installLocation="auto">
 
     <uses-sdk
         android:minSdkVersion="7"

@@ -1,4 +1,4 @@
-package com.jmg.jmgphotouploader;
+package org.de.jmg.jmgphotouploader;
 
 //import android.support.v7.app.ActionBarActivity;
 import java.io.*;

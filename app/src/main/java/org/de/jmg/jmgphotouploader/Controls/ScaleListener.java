@@ -1,4 +1,4 @@
-package com.jmg.jmgphotouploader.Controls;
+package org.de.jmg.jmgphotouploader.Controls;
 
 //import Android.Runtime.*;
 import android.view.*;
