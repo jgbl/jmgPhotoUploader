@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -19,7 +20,7 @@ import com.microsoft.live.LiveConnectSession;
 import com.microsoft.live.LiveConnectClient;
 import com.microsoft.live.LiveStatus;
 
-public class LoginLiveActivity extends Activity  implements LiveAuthListener
+public class LoginLiveActivity extends AppCompatActivity implements LiveAuthListener
 {
 
     private LiveAuthClient auth;

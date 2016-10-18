@@ -1,13 +1,20 @@
 package org.de.jmg.jmgphotouploader;
 
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.app.*;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 //import android.runtime.*;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.*;
 import android.widget.*;
 import android.widget.ExpandableListView.OnChildClickListener;
@@ -21,10 +28,13 @@ import com.microsoft.live.LiveOperation;
 import com.microsoft.live.LiveOperationException;
 import com.microsoft.live.LiveStatus;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+
 //C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 //ORIGINAL LINE: [Activity(Label = "JMGPhotoPrinter", MainLauncher = true, Icon = "@drawable/edit")] public class MainActivity : Activity
-public class _MainActivity extends Activity 
+public class _MainActivity extends AppCompatActivity
 {
+	public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 804658;
 	public ExpandableListView lv = null;
 	
 	public JMPPPApplication app;
@@ -43,130 +53,24 @@ public class _MainActivity extends Activity
 		{
 			app = (JMPPPApplication) getApplication();
 			app.MainContext = this.Context;
-			if (app.dbpp != null)
-			{
-				lib.dbpp = app.dbpp;
-				lib.dbpp = new dbpp(this);
-				lib.dbpp.createDataBase();
-				app.dbpp = lib.dbpp;
-			}
-			else
-			{
-				lib.dbpp = new dbpp(this);
-				lib.dbpp.createDataBase();
-				app.dbpp = lib.dbpp;
-			}
-			String SQL = "ALTER TABLE Services ADD COLUMN visible BOOL NOT NULL DEFAULT true";
-			try
-			{
-				Cursor c = lib.dbpp.query("Select * FROM Services");
-				if (c.getColumnCount() < 5)	lib.dbpp.DataBase.execSQL(SQL);
-				boolean first = true;
-				lib.setgstatus("enumerate Services");
-				while ((first) ? (c.moveToFirst()) : (c.moveToNext()))
-				{
-					first = false;
-					String service = c.getString(c.getColumnIndex("Name"));
-					String Package = c.getString(c.getColumnIndex("package"));
-					if (service.contains("Facebook")){
-						if ( Package == null || Package.equals(""))
-						{
-							String p = "com.facebook.katana";
-							String sql = "Update Services SET package = \"" + p + "\" WHERE _id = " + c.getInt(0);
-							lib.dbpp.DataBase.execSQL(sql);
-							p = "https://www.facebook.com/mobile/";
-							sql = "Update Services SET URL = \"" + p + "\" WHERE _id = " + c.getInt(0);
-							lib.dbpp.DataBase.execSQL(sql);
-						}
-					}
-					else if (service.contains("Twitter")){
-						if (Package == null|| Package.equals(""))
-						{
-							String p = "com.twitter." +
-									"android,com." +
-									"twidroid,com.handmark." +
-									"tweetcaster,com.thedeck.android";
-							String sql = "Update Services SET package = \"" + p + "\" WHERE _id = " + c.getInt(0);
-							lib.dbpp.DataBase.execSQL(sql);
-							
-							p = "https://about.twitter.com/de/products/list";
-							sql = "Update Services SET URL = \"" + p + "\" WHERE _id = " + c.getInt(0);
-							lib.dbpp.DataBase.execSQL(sql);
-							
-						}
-					}
-					else if (service.contains("Instagram")){
-						if (Package == null || Package.equals("") )
-						{
-							String p = "com.instagram.android";
-							String sql = "Update Services SET package = \"" + p + "\" WHERE _id = " + c.getInt(0);
-							lib.dbpp.DataBase.execSQL(sql);
-							p = "http://instagram.de.uptodown.com/android";;
-							sql = "Update Services SET URL = \"" + p + "\" WHERE _id = " + c.getInt(0);
-							lib.dbpp.DataBase.execSQL(sql);
-						}
-					}
-					else if (service.contains("Pinterest")){
-					}
-					//c = lib.dbpp.query("Select * FROM Services");
-				
-				}
-				if (c.getCount() < 6)
-				{
-					String sql = "INSERT INTO Services ('Name','URL','package') VALUES('Flickr','http://flickr.com','com.yahoo.mobile.client.android.flickr')";
-					lib.dbpp.DataBase.execSQL(sql);
-					sql = "INSERT INTO Services ('Name','URL','package') VALUES('Tumblr','http://tumblr.com','com.tumblr')";
-					lib.dbpp.DataBase.execSQL(sql);
-				}
-				if (c.getCount() < 7)
-				{
-					String sql = "INSERT INTO Services ('Name','URL','package') VALUES('Photobucket','http://photobucket.com','com.photobucket.android')";
-					lib.dbpp.DataBase.execSQL(sql);
-				}
-			}
-			catch (Exception ex)
-			{
-				System.out.println(ex.getMessage());
-			}
+			initDB(app);
 			//requestWindowFeature(Window.FEATURE_PROGRESS);
 			//requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 			// Set our view from the "main" layout resource
 					//_gestureDetector = new GestureDetector(this);
 			//_ScaleGestureDetector = new ScaleGestureDetector (this,this);
 			//lv.Touch += lv_touch;
-	
-			
-			System.out.println(lib.getExternalPicturesDir());
-	
-			String selection = "";
-			String[] selectionArgs = new String[]{};
-			String[] projection = new String[] {MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.Media.BUCKET_ID};
-			if (app.ppa == null)
-			{
-				android.database.Cursor mediaCursor = getContentResolver().query(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, selection,selectionArgs, "");
-				if (mediaCursor != null) lib.GetThumbnails(this, false, mediaCursor, app.BMList);
-		
-				mediaCursor = getContentResolver().query(android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI,projection,selection,selectionArgs, "");
-				if (mediaCursor != null) lib.GetThumbnails(this, true, mediaCursor, app.BMList);
-				
-				if (app.ppa == null) app.BMList.add(new ImgFolder("One Drive",ImgFolder.Type.OneDriveAlbum));
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+					&& ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+				ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+						MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
 			}
-			setContentView(R.layout.activity_main);
-	
-			lv = new ZoomExpandableListview(this); //FindViewById<ExpandableListView> (Resource.Id.lvItems);
-			this.addContentView(lv, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,ViewGroup.LayoutParams.FILL_PARENT));
-	
-			lv.setChoiceMode(ExpandableListView.CHOICE_MODE_MULTIPLE);
-			lv.setClickable(true);
-			lv.setFocusable(true);
-			lv.setFocusableInTouchMode(true);
-			SetPPA();
-			
-			lv.setOnChildClickListener(lv_ChildClick);
-			lv.setOnScrollListener(app.ppa.onScrollListener);
-			
-			//lv.setOverScrollMode(View.OVER_SCROLL_NEVER);
-			
+			else
+			{
+				loadmedia();
+			}
+
+
 		}
 		catch (Exception ex)
 		{
@@ -176,6 +80,150 @@ public class _MainActivity extends Activity
 		
 		
 	}
+
+
+	private void initDB(JMPPPApplication app)
+	{
+		if (app.dbpp != null)
+		{
+			lib.dbpp = app.dbpp;
+			lib.dbpp = new dbpp(this);
+			lib.dbpp.createDataBase();
+			app.dbpp = lib.dbpp;
+		}
+		else
+		{
+			lib.dbpp = new dbpp(this);
+			lib.dbpp.createDataBase();
+			app.dbpp = lib.dbpp;
+		}
+		String SQL = "ALTER TABLE Services ADD COLUMN visible BOOL NOT NULL DEFAULT true";
+		try
+		{
+			Cursor c = lib.dbpp.query("Select * FROM Services");
+			if (c.getColumnCount() < 5)	lib.dbpp.DataBase.execSQL(SQL);
+			boolean first = true;
+			lib.setgstatus("enumerate Services");
+			while ((first) ? (c.moveToFirst()) : (c.moveToNext()))
+			{
+				first = false;
+				String service = c.getString(c.getColumnIndex("Name"));
+				String Package = c.getString(c.getColumnIndex("package"));
+				if (service.contains("Facebook")){
+					if ( Package == null || Package.equals(""))
+					{
+						String p = "com.facebook.katana";
+						String sql = "Update Services SET package = \"" + p + "\" WHERE _id = " + c.getInt(0);
+						lib.dbpp.DataBase.execSQL(sql);
+						p = "https://www.facebook.com/mobile/";
+						sql = "Update Services SET URL = \"" + p + "\" WHERE _id = " + c.getInt(0);
+						lib.dbpp.DataBase.execSQL(sql);
+					}
+				}
+				else if (service.contains("Twitter")){
+					if (Package == null|| Package.equals(""))
+					{
+						String p = "com.twitter." +
+								"android,com." +
+								"twidroid,com.handmark." +
+								"tweetcaster,com.thedeck.android";
+						String sql = "Update Services SET package = \"" + p + "\" WHERE _id = " + c.getInt(0);
+						lib.dbpp.DataBase.execSQL(sql);
+
+						p = "https://about.twitter.com/de/products/list";
+						sql = "Update Services SET URL = \"" + p + "\" WHERE _id = " + c.getInt(0);
+						lib.dbpp.DataBase.execSQL(sql);
+
+					}
+				}
+				else if (service.contains("Instagram")){
+					if (Package == null || Package.equals("") )
+					{
+						String p = "com.instagram.android";
+						String sql = "Update Services SET package = \"" + p + "\" WHERE _id = " + c.getInt(0);
+						lib.dbpp.DataBase.execSQL(sql);
+						p = "http://instagram.de.uptodown.com/android";;
+						sql = "Update Services SET URL = \"" + p + "\" WHERE _id = " + c.getInt(0);
+						lib.dbpp.DataBase.execSQL(sql);
+					}
+				}
+				else if (service.contains("Pinterest")){
+				}
+				//c = lib.dbpp.query("Select * FROM Services");
+
+			}
+			if (c.getCount() < 6)
+			{
+				String sql = "INSERT INTO Services ('Name','URL','package') VALUES('Flickr','http://flickr.com','com.yahoo.mobile.client.android.flickr')";
+				lib.dbpp.DataBase.execSQL(sql);
+				sql = "INSERT INTO Services ('Name','URL','package') VALUES('Tumblr','http://tumblr.com','com.tumblr')";
+				lib.dbpp.DataBase.execSQL(sql);
+			}
+			if (c.getCount() < 7)
+			{
+				String sql = "INSERT INTO Services ('Name','URL','package') VALUES('Photobucket','http://photobucket.com','com.photobucket.android')";
+				lib.dbpp.DataBase.execSQL(sql);
+			}
+		}
+		catch (Exception ex)
+		{
+			System.out.println(ex.getMessage());
+		}
+
+	}
+
+	private void loadmedia() throws Exception
+	{
+		System.out.println(lib.getExternalPicturesDir());
+
+		String selection = "";
+		String[] selectionArgs = new String[]{};
+		String[] projection = new String[] {MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.Media.BUCKET_ID};
+		if (app.ppa == null)
+		{
+			Cursor mediaCursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, selection,selectionArgs, "");
+			if (mediaCursor != null) lib.GetThumbnails(this, false, mediaCursor, app.BMList);
+
+			mediaCursor = getContentResolver().query(MediaStore.Images.Media.INTERNAL_CONTENT_URI,projection,selection,selectionArgs, "");
+			if (mediaCursor != null) lib.GetThumbnails(this, true, mediaCursor, app.BMList);
+
+			if (app.ppa == null) app.BMList.add(new ImgFolder("One Drive",ImgFolder.Type.OneDriveAlbum));
+		}
+		setContentView(R.layout.activity_main);
+
+		lv = new ZoomExpandableListview(this); //FindViewById<ExpandableListView> (Resource.Id.lvItems);
+		this.addContentView(lv, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,ViewGroup.LayoutParams.FILL_PARENT));
+
+		lv.setChoiceMode(ExpandableListView.CHOICE_MODE_MULTIPLE);
+		lv.setClickable(true);
+		lv.setFocusable(true);
+		lv.setFocusableInTouchMode(true);
+		SetPPA();
+
+		lv.setOnChildClickListener(lv_ChildClick);
+		lv.setOnScrollListener(app.ppa.onScrollListener);
+
+		//lv.setOverScrollMode(View.OVER_SCROLL_NEVER);
+
+	}
+
+	@Override
+	public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		if (requestCode == MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE) {
+			if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				// Permission granted.
+				try {
+					loadmedia();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else {
+				// User refused to grant permission.
+			}
+		}
+	}
+
 	private void SetPPA()
 	{
 		if (app.ppa == null)  	app.ppa = new PhotoFolderAdapter(this, app.BMList);

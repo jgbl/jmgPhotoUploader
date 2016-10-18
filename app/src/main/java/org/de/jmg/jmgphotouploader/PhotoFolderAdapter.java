@@ -465,11 +465,12 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 		}
 	}
 
-    List<imgListViewLiveDownloadListener> list = new ArrayList<imgListViewLiveDownloadListener>();
+    //List<imgListViewLiveDownloadListener> list = new ArrayList<imgListViewLiveDownloadListener>();
     private void LoadThumbnailOneDrive(ImgListItem pItem, ImageView pImage) throws Exception
 	{
         final ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).lv;
-		try
+		/*
+        try
 		{
 			for (int i = 0; i < list.size(); i++)
 			{
@@ -495,6 +496,8 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 		{
 			lib.ShowException(context,ex);
 		}
+
+	    */
 
         String file = pItem.id + "/picture?type=thumbnail";
 		if (pItem.ThumbnailLoaded) {
@@ -541,7 +544,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 
 			        public void onDownloadCompleted(LiveDownloadOperation operation)
 			        {
-						list.remove(this);
+						//list.remove(this);
 						//File f = (File)operation.getUserState();
                         InputStream input = null;
 			        	if (mIsScrolling || lv.getIsScaled() || !ItemExists(Image, item))
@@ -634,7 +637,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 			        	}
 			        	*/
 
-                        list.remove(this);
+                        //list.remove(this);
 					}
 			        public void onDownloadProgress(int totalBytes, int bytesRemaining, LiveDownloadOperation operation)
 			        {
@@ -650,7 +653,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 			        				+ " IsScaled " + lv.getIsScaled() 
 			        				+ " ItemExists " + ItemExists(Image,item));
 			        		operation.cancel();
-                            list.remove(this);
+                            //list.remove(this);
 							//File f = (File)operation.getUserState();
 							//f.delete();
 			        	}
@@ -660,7 +663,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 			    };
 				//File tmpFile = File.createTempFile("Live",".tmp");
                 LDL.operation = lib.getClient(context).downloadAsync(file, LDL);
-                list.add(LDL);
+                //list.add(LDL);
 
 			}
 		}
