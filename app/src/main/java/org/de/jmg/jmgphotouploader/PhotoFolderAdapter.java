@@ -464,68 +464,45 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 			return view;
 		}
 	}
-	/*
+
     List<imgListViewLiveDownloadListener> list = new ArrayList<imgListViewLiveDownloadListener>();
-    Timer timer = null;
-    boolean TimerStarted;
-    */
-    private void LoadThumbnailOneDrive(ImgListItem item, ImageView Image) throws Exception
+    private void LoadThumbnailOneDrive(ImgListItem pItem, ImageView pImage) throws Exception
 	{
         final ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).lv;
-		/*
-		if (!TimerStarted && timer == null)
-        {
-            TimerStarted = true;
-			timer = new Timer();
-			timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    try {
-						for (int i = 0; i < list.size(); i++)
-						{
-							imgListViewLiveDownloadListener ldl = list.get(i);
-							if (!ItemExists(ldl.Image, ldl.item))
-							{
-								try
-								{
-									ldl.cancel();
-									list.remove((ldl));
-									i--;
-								}
-								catch (Exception ex)
-								{
-									lib.ShowException(context, ex);
-								}
-
-							}
-						}
+		try
+		{
+			for (int i = 0; i < list.size(); i++)
+			{
+				imgListViewLiveDownloadListener ldl = list.get(i);
+				if (!ItemExists(ldl.Image, ldl.item))
+				{
+					try
+					{
+						ldl.cancel();
+						list.remove((ldl));
+						i--;
+						//lib.ShowToast(context, "Item " + ldl.item.FileName + " download cancelled!");
 					}
 					catch (Exception ex)
 					{
-						lib.ShowException(context,ex);
+						lib.ShowException(context, ex);
 					}
-                    if (list.isEmpty())
-                    {
-                        TimerStarted = false;
-                        try
-                        {
-                            timer.cancel();
-							timer.purge();
-							timer = null;
-                        }
-                        catch(Exception ex)
-                        {
-							lib.ShowException(context,ex);
-                        }
-                    }
-                }
-            },500,500);
-            //TimerStarted = true;
+
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			lib.ShowException(context,ex);
+		}
+
+        String file = pItem.id + "/picture?type=thumbnail";
+		if (pItem.ThumbnailLoaded) {
+            return;
         }
-		*/
-        String file = item.id + "/picture?type=thumbnail";
-		if (item.ThumbnailLoaded) return;
-		if (!ItemExists(Image,item)) return;
+		if (!ItemExists(pImage,pItem)) {
+            return;
+        }
 		try 
 		{
 			
@@ -545,7 +522,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 				lib.ShowException(context, ex);
 			}
 
-        	if (mIsScrolling || lv.getIsScaled() || !ItemExists(Image, item))
+        	if (mIsScrolling || lv.getIsScaled() || !ItemExists(pImage, pItem))
 			{
         		/*
         		lib.ShowToast(context, "Item " + item.FileName 
@@ -559,19 +536,12 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 			else
 			{
 				imgListViewLiveDownloadListener LDL;
-				LDL = new imgListViewLiveDownloadListener(Image,item)
+				LDL = new imgListViewLiveDownloadListener(pImage,pItem)
                     {
 
 			        public void onDownloadCompleted(LiveDownloadOperation operation)
 			        {
-						/*list.remove(this);
-						if (list.isEmpty())
-						{
-							TimerStarted = false;
-							timer.cancel();
-							timer.purge();
-							timer = null;
-						}*/
+						list.remove(this);
 						//File f = (File)operation.getUserState();
                         InputStream input = null;
 			        	if (mIsScrolling || lv.getIsScaled() || !ItemExists(Image, item))
@@ -663,17 +633,9 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 							context.finish();
 			        	}
 			        	*/
-						/*
+
                         list.remove(this);
-                        if (list.isEmpty())
-                        {
-                            TimerStarted = false;
-                            timer.cancel();
-							timer.purge();
-							timer = null;
-                        }
-                        */
-			        }
+					}
 			        public void onDownloadProgress(int totalBytes, int bytesRemaining, LiveDownloadOperation operation)
 			        {
 			            //resultTextView.setText("Downloading picture... " + bytesRemaining + " bytes downloaded " +
@@ -688,6 +650,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 			        				+ " IsScaled " + lv.getIsScaled() 
 			        				+ " ItemExists " + ItemExists(Image,item));
 			        		operation.cancel();
+                            list.remove(this);
 							//File f = (File)operation.getUserState();
 							//f.delete();
 			        	}
@@ -697,7 +660,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 			    };
 				//File tmpFile = File.createTempFile("Live",".tmp");
                 LDL.operation = lib.getClient(context).downloadAsync(file, LDL);
-                //list.add(LDL);
+                list.add(LDL);
 
 			}
 		}

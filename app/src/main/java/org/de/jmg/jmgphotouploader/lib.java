@@ -756,7 +756,7 @@ public class lib
 	   }
 	   return DialogResultYes;
 	}
-	public static synchronized void ShowToast(Context context, String msg)
+	public static void ShowToast(Context context, String msg)
 	{
 		/*Looper.prepare();*/
 		Toast T = Toast.makeText(context, msg, Toast.LENGTH_LONG);
