@@ -4,11 +4,13 @@ import java.io.*;
 import android.database.sqlite.*;
 import android.content.*;
 import android.content.res.AssetManager;
+import android.os.Build;
+import android.os.Environment;
 
 public class dbpp extends SQLiteOpenHelper
 {
 	//The Android's default system path of your application database.
-	private static String DB_PATH = "/data/data/com.jmg.photoprinter/databases/";
+	private static String DB_PATH = "/data/data/org.de.jmg.jmgphotouploader/databases/";
 
 	private static String DB_NAME = "JMGPhotoPrinter.sqlite";
 
@@ -31,8 +33,12 @@ public class dbpp extends SQLiteOpenHelper
 
 		//base(context, DB_NAME, null, 1);
 		this.myContext = context;
-		String extPath = android.os.Environment.getExternalStorageDirectory().getPath();
+		String extPath = Environment.getExternalStorageDirectory().getPath();
 		File F = new File(extPath);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			F = context.getExternalFilesDir(null);
+			extPath = F.getPath();
+		}
 		if (F.isDirectory() && F.exists())
 		{
 			String JMGDataDirectory = Path.combine(extPath, "jmgphotoprinter","database");
@@ -121,7 +127,7 @@ public class dbpp extends SQLiteOpenHelper
 
 		}
 
-		return checkDB != null ? true : false;
+		return checkDB != null;
 	}
 
 	private void copyDataBase() throws IOException
