@@ -20,7 +20,7 @@ import com.microsoft.live.LiveConnectSession;
 import com.microsoft.live.LiveConnectClient;
 import com.microsoft.live.LiveStatus;
 
-public class LoginLiveActivity extends AppCompatActivity implements LiveAuthListener
+public class LoginLiveActivity extends Activity implements LiveAuthListener
 {
 
     private LiveAuthClient auth;

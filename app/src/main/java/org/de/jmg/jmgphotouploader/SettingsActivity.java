@@ -17,7 +17,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends Activity {
 	public JMPPPApplication app;
 	public android.database.Cursor Cursor;
 	public static int requestCode = 9998;

@@ -118,8 +118,13 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 		
 		// Get the built-in first text view and insert the group name ("Vegetables", "Fruits", etc.):
 		TextView textView = (TextView) view.findViewById(android.R.id.text1);
-		
-		if (imgFolder.type == ImgFolder.Type.OneDriveAlbum) 
+		if (blnNew)
+        {
+            int size = (lib.getScreenSize(context).x < lib.getScreenSize(context).y ? lib.getScreenSize(context).x : lib.getScreenSize(context).y);
+            int newSize = (size/30);
+            if (newSize > textView.getTextSize()) textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, newSize);
+        }
+        if (imgFolder.type == ImgFolder.Type.OneDriveAlbum)
 			{
 			textView.setTextColor(Color.CYAN);
 			if (isExpanded==false && imgFolder.items != null && imgFolder.items.size()==0 && imgFolder.Name=="/" && imgFolder.fetched == false)
@@ -219,15 +224,25 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 			lib.setgstatus("GetChildview ImageView");
 			if (isNewView) view.setMinimumHeight((int) lib.convertFromDp(context.getApplicationContext(), view.getHeight()));
 			final ImageView Image = (ImageView)view.findViewById (R.id.Image);
+            if (isNewView)
+            {
+                int width = lib.getScreenSize(context).x;
+                if (lib.getScreenSize(context).y > width) width = lib.getScreenSize(context).y;
+                ViewGroup.LayoutParams layoutParams = Image.getLayoutParams();
+                int diff = layoutParams.width;
+                layoutParams.width = width / 10;
+                layoutParams.height = width / 10;
+                diff = layoutParams.width-diff;
+                Image.setLayoutParams(layoutParams);
+                if (diff > 0)
+                {
+                    LinearLayout Text = (LinearLayout) view.findViewById (R.id.Text);
+                    RelativeLayout.LayoutParams RL = (RelativeLayout.LayoutParams)Text.getLayoutParams();
+                    RL.setMargins(RL.leftMargin + diff, RL.topMargin,RL.rightMargin + diff, RL.bottomMargin);
+                    Text.setLayoutParams(RL);
+                }
 
-			int width = lib.getScreenSize(context).x;
-
-			ViewGroup.LayoutParams layoutParams = Image.getLayoutParams();
-			int diff = layoutParams.width;
-			layoutParams.width = width / 10;
-			layoutParams.height = width / 10;
-			diff = layoutParams.width-diff;
-			Image.setLayoutParams(layoutParams);
+            }
 			boolean ItemExists = false;
 			if (view.getTag() != null)
 			{
@@ -281,10 +296,6 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 			//view.FindViewById<ImageView> (Android.Resource.Id.Icon).ScaleY = 5;
 			lib.setgstatus("GetChildview Text1");
 
-			LinearLayout Text = (LinearLayout) view.findViewById (R.id.Text);
-			RelativeLayout.LayoutParams RL = (RelativeLayout.LayoutParams)Text.getLayoutParams();
-			RL.setMargins(RL.leftMargin + diff, RL.topMargin,RL.rightMargin - diff, RL.bottomMargin);
-			Text.setLayoutParams(RL);
 
 			TextView Text1 = (TextView)view.findViewById (R.id.Text1);
 			Text1.setText (item.FileName);
@@ -409,6 +420,8 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 									}
 									*/
 									lib.setgstatus("GetChildview AddCheckbox to Layout");
+									//L.width = lib.getScreenSize(context).x / (2 * Cursor.getCount());
+									//cb.findViewById(android.R.id.checkbox);
 									layout.addView(cb, L);
 									//cb.setWidth((int)(cb.getWidth() / cb.getScaleX()));
 									//cb.setHeight((int)(cb.getHeight() / cb.getScaleY()));

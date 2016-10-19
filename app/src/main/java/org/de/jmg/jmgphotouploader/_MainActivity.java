@@ -32,7 +32,7 @@ import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 
 //C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 //ORIGINAL LINE: [Activity(Label = "JMGPhotoPrinter", MainLauncher = true, Icon = "@drawable/edit")] public class MainActivity : Activity
-public class _MainActivity extends AppCompatActivity
+public class _MainActivity extends Activity
 {
 	public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 112;
 	public ExpandableListView lv = null;

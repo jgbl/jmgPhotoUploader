@@ -19,6 +19,7 @@ import android.os.Build;
 //import android.runtime.*;
 import android.provider.*;
 import android.provider.MediaStore.Images;
+import android.util.DisplayMetrics;
 import android.view.Display;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
@@ -717,6 +718,23 @@ public class lib
 		}
 		ScreenSize = size;
 		return ScreenSize;
+	}
+
+	public static PointF ScreenInches;
+	public static PointF getScreenInches(Activity context)
+	{
+		if (ScreenInches != null) return ScreenInches;
+		DisplayMetrics metrics = new DisplayMetrics();
+		Display display = context.getWindowManager().getDefaultDisplay();
+
+		float widthDpi = metrics.xdpi;
+		float heightDpi = metrics.ydpi;
+
+
+		float widthInches = getScreenSize(context).x / widthDpi;
+		float heightInches = getScreenSize(context).y / heightDpi;
+		ScreenInches = new PointF(widthInches,heightInches);
+		return ScreenInches;
 	}
 
 	private static class ExStateInfo
