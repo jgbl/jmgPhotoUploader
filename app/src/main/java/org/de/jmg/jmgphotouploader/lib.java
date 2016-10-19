@@ -19,6 +19,7 @@ import android.os.Build;
 //import android.runtime.*;
 import android.provider.*;
 import android.provider.MediaStore.Images;
+import android.view.Display;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
@@ -694,7 +695,30 @@ public class lib
 
 		context.startActivity(intent);
 	}
-	
+	public static Point ScreenSize;
+	public static Point getScreenSize(Activity context)
+	{
+		if (ScreenSize!=null) return ScreenSize;
+		Display display = context.getWindowManager().getDefaultDisplay();
+		Point size = new Point();
+		final int width;
+		final int height;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+			display.getSize(size);
+
+		}
+		else
+		{
+			//noinspection deprecation
+			width = display.getWidth();  // deprecated
+			//noinspection deprecation
+			height = display.getHeight();  // deprecated
+			size = new Point( width,height);
+		}
+		ScreenSize = size;
+		return ScreenSize;
+	}
+
 	private static class ExStateInfo
 	{
 		public Context context;

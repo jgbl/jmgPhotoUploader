@@ -219,7 +219,15 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 			lib.setgstatus("GetChildview ImageView");
 			if (isNewView) view.setMinimumHeight((int) lib.convertFromDp(context.getApplicationContext(), view.getHeight()));
 			final ImageView Image = (ImageView)view.findViewById (R.id.Image);
-			
+
+			int width = lib.getScreenSize(context).x;
+
+			ViewGroup.LayoutParams layoutParams = Image.getLayoutParams();
+			int diff = layoutParams.width;
+			layoutParams.width = width / 10;
+			layoutParams.height = width / 10;
+			diff = layoutParams.width-diff;
+			Image.setLayoutParams(layoutParams);
 			boolean ItemExists = false;
 			if (view.getTag() != null)
 			{
@@ -240,7 +248,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 			lib.setClient(myApp.getConnectClient());
 			context = (Activity) myApp.MainContext;
 			boolean isOneDrive = false;
-			if (item.type==ImgFolder.Type.OneDriveAlbum || item.type==ImgFolder.Type.OneDriveFolder)
+			if (item.type== Type.OneDriveAlbum || item.type== Type.OneDriveFolder)
 			{
 				LoadThumbnailOneDrive(item,Image);
 				isOneDrive = true;
@@ -272,6 +280,12 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 			//view.FindViewById<ImageView> (Android.Resource.Id.Icon).ScaleX = 5;
 			//view.FindViewById<ImageView> (Android.Resource.Id.Icon).ScaleY = 5;
 			lib.setgstatus("GetChildview Text1");
+
+			LinearLayout Text = (LinearLayout) view.findViewById (R.id.Text);
+			RelativeLayout.LayoutParams RL = (RelativeLayout.LayoutParams)Text.getLayoutParams();
+			RL.setMargins(RL.leftMargin + diff, RL.topMargin,RL.rightMargin - diff, RL.bottomMargin);
+			Text.setLayoutParams(RL);
+
 			TextView Text1 = (TextView)view.findViewById (R.id.Text1);
 			Text1.setText (item.FileName);
 			Text1.setClickable(false);
@@ -319,7 +333,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 			lib.setgstatus("GetChildview Start Combo");
 			LinearLayout layout = (LinearLayout)view.findViewById(R.id.Text); // (context);
 			//relLayout.AddView (layout);
-			android.database.Cursor Cursor;
+			Cursor Cursor;
 			lib.setgstatus("GetChildview Services");
 			if (ServiceCursor == null)
 			{
@@ -379,7 +393,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 									//cb.forceLayout();
 									cb.setTextSize(TypedValue.COMPLEX_UNIT_PX,lib.convertFromDp(context.getApplicationContext(), 14.0f));
 									//cb.SetPadding (1,1,1,1);//(5, 26, 5, 5);
-									cb.setGravity(android.view.Gravity.CENTER_VERTICAL);
+									cb.setGravity(Gravity.CENTER_VERTICAL);
 									float Weight = 0.49f / Cursor.getCount();
 									LinearLayout.LayoutParams L = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.FILL_PARENT,Weight);
 									//noinspection WrongConstant
@@ -432,7 +446,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 											
 										}
 									}
-									catch (java.lang.Exception e)
+									catch (Exception e)
 									{
 									}
 								}
