@@ -230,19 +230,18 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                 if (lib.getScreenSize(context).y > width) width = lib.getScreenSize(context).y;
                 ViewGroup.LayoutParams layoutParams = Image.getLayoutParams();
                 int diff = layoutParams.width;
-                layoutParams.width = width / 10;
-                layoutParams.height = width / 10;
-                diff = layoutParams.width-diff;
-                Image.setLayoutParams(layoutParams);
-                if (diff != 0)
-                {
-                    LinearLayout Text = (LinearLayout) view.findViewById (R.id.Text);
-                    RelativeLayout.LayoutParams RL = (RelativeLayout.LayoutParams)Text.getLayoutParams();
-                    RL.setMargins(RL.leftMargin + diff, RL.topMargin,RL.rightMargin + diff, RL.bottomMargin);
-                    Text.setLayoutParams(RL);
-                }
-
-            }
+				diff = (width/10)-diff;
+				if (diff>0)
+				{
+					layoutParams.width = width / 10;
+                	layoutParams.height = width / 10;
+                	Image.setLayoutParams(layoutParams);
+                    //LinearLayout Text = (LinearLayout) view.findViewById (R.id.Text);
+                    //RelativeLayout.LayoutParams RL = (RelativeLayout.LayoutParams)Text.getLayoutParams();
+                    //RL.setMargins(RL.leftMargin + diff, RL.topMargin,RL.rightMargin + diff, RL.bottomMargin);
+                    //Text.setLayoutParams(RL);
+				}
+			}
 			boolean ItemExists = false;
 			if (view.getTag() != null)
 			{

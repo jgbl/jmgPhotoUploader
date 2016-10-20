@@ -7,24 +7,24 @@
     android:padding="1dp"
     android:id="@+id/ImageList">
 <!--android:background="#FFDAFF7F"-->
-    <ImageView
-        android:id="@+id/Image"
-        android:layout_height="78px"
-        android:layout_width="78px"
-        android:padding="1dp"
-        android:src="@drawable/res"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:clickable="false"
-        android:layout_alignParentLeft="true"
-        android:longClickable="false" />
     <LinearLayout
         android:id="@+id/Text"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="80px"
+        android:layout_height="wrap_content"
         android:focusable="false"
-        android:layout_marginLeft="80px">
+        >
+        <ImageView
+            android:id="@+id/Image"
+            android:layout_height="78dp"
+            android:layout_width="78dp"
+            android:padding="1dp"
+            android:src="@drawable/res"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:clickable="false"
+            android:layout_alignParentLeft="true"
+            android:longClickable="false" />
         <TextView
             android:id="@+id/Text1"
             android:layout_width="0dp"
