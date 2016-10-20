@@ -222,7 +222,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 				isNewView = true;
 			}
 			lib.setgstatus("GetChildview ImageView");
-			if (isNewView) view.setMinimumHeight((int) lib.convertFromDp(context.getApplicationContext(), view.getHeight()));
+			//if (isNewView) view.setMinimumHeight((int) lib.convertFromDp(context.getApplicationContext(), view.getHeight()));
 			final ImageView Image = (ImageView)view.findViewById (R.id.Image);
             if (isNewView)
             {
@@ -234,7 +234,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                 layoutParams.height = width / 10;
                 diff = layoutParams.width-diff;
                 Image.setLayoutParams(layoutParams);
-                if (diff > 0)
+                if (diff != 0)
                 {
                     LinearLayout Text = (LinearLayout) view.findViewById (R.id.Text);
                     RelativeLayout.LayoutParams RL = (RelativeLayout.LayoutParams)Text.getLayoutParams();
@@ -303,8 +303,14 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 			Text1.setFocusable(false);
 			Text1.setFocusableInTouchMode(false);
 			Text1.setLongClickable(false);
-			if (isNewView) Text1.setTextSize(TypedValue.COMPLEX_UNIT_PX,lib.convertFromDp(context.getApplicationContext(), Text1.getTextSize()));
-			//Text1.Click+= (object sender, EventArgs e) => Console.WriteLine("Text1 clicked");
+			if (isNewView)  {
+				Text1.setTextSize(TypedValue.COMPLEX_UNIT_PX,lib.convertFromDp(context.getApplicationContext(), Text1.getTextSize()));
+				int newSize = lib.getScreenSize(context).x / 70;
+				if (newSize > Text1.getTextSize())
+				{
+					Text1.setTextSize(TypedValue.COMPLEX_UNIT_PX, newSize);
+				}
+			}//Text1.Click+= (object sender, EventArgs e) => Console.WriteLine("Text1 clicked");
 			lib.setgstatus("GetChildview Text2");
 			TextView Text2 = (TextView)view.findViewById (R.id.Text2);
 			if (item.getsize() == null && item.getImg() != null)
@@ -406,7 +412,8 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 									//cb.SetPadding (1,1,1,1);//(5, 26, 5, 5);
 									cb.setGravity(Gravity.CENTER_VERTICAL);
 									float Weight = 0.49f / Cursor.getCount();
-									LinearLayout.LayoutParams L = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.FILL_PARENT,Weight);
+									int size = (int) ((lib.getScreenSize(context).x * 0.49f) / Cursor.getCount());
+									LinearLayout.LayoutParams L = new LinearLayout.LayoutParams(size, ViewGroup.LayoutParams.MATCH_PARENT,Weight);
 									//noinspection WrongConstant
 									L.gravity = cb.getGravity();
 									/*
