@@ -412,8 +412,8 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 									//cb.SetPadding (1,1,1,1);//(5, 26, 5, 5);
 									cb.setGravity(Gravity.CENTER_VERTICAL);
 									float Weight = 0.49f / Cursor.getCount();
-									int size = (int) ((lib.getScreenSize(context).x * 0.49f) / Cursor.getCount());
-									LinearLayout.LayoutParams L = new LinearLayout.LayoutParams(size, ViewGroup.LayoutParams.MATCH_PARENT,Weight);
+									int size = (int) ((lib.getScreenSize(context).x * 0.35f) / Cursor.getCount());
+									LinearLayout.LayoutParams L = new LinearLayout.LayoutParams(size, ViewGroup.LayoutParams.WRAP_CONTENT,Weight);
 									//noinspection WrongConstant
 									L.gravity = cb.getGravity();
 									/*
