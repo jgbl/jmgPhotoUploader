@@ -707,7 +707,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 	}
 	private boolean ItemExists(ImageView Image, ImgListItem item)
     {
-    	View view = (View) Image.getParent();
+    	View view = (View) Image.getParent().getParent();
     	Boolean ItemExists = false;
     	if (view.getTag() != null)
 		{
