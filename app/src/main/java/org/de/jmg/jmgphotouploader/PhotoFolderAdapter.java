@@ -609,7 +609,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 			                catch (Exception ex)
 			                {
 			                	ex.printStackTrace();
-			                	lib.ShowToast(context, "Could not load " + item.FileName + " Error: " + ex.getClass().getName() + " " + ex.getMessage());
+			                	lib.ShowToast(context, context.getString(R.string.Couldnotload) + item.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage());
 			                }
 			                if (bMap != null)
 			                {
@@ -620,14 +620,14 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 			                	}
 			                	else
 			                	{
-			                		lib.ShowToast(context, "Item " + item.FileName + " is no more visible!");
+			                		lib.ShowToast(context, getS(R.string.Item) + item.FileName + getS(R.string.isnomorevisible));
 			                	}
 			                	//SetImageViewBitmap(new ItemParamsSet(p.img, bMap));
 			                	//p.item.setsize(bMap.getWidth() + "*" + bMap.getHeight());
 			                }
 			                else
 			                {
-			                	lib.ShowToast(context, "Could not load " + item.FileName);
+			                	lib.ShowToast(context, getS(R.string.Couldnotload) + item.FileName);
 			                }
 			                if(input !=  null)
 			                {
@@ -644,19 +644,20 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 			            }
 			            catch(Exception ex) {
 			                //resultTextView.setText("Error downloading picture: " + ex.getMessage());
-			            	lib.ShowToast(context, "Could not load " + item.FileName + " Error: " + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
+			            	lib.ShowToast(context, context.getString(R.string.Couldnotload) + item.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
 			            }
 			            finally
 			            {
 							//f.delete();
 			            }
 			        }
-			        			        
+
+
 			        public void onDownloadFailed(LiveOperationException exception, LiveDownloadOperation operation)
 			        {
 			            //resultTextView.setText(exception.getMessage());
 			        	//lib.ShowToast(context, "Failure! Could not load " + item.FileName);
-                        lib.ShowToast(context, "Could not load " + item.FileName + " Error: " + exception.getClass().getName() + " " + exception.getMessage() + (lib.getCauses(exception)));
+                        lib.ShowToast(context, context.getString(R.string.Couldnotload) + item.FileName + context.getString(R.string.Error) + exception.getClass().getName() + " " + exception.getMessage() + (lib.getCauses(exception)));
 						//File f = (File)operation.getUserState();
 						//f.delete();
 						//mProgress.dismiss();
@@ -680,11 +681,11 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 			        	//ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).lv;
 			        	if (mIsScrolling || lv.getIsScaled() || !ItemExists(Image, item))
 			        	{
-			        		lib.ShowToast(context, "Operation canceled! " + item.FileName 
-			        				+ " can not be displayed!" 
+			        		lib.ShowToast(context, getS(R.string.Operationcanceled) + item.FileName);
+			        				/*+ " can not be displayed!"
 			        				+ " IsScrolling " + mIsScrolling 
 			        				+ " IsScaled " + lv.getIsScaled() 
-			        				+ " ItemExists " + ItemExists(Image,item));
+			        				+ " ItemExists " + ItemExists(Image,item));*/
 			        		operation.cancel();
                             //list.remove(this);
 							//File f = (File)operation.getUserState();
@@ -717,6 +718,12 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 		}
     	return ItemExists;
     }
+
+	public String getS(int resid)
+	{
+		return context.getString(resid);
+	}
+
 
 	private void GetFolderItems(ImgFolder Folder, int GroupPosition){
 		if ((Folder.type == ImgFolder.Type.OneDriveAlbum || Folder.type == ImgFolder.Type.OneDriveFolder) && (Folder.Name != "/") && (Folder.items.size() == 0))
@@ -797,7 +804,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
             //this.finish();
         }
         else {
-            lib.ShowMessage(context,"Not signed in.");
+            lib.ShowMessage(context,getS(R.string.Notsignedin));
             client = null;
             //lib.LatchClient.countDown();
             //GetThumbnailsOneDriveAndSetLV(false);
@@ -807,7 +814,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
     }
 
     public void onAuthError(LiveAuthException exception, Object userState) {
-        lib.ShowMessage(context, "Error signing in: " + exception.getMessage());        
+        lib.ShowMessage(context, getS(R.string.Errorsigningin) + exception.getMessage());
         client = null;
         //lib.LatchClient.countDown();
         //GetThumbnailsOneDriveAndSetLV(false);
@@ -1086,8 +1093,8 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 							}
 							
 							final ProgressDialog mProgress = new ProgressDialog(context);
-							mProgress.setTitle("Download");
-							mProgress.setMessage("Downloading Image");
+							mProgress.setTitle(getS(R.string.Download));
+							mProgress.setMessage(getS(R.string.DownloadingImage));
 							mProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 							mProgress.setMax(100);
 							mProgress.setIndeterminate(true);
@@ -1113,7 +1120,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 								
 								@Override
 								public void onDownloadCompleted(LiveDownloadOperation arg0) {
-									lib.ShowToast(context, "File downloaded.");
+									lib.ShowToast(context, getS(R.string.File) + " " + file + " " + getS(R.string.downloaded));
 									InputStream s = null;
 									Bitmap mBitmap = null;
 									// TODO Auto-generated method stub

@@ -8,4 +8,19 @@
     <string name="action_settings">Einstellungen</string>
     <string name="btnClose">Schließen</string>
     <string name="btn_add">Hinzufügen</string>
+    <string name="onActivityResultcalled">onActivityResult wurde aufgerufen</string>
+    <string name="Download">Download</string>
+    <string name="Couldnotload">Konnte nicht laden</string>
+    <string name="DownloadingImage">Lade Bild herunter</string>
+    <string name="Error">"Fehler: "</string>
+    <string name="Errorsigningin">"Fehler beim anmelden: "</string>
+    <string name="File">Datei</string>
+    <string name="Item">Gegenstand</string>
+    <string name="Notsignedin">Nicht angemeldet!</string>
+    <string name="NotsignedinStatusis">"Nicht angemeldet. Der Status ist "</string>
+    <string name="Operationcanceled">Der Vorgang wurde abgebrochen!</string>
+    <string name="Signedin">Angemeldet.</string>
+    <string name="downloaded">" heruntergeladen."</string>
+    <string name="isnomorevisible">" ist nicht mehr sichtbar!"</string>
+    <string name="search">suchen</string>
 </resources>

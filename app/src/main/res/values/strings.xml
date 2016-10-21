@@ -9,5 +9,20 @@
     <string name="LoginLive">Login Live</string>
     <string name="btnClose">Close</string>
     <string name="action_refresh">refresh</string>
+    <string name="search">search</string>
+    <string name="onActivityResultcalled">onActivityResult called</string>
+    <string name="Couldnotload">Could not load</string>
+    <string name="Error">"Error: "</string>
+    <string name="Notsignedin">Not signed in!</string>
+    <string name="Errorsigningin">\"Error signing in: \"</string>
+    <string name="Download">Download</string>
+    <string name="DownloadingImage">Downloading image</string>
+    <string name="Signedin">Signed in.</string>
+    <string name="NotsignedinStatusis">"Not signed in. Status is "</string>
+    <string name="Item">Item</string>
+    <string name="isnomorevisible">" is no more visible!"</string>
+    <string name="Operationcanceled">Operation canceled!</string>
+    <string name="File">File</string>
+    <string name="downloaded">" downloaded."</string>
 
 </resources>

@@ -399,7 +399,7 @@ public class _MainActivity extends Activity
 	
 	private void openSearch()
 	{
-		lib.ShowMessage(this, "search");
+		lib.ShowMessage(this, getString(R.string.search));
 	}
 	
 	public void StartLoginLive(ImgFolder OneDrive)
@@ -463,7 +463,7 @@ public class _MainActivity extends Activity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	
-    	Toast.makeText(this, "onActivityResult called", Toast.LENGTH_LONG).show();
+    	Toast.makeText(this, getString(R.string.onActivityResultcalled), Toast.LENGTH_LONG).show();
         lib.setClient(app.getConnectClient());
     	if (requestCode == LoginLiveActivity.requestCode && resultCode == Activity.RESULT_OK && lib.getClient(this) != null){
 			final int GroupPosition = data.getExtras().getInt("GroupPosition");

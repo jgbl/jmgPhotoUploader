@@ -200,7 +200,7 @@ public class LoginLiveActivity extends Activity implements LiveAuthListener
 	public void onAuthComplete(LiveStatus status, LiveConnectSession session,
 			Object arg2) {
 	   	if(status == LiveStatus.CONNECTED) {
-            lib.ShowToast(this,"Signed in.");
+            lib.ShowToast(this,getString(R.string.Signedin));
             //client = new LiveConnectClient(session);
             lib.setClient(client);
             setResultPositive(session);
@@ -208,7 +208,7 @@ public class LoginLiveActivity extends Activity implements LiveAuthListener
             prefs.edit().putString("ONE_DRIVE_REFRESH_TOKEN_KEY", session.getRefreshToken()).commit(); // save it to shared preferences on first login
         }
         else {
-            lib.ShowToast(LoginLiveActivity.this,"Not signed in. Status is " + status + ".");
+            lib.ShowToast(LoginLiveActivity.this,getString(R.string.NotsignedinStatusis) + status + ".");
             lib.setClient(client);
             Intent i = new Intent();
             setResult(Activity.RESULT_CANCELED, i);
