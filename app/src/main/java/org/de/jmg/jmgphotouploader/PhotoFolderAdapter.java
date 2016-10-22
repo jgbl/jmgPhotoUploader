@@ -137,6 +137,15 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 		{
 			textView.setTextColor(Color.GRAY);
 		}
+		else if (imgFolder.type == ImgFolder.Type.Google)
+		{
+			textView.setTextColor(Color.GREEN);
+			if (isExpanded==false && imgFolder.items != null && imgFolder.items.size()==0 && imgFolder.Name=="/" && imgFolder.fetched == false)
+			{
+				imgFolder.fetched = false;
+				imgFolder.Name = "Google Drive";
+			}
+		}
 		else
 		{
 			textView.setTextColor(Color.WHITE);
@@ -262,11 +271,18 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 			lib.setClient(myApp.getConnectClient());
 			context = (Activity) myApp.MainContext;
 			boolean isOneDrive = false;
+			boolean isGoogle = false;
 			if (item.type== Type.OneDriveAlbum || item.type== Type.OneDriveFolder)
 			{
 				LoadThumbnailOneDrive(item,Image);
 				isOneDrive = true;
 			}
+			else if (item.type== Type.Google)
+			{
+				//LoadThumbnailOneDrive(item,Image);
+				isGoogle = true;
+			}
+
 			else
 			{
 				//BitmapWorkerAsyncTask Task = new BitmapWorkerAsyncTask(new ItemParams(item,Image,view), context);
@@ -390,6 +406,11 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 								{
 									CursorItem = lib.dbpp.DataBase.query("Files", null, "FileName=?", new String[]{item.id}, null, null, null);
 								}
+								else if (item.type == Type.Google)
+								{
+									//CursorItem = lib.dbpp.DataBase.query("Files", null, "FileName=?", new String[]{item.id}, null, null, null);
+                                    CursorItem = null;
+                                }
 								else
 								{
 									String uri = item.folder; //item.Uri.getPath();
@@ -445,7 +466,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 									cb.setChecked(false);
 								}
 								lib.setgstatus("GetChildview Set Checked");
-								if (CursorItem.moveToFirst())
+								if (CursorItem != null && CursorItem.moveToFirst())
 								{
 									try
 									{
@@ -910,21 +931,32 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 				lib.setgstatus("cb_checkedChanged Query Files");
 				//CursorItem = lib.dbpp.DataBase.query("Files", null, "URI=?", new String[]{item.Uri.getPath()}, null, null, null);
 				boolean isOneDrive = false;
+				boolean isGoogle = false;
 				if (item.type == Type.OneDriveAlbum)
 				{
 					CursorItem = lib.dbpp.DataBase.query("Files", null, "FileName=?", new String[]{item.id}, null, null, null);
 					isOneDrive = true;
 				}
+				else if (item.type == Type.Google)
+				{
+					//CursorItem = lib.dbpp.DataBase.query("Files", null, "FileName=?", new String[]{item.id}, null, null, null);
+					CursorItem = null;
+					isGoogle = true;
+				}
 				else
 				{
 					CursorItem = lib.dbpp.DataBase.query("Files", null, "URI=?", new String[]{item.folder}, null, null, null);
 				}
-				if (CursorItem.getCount() == 0)
+				if (CursorItem!=null && CursorItem.getCount() == 0)
 				{
 					ContentValues values = new ContentValues();
 					if (isOneDrive)
 					{
 						values.put("URI", item.Uri.getPath());
+					}
+					if (isGoogle)
+					{
+						//values.put("URI", item.Uri.getPath());
 					}
 					else
 					{
@@ -934,6 +966,10 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 					{
 						values.put("FileName", item.id);
 					}
+					else if (item.type == Type.Google)
+					{
+						//values.put("FileName", item.id);
+					}
 					else
 					{
 						values.put("FileName", item.FileName);
@@ -942,8 +978,8 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 					lib.dbpp.DataBase.insert("Files", null, values);
 					//CursorItem = lib.dbpp.DataBase.Query ("Files", null, "URI=?", new string[]{ item.Uri.Path }, null, null, null);
 				}
-			} while (CursorItem.getCount() == 0);
-			CursorItem.moveToFirst();
+			} while (CursorItem != null && CursorItem.getCount() == 0);
+			if (CursorItem!=null) CursorItem.moveToFirst();
 			lib.setgstatus("cb_checkedChanged GetFileID");
 			int FileID = CursorItem.getInt(CursorItem.getColumnIndex("_id"));
 
@@ -1036,6 +1072,14 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 								{
 									try {
 										LoadThumbnailOneDrive(item,Image);
+									} catch (Exception e) {
+										lib.ShowException(context,e);
+									}
+								}
+								else if (item.type== Type.Google)
+								{
+									try {
+										//LoadThumbnailOneDrive(item,Image);
 									} catch (Exception e) {
 										lib.ShowException(context,e);
 									}
@@ -1151,6 +1195,9 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 							
 							
 							
+						}
+						else if (ImgListItem.type== Type.Google)
+						{
 						}
 						else
 						{
