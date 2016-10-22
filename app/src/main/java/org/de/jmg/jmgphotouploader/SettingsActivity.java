@@ -87,8 +87,13 @@ public class SettingsActivity extends Activity {
 				        /** Creating a TextView to add to the row **/
 				        TextView Column = new TextView(this);
 				        Column.setText(Cursor.getColumnName(i));
+						if (Cursor.getColumnName(i).equalsIgnoreCase("package"))
+						{
+							Column.setText(app.MainContext.getString(R.string.packagename));
+						}
 				        Column.setTextColor(Color.GRAY);
 				        Column.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+						Column.setTextSize(TypedValue.COMPLEX_UNIT_DIP,20);
 				        //Column.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
 				        Column.setPadding(5, 5, 5, 0);
 				        int index = i - 1;
@@ -115,7 +120,7 @@ public class SettingsActivity extends Activity {
 					        			| android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE);
 								Column.setText(Cursor.getString(i));
 								Column.setTextColor(Color.WHITE);
-								Column.setTextSize(TypedValue.COMPLEX_UNIT_PX,lib.convertFromDp(this, Column.getTextSize()));
+								Column.setTextSize(TypedValue.COMPLEX_UNIT_DIP,15);
 						        Column.setTypeface(Typeface.DEFAULT, Typeface.NORMAL);
 						        //Column.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
 						        Column.setPadding(5, 5, 5, 0);

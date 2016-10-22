@@ -24,5 +24,6 @@
     <string name="Operationcanceled">Operation canceled!</string>
     <string name="File">File</string>
     <string name="downloaded">" downloaded."</string>
+    <string name="packagename">package name</string>
 
 </resources>
