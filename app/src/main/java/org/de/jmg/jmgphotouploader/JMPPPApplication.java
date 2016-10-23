@@ -27,6 +27,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 
+import com.google.api.services.drive.Drive;
 import com.microsoft.live.LiveAuthClient;
 import com.microsoft.live.LiveAuthListener;
 import com.microsoft.live.LiveConnectClient;
@@ -36,6 +37,7 @@ public class JMPPPApplication extends Application {
 
     private LiveAuthClient mAuthClient;
     private LiveConnectClient mConnectClient;
+    private com.google.api.services.drive.Drive mGoogleDriveClient;
     private LiveConnectSession mSession;
     public java.util.ArrayList<ImgFolder> BMList = new java.util.ArrayList<ImgFolder>();
     public PhotoFolderAdapter ppa;
@@ -65,6 +67,21 @@ public class JMPPPApplication extends Application {
     	return mConnectClient;
     }
 
+    public com.google.api.services.drive.Drive getGoogleDriveClient()
+    {
+
+        if (mGoogleDriveClient == null)
+        {
+            Intent LoginGoogleIntent = new Intent(MainContext, LoginGoogleActivity.class);
+            //LoginLiveIntent.putExtra("GroupPosition", 0);
+            this.ppa = null;
+            this.BMList = new java.util.ArrayList<ImgFolder>();
+            MainContext.startActivity(LoginGoogleIntent);
+            ((Activity) MainContext).finish();
+        }
+        return mGoogleDriveClient;
+    }
+
     public LiveConnectSession getSession() {
         return mSession;
     }
@@ -75,6 +92,9 @@ public class JMPPPApplication extends Application {
 
     public void setConnectClient(LiveConnectClient connectClient) {
         mConnectClient = connectClient;
+    }
+    public void setGoobleDriveClient(Drive connectClient) {
+        mGoogleDriveClient = connectClient;
     }
 
     public void setSession(LiveConnectSession session) {

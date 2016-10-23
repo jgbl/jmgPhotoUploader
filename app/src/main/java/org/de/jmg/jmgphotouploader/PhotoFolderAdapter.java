@@ -273,6 +273,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 			lib.setgstatus("GetChildview Thread");
 			JMPPPApplication myApp = (JMPPPApplication) context.getApplication();
 			lib.setClient(myApp.getConnectClient());
+			lib.setClientGoogle(myApp.getGoogleDriveClient());
 			context = (Activity) myApp.MainContext;
 			boolean isOneDrive = false;
 			boolean isGoogle = false;

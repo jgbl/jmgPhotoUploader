@@ -60,15 +60,18 @@ public class LoginGoogleActivity extends Activity
          private static final String BUTTON_TEXT = "Call Drive API";
          private static final String PREF_ACCOUNT_NAME = "accountName";
          private static final String[] SCOPES = { DriveScopes.DRIVE_METADATA_READONLY };
+        private JMPPPApplication mApp;
 
-         /**
+    /**
    * Create the main activity.
    * @param savedInstanceState previously saved instance data.
    */
          @Override
  protected void onCreate(Bundle savedInstanceState) {
           super.onCreate(savedInstanceState);
-          LinearLayout activityLayout = new LinearLayout(this);
+          mApp = (JMPPPApplication)getApplication();
+
+             LinearLayout activityLayout = new LinearLayout(this);
           LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.MATCH_PARENT);
@@ -321,6 +324,11 @@ public class LoginGoogleActivity extends Activity
       private com.google.api.services.drive.Drive mService = null;
       private Exception mLastError = null;
 
+             public com.google.api.services.drive.Drive getServiceDrive()
+             {
+                 return mService;
+             }
+
       public MakeRequestTask(GoogleAccountCredential credential) {
            HttpTransport transport = AndroidHttp.newCompatibleTransport();
            JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
@@ -328,6 +336,7 @@ public class LoginGoogleActivity extends Activity
                      transport, jsonFactory, credential)
              .setApplicationName("Drive API Android Quickstart")
              .build();
+          mApp.setGoobleDriveClient(mService);
           }
 
       /**

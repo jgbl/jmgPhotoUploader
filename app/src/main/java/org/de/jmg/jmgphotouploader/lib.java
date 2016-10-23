@@ -6,6 +6,7 @@ import java.nio.channels.FileChannel;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.google.api.services.drive.Drive;
 import com.microsoft.live.*;
 
 import android.graphics.*;
@@ -28,11 +29,13 @@ import java.util.Locale;
 
 public class lib
 {
+
 	public lib()
 	{
 	}
 	private static String _status = "";
 	private static final String ONEDRIVE_APP_ID = "48122D4E";
+	private static Drive mClientGoogle;
 	public static java.util.ArrayList<ImgListItem> BMList;
 	public static dbpp dbpp;
 	public static int LastgroupPosition;
@@ -213,6 +216,10 @@ public class lib
 	public static void setClient(LiveConnectClient client)
 	{
 		mClient = client;
+	}
+	public static void setClientGoogle(Drive client)
+	{
+		mClientGoogle = client;
 	}
 	public static void GetThumbnailsOneDrive(final Activity context,final String folder, final ImgFolder imgFolder,final int GroupPosition, final ExpandableListView lv) throws LiveOperationException, InterruptedException
 	{
