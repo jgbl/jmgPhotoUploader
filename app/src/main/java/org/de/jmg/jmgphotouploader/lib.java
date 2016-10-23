@@ -217,6 +217,12 @@ public class lib
 	{
 		mClient = client;
 	}
+	public static Drive getClientGoogle(Activity context)
+	{
+		JMPPPApplication myApp = (JMPPPApplication) context.getApplication();
+		mClientGoogle = myApp.getGoogleDriveClient();
+		return mClientGoogle;
+	}
 	public static void setClientGoogle(Drive client)
 	{
 		mClientGoogle = client;

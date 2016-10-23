@@ -42,6 +42,11 @@
         <activity
             android:name="SettingsActivity">
         </activity>
+        <activity
+            android:name=".LoginGoogleActivity"
+            android:permission="android.permission.INTERNET"
+            >
+        </activity>
     </application>
 
 </manifest>

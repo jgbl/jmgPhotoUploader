@@ -272,18 +272,19 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 			
 			lib.setgstatus("GetChildview Thread");
 			JMPPPApplication myApp = (JMPPPApplication) context.getApplication();
-			lib.setClient(myApp.getConnectClient());
-			lib.setClientGoogle(myApp.getGoogleDriveClient());
+
 			context = (Activity) myApp.MainContext;
 			boolean isOneDrive = false;
 			boolean isGoogle = false;
 			if (item.type== Type.OneDriveAlbum || item.type== Type.OneDriveFolder)
 			{
+				lib.setClient(myApp.getConnectClient());
 				LoadThumbnailOneDrive(item,Image);
 				isOneDrive = true;
 			}
 			else if (item.type== Type.Google)
 			{
+				lib.setClientGoogle(myApp.getGoogleDriveClient());
 				//LoadThumbnailOneDrive(item,Image);
 				isGoogle = true;
 			}
@@ -752,15 +753,24 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 
 
 	private void GetFolderItems(ImgFolder Folder, int GroupPosition){
-		if ((Folder.type == ImgFolder.Type.OneDriveAlbum || Folder.type == ImgFolder.Type.OneDriveFolder) && (Folder.Name != "/") && (Folder.items.size() == 0))
+		if ((Folder.type == ImgFolder.Type.OneDriveAlbum || Folder.type == ImgFolder.Type.OneDriveFolder || Folder.type == ImgFolder.Type.Google) && (Folder.Name != "/") && (Folder.items.size() == 0))
 		{
-			if (Folder.Name == "One Drive") 
+			if (Folder.Name == "One Drive" || Folder.Name == "Google Drive")
 			{
 				Folder.Name = "/";	
 			}
 			if (Folder.items.size() == 0 && Folder.fetched == false) {
 				lib.LastgroupPosition = GroupPosition;
-				if (true)
+				if (Folder.type == ImgFolder.Type.Google)
+				{
+					if (lib.getClientGoogle(context) == null)
+					{
+						Folder.Name = "Google Drive";
+						lib.BMList = new java.util.ArrayList<ImgListItem>();
+						//((_MainActivity)context).StartLoginLive(Folder);
+					}
+				}
+				else
 				{
 					
 					if (lib.getClient(context) == null)
