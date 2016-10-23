@@ -9,6 +9,20 @@ apply plugin: 'com.android.application'
         minSdkVersion 11
         targetSdkVersion 23
     }
+    signingConfigs {
+        release {
+            keyAlias 'jmgphotouploader'
+            keyPassword '89374thd'
+            storeFile file('/pub/keystore')
+            storePassword '89374thd'
+        }
+        debug {
+            keyAlias 'jmgphotouploader'
+            keyPassword '89374thd'
+            storeFile file('/pub/keystore')
+            storePassword '89374thd'
+        }
+    }
 
     buildTypes {
         debug {
