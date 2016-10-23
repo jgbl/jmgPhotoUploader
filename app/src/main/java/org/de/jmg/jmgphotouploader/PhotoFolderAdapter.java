@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.util.TypedValue;
 import android.view.View;
@@ -45,6 +46,9 @@ import com.microsoft.live.LiveDownloadOperation;
 import com.microsoft.live.LiveDownloadOperationListener;
 import com.microsoft.live.LiveOperationException;
 import com.microsoft.live.LiveStatus;
+
+
+
 
 
 public class PhotoFolderAdapter extends BaseExpandableListAdapter implements LiveAuthListener
@@ -812,6 +816,8 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 			}
 		}
 	}
+
+
 
 	public void onAuthComplete(LiveStatus status, LiveConnectSession session, Object userState) {
         if(status == LiveStatus.CONNECTED) {
