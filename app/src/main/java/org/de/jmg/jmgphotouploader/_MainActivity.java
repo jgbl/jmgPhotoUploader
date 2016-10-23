@@ -413,6 +413,15 @@ public class _MainActivity extends Activity
 		LoginLiveIntent.putExtra("GroupPosition", lib.LastgroupPosition);
 		this.startActivityForResult(LoginLiveIntent, LoginLiveActivity.requestCode);
 	}
+
+	public void StartLoginGoogle(ImgFolder Google)
+	{
+		app.LoginClosed=false;
+		app.GoogleFolder = Google;
+		Intent LoginIntent = new Intent(this, LoginGoogleActivity.class);
+		LoginIntent.putExtra("GroupPosition", lib.LastgroupPosition);
+		this.startActivityForResult(LoginIntent, LoginGoogleActivity.requestCode);
+	}
 	
 	private void openSettings()
 	{
@@ -468,7 +477,8 @@ public class _MainActivity extends Activity
     	
     	Toast.makeText(this, getString(R.string.onActivityResultcalled), Toast.LENGTH_LONG).show();
         lib.setClient(app.getConnectClient());
-    	if (requestCode == LoginLiveActivity.requestCode && resultCode == Activity.RESULT_OK && lib.getClient(this) != null){
+    	lib.setClientGoogle(app.getGoogleDriveClient());
+		if (requestCode == LoginLiveActivity.requestCode && resultCode == Activity.RESULT_OK && lib.getClient(this) != null){
 			final int GroupPosition = data.getExtras().getInt("GroupPosition");
 			try {
 				lib.GetThumbnailsOneDrive(this, "/", app.OneDriveFolder, GroupPosition, _MainActivity.this.lv);
@@ -481,7 +491,23 @@ public class _MainActivity extends Activity
 				e.printStackTrace();
 			}
 		}
-        else if (requestCode == SettingsActivity.requestCode && resultCode == Activity.RESULT_OK)
+		if (requestCode == LoginGoogleActivity.requestCode && resultCode == Activity.RESULT_OK && lib.getClientGoogle(this) != null){
+			final int GroupPosition = data.getExtras().getInt("GroupPosition");
+			/*
+			try {
+				lib.GetThumbnailsOneDrive(this, "/", app.OneDriveFolder, GroupPosition, _MainActivity.this.lv);
+				if (app.OneDriveFolder!=null)app.OneDriveFolder.fetched=true;
+			} catch (LiveOperationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			*/
+		}
+
+		else if (requestCode == SettingsActivity.requestCode && resultCode == Activity.RESULT_OK)
         {
         	boolean changed = data.getExtras().getBoolean("changed");
         	final int GroupPosition = data.getExtras().getInt("GroupPosition");

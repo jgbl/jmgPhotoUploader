@@ -45,7 +45,8 @@ public class JMPPPApplication extends Application {
     public Context MainContext;
     public boolean LoginClosed = false;
     public ImgFolder OneDriveFolder;
-    
+    public ImgFolder GoogleFolder;
+
     public LiveAuthClient getAuthClient() {
         return mAuthClient;
     }
@@ -70,7 +71,7 @@ public class JMPPPApplication extends Application {
     public com.google.api.services.drive.Drive getGoogleDriveClient()
     {
 
-        if (mGoogleDriveClient == null)
+        if (mGoogleDriveClient == null )
         {
             Intent LoginGoogleIntent = new Intent(MainContext, LoginGoogleActivity.class);
             //LoginLiveIntent.putExtra("GroupPosition", 0);

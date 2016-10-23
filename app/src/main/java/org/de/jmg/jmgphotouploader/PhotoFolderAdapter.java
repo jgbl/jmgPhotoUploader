@@ -765,9 +765,29 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 				{
 					if (lib.getClientGoogle(context) == null)
 					{
+
 						Folder.Name = "Google Drive";
 						lib.BMList = new java.util.ArrayList<ImgListItem>();
-						//((_MainActivity)context).StartLoginLive(Folder);
+						((_MainActivity)context).StartLoginGoogle(Folder);
+					}
+					else
+					{
+						try {
+							if(Folder.fetched == false ){
+								lib.BMList = new java.util.ArrayList<ImgListItem>();
+								Folder.items= lib.BMList;
+								lib.GetThumbnailsGoogle(context,Folder.Name, Folder, GroupPosition, ((_MainActivity)context).lv);
+								Folder.fetched=true;
+							}
+						} catch (LiveOperationException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 					}
 				}
 				else
