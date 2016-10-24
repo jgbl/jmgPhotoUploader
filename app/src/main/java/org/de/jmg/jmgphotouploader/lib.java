@@ -241,6 +241,11 @@ public class lib {
                         if (folders != null) {
                             final JSONArray data = folders.optJSONArray("data");
                             if (data != null) {
+
+                                final _MainActivity Main = (_MainActivity) context;
+                                final JMPPPApplication app = (JMPPPApplication) Main.getApplication();
+                                final PhotoFolderAdapter ppa = app.ppa;
+
                                 lib.BMList.clear();
                                 int countFolders = 0;
                                 for (int i = 0; i < data.length(); i++) {
@@ -255,9 +260,6 @@ public class lib {
                                         final String size = oneDriveItem.optString("size");
 
                                         //lib.ShowMessage(context,itemType);
-                                        _MainActivity Main = (_MainActivity) context;
-                                        JMPPPApplication app = (JMPPPApplication) Main.getApplication();
-                                        PhotoFolderAdapter ppa = app.ppa;
                                         if (itemType.equals("photo")) {
                                             final int width = oneDriveItem.optInt("width");
                                             final int height = oneDriveItem.optInt("height");
@@ -455,9 +457,10 @@ public class lib {
 
                                         //lib.ShowMessage(context,itemType);
                                         final String WebContentLink = GoogleDriveItem.getWebContentLink();
-                                       final android.net.Uri auri = (WebContentLink!=null?android.net.Uri.parse(WebContentLink)?null);
 
-                                        ImgListItem Item = (new ImgListItem(context, id, 0, itemName, auri, uri, ImgFolder.Type.Google, 0 + "x" + 0));
+                                        final android.net.Uri auri = (WebContentLink!=null)?android.net.Uri.parse(WebContentLink):null;
+
+                                        final ImgListItem Item = (new ImgListItem(context, id, 0, itemName, auri, uri, ImgFolder.Type.Google, 0 + "x" + 0));
 
                                         lib.BMList.add(Item);
                                         ppa.notifyDataSetChanged();
