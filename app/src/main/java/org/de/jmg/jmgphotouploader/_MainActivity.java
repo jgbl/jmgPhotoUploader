@@ -404,9 +404,12 @@ public class _MainActivity extends Activity
 	{
 		lib.ShowMessage(this, getString(R.string.search));
 	}
-	
+
+	private boolean _liveLock = false;
 	public void StartLoginLive(ImgFolder OneDrive)
 	{
+		if (_liveLock) return;
+		_liveLock = true;
 		app.LoginClosed=false;
 		app.OneDriveFolder = OneDrive;
 		Intent LoginLiveIntent = new Intent(this, LoginLiveActivity.class);
@@ -414,8 +417,11 @@ public class _MainActivity extends Activity
 		this.startActivityForResult(LoginLiveIntent, LoginLiveActivity.requestCode);
 	}
 
+	private boolean _GoogleLock = false;
 	public void StartLoginGoogle(ImgFolder Google)
 	{
+		if (_GoogleLock) return;
+		_GoogleLock = true;
 		app.LoginGoogleClosed=false;
 		app.GoogleFolder = Google;
 		Intent LoginIntent = new Intent(this, LoginGoogleActivity.class);
@@ -478,28 +484,36 @@ public class _MainActivity extends Activity
     	Toast.makeText(this, getString(R.string.onActivityResultcalled), Toast.LENGTH_LONG).show();
         lib.setClient(app.getConnectClient());
     	lib.setClientGoogle(app.getGoogleDriveClient());
-		if (requestCode == LoginLiveActivity.requestCode && resultCode == Activity.RESULT_OK && lib.getClient(this) != null){
-			final int GroupPosition = data.getExtras().getInt("GroupPosition");
-			try {
-				lib.GetThumbnailsOneDrive(this, "/", app.OneDriveFolder, GroupPosition, _MainActivity.this.lv);
-				if (app.OneDriveFolder!=null)app.OneDriveFolder.fetched=true;
-			} catch (LiveOperationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		if (requestCode == LoginLiveActivity.requestCode)
+		{
+			_liveLock = false;
+			if(resultCode == Activity.RESULT_OK && lib.getClient(this) != null) {
+				final int GroupPosition = data.getExtras().getInt("GroupPosition");
+				try {
+					lib.GetThumbnailsOneDrive(this, "/", app.OneDriveFolder, GroupPosition, _MainActivity.this.lv);
+					if (app.OneDriveFolder != null) app.OneDriveFolder.fetched = true;
+				} catch (LiveOperationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
-		if (requestCode == LoginGoogleActivity.requestCode && resultCode == Activity.RESULT_OK && lib.getClientGoogle(this) != null){
-			final int GroupPosition = data.getExtras().getInt("GroupPosition");
+		if (requestCode == LoginGoogleActivity.requestCode)
+		{
+			_GoogleLock = false;
+			if (resultCode == Activity.RESULT_OK && lib.getClientGoogle(this) != null) {
+				final int GroupPosition = data.getExtras().getInt("GroupPosition");
 
-			try {
-				lib.GetThumbnailsGoogle(this, "/", app.GoogleFolder, GroupPosition, _MainActivity.this.lv);
-				if (app.GoogleFolder!=null)app.GoogleFolder.fetched=true;
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				try {
+					lib.GetThumbnailsGoogle(this, "/", app.GoogleFolder, GroupPosition, _MainActivity.this.lv);
+					if (app.GoogleFolder != null) app.GoogleFolder.fetched = true;
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 
 		}

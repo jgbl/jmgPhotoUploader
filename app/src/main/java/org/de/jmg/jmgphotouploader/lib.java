@@ -412,9 +412,9 @@ public class lib {
                 if (imgFolder != null && imgFolder.id != null)
                     queryString = imgFolder.id + "/files";
                 //Latch = new CountDownLatch(1);
-                AsyncTask<Void,Void,FileList> task = new AsyncTask<Void, Void, FileList>() {
+                AsyncTask<Void,Void,List<com.google.api.services.drive.model.File>> task = new AsyncTask<Void,Void,List<com.google.api.services.drive.model.File>>() {
                     @Override
-                    protected FileList doInBackground(Void... params) {
+                    protected List<com.google.api.services.drive.model.File> doInBackground(Void... params) {
                         Drive client = lib.getClientGoogle(context);
                         FileList result = null;
                         try {
@@ -422,18 +422,23 @@ public class lib {
                                     .setPageSize(10)
                                     .setFields("nextPageToken, files(id, name)")
                                     .execute();
+                            return result.getFiles();
                         } catch (IOException e) {
                             e.printStackTrace();
+                            return null;
                         }
-                        return result;
+
 
                     }
 
                     @Override
-                    protected void onPostExecute(FileList result)
+                    protected void onPostExecute(List<com.google.api.services.drive.model.File> result)
                     {
                         if (result != null) {
-                            List<com.google.api.services.drive.model.File> files = result.getFiles();
+                            final _MainActivity Main = (_MainActivity) context;
+                            final JMPPPApplication app = (JMPPPApplication) Main.getApplication();
+                            final PhotoFolderAdapter ppa = app.ppa;
+                            List<com.google.api.services.drive.model.File> files = result;
                             if (files != null) {
                                 lib.BMList.clear();
                                 int countFolders = 0;
@@ -446,13 +451,11 @@ public class lib {
                                         final String itemType = GoogleDriveItem.getKind();
                                         final String id = GoogleDriveItem.getId();
                                         final String uri = GoogleDriveItem.getWebViewLink();
-                                        final String size = GoogleDriveItem.getSize().toString();
+                                        final String size = "" + GoogleDriveItem.getSize();
 
                                         //lib.ShowMessage(context,itemType);
-                                        _MainActivity Main = (_MainActivity) context;
-                                        JMPPPApplication app = (JMPPPApplication) Main.getApplication();
-                                        PhotoFolderAdapter ppa = app.ppa;
-                                        final android.net.Uri auri = android.net.Uri.parse(GoogleDriveItem.getWebContentLink());
+                                        final String WebContentLink = GoogleDriveItem.getWebContentLink();
+                                       final android.net.Uri auri = (WebContentLink!=null?android.net.Uri.parse(WebContentLink)?null);
 
                                         ImgListItem Item = (new ImgListItem(context, id, 0, itemName, auri, uri, ImgFolder.Type.Google, 0 + "x" + 0));
 
