@@ -416,7 +416,7 @@ public class _MainActivity extends Activity
 
 	public void StartLoginGoogle(ImgFolder Google)
 	{
-		app.LoginClosed=false;
+		app.LoginGoogleClosed=false;
 		app.GoogleFolder = Google;
 		Intent LoginIntent = new Intent(this, LoginGoogleActivity.class);
 		LoginIntent.putExtra("GroupPosition", lib.LastgroupPosition);
@@ -493,18 +493,15 @@ public class _MainActivity extends Activity
 		}
 		if (requestCode == LoginGoogleActivity.requestCode && resultCode == Activity.RESULT_OK && lib.getClientGoogle(this) != null){
 			final int GroupPosition = data.getExtras().getInt("GroupPosition");
-			/*
+
 			try {
-				lib.GetThumbnailsOneDrive(this, "/", app.OneDriveFolder, GroupPosition, _MainActivity.this.lv);
-				if (app.OneDriveFolder!=null)app.OneDriveFolder.fetched=true;
-			} catch (LiveOperationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InterruptedException e) {
+				lib.GetThumbnailsOneDrive(this, "/", app.GoogleFolder, GroupPosition, _MainActivity.this.lv);
+				if (app.GoogleFolder!=null)app.GoogleFolder.fetched=true;
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			*/
+
 		}
 
 		else if (requestCode == SettingsActivity.requestCode && resultCode == Activity.RESULT_OK)

@@ -428,34 +428,36 @@ public class lib {
                         return result;
 
                     }
-                };
-                FileList result = task.execute().get();
-                if (result != null) {
-                    List<com.google.api.services.drive.model.File> files = result.getFiles();
-                    if (files != null) {
-                        lib.BMList.clear();
-                        int countFolders = 0;
-                        for (int i = 0; i < files.size(); i++) {
-                            final com.google.api.services.drive.model.File GoogleDriveItem = files.get(i);
-                            if (GoogleDriveItem != null) {
-                                System.out.println(GoogleDriveItem.toString());
-                                final String itemName = GoogleDriveItem.getName();
-                                //final String itemType = oneDriveItem.optString("type");
-                                final String itemType = GoogleDriveItem.getKind();
-                                final String id = GoogleDriveItem.getId();
-                                final String uri = GoogleDriveItem.getWebViewLink();
-                                final String size = GoogleDriveItem.getSize().toString();
 
-                                //lib.ShowMessage(context,itemType);
-                                _MainActivity Main = (_MainActivity) context;
-                                JMPPPApplication app = (JMPPPApplication) Main.getApplication();
-                                PhotoFolderAdapter ppa = app.ppa;
-                                final android.net.Uri auri = android.net.Uri.parse(GoogleDriveItem.getWebContentLink());
+                    @Override
+                    protected void onPostExecute(FileList result)
+                    {
+                        if (result != null) {
+                            List<com.google.api.services.drive.model.File> files = result.getFiles();
+                            if (files != null) {
+                                lib.BMList.clear();
+                                int countFolders = 0;
+                                for (int i = 0; i < files.size(); i++) {
+                                    final com.google.api.services.drive.model.File GoogleDriveItem = files.get(i);
+                                    if (GoogleDriveItem != null) {
+                                        System.out.println(GoogleDriveItem.toString());
+                                        final String itemName = GoogleDriveItem.getName();
+                                        //final String itemType = oneDriveItem.optString("type");
+                                        final String itemType = GoogleDriveItem.getKind();
+                                        final String id = GoogleDriveItem.getId();
+                                        final String uri = GoogleDriveItem.getWebViewLink();
+                                        final String size = GoogleDriveItem.getSize().toString();
 
-                                ImgListItem Item = (new ImgListItem(context, id, 0, itemName, auri, uri, ImgFolder.Type.OneDriveAlbum, 0 + "x" + 0));
+                                        //lib.ShowMessage(context,itemType);
+                                        _MainActivity Main = (_MainActivity) context;
+                                        JMPPPApplication app = (JMPPPApplication) Main.getApplication();
+                                        PhotoFolderAdapter ppa = app.ppa;
+                                        final android.net.Uri auri = android.net.Uri.parse(GoogleDriveItem.getWebContentLink());
 
-                                lib.BMList.add(Item);
-                                ppa.notifyDataSetChanged();
+                                        ImgListItem Item = (new ImgListItem(context, id, 0, itemName, auri, uri, ImgFolder.Type.Google, 0 + "x" + 0));
+
+                                        lib.BMList.add(Item);
+                                        ppa.notifyDataSetChanged();
                                             /*
                                             if (itemType.equals("photo"))
                                             {
@@ -483,10 +485,14 @@ public class lib {
                                                 ppa.notifyDataSetChanged();
                                             }*/
 
+                                    }
+                                }
                             }
                         }
                     }
-                }
+                };
+                task.execute();
+
             }
         } catch (Exception ex) {
             lib.ShowException(context, ex);

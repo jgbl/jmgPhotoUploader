@@ -69,18 +69,23 @@ public class LoginGoogleActivity extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mApp = (JMPPPApplication) getApplication();
+        if (mApp.LoginGoogleClosed)
+        {
+            mApp.LoginGoogleClosed = false;
+            this.finish();
+        }
+        else {
+            LinearLayout activityLayout = new LinearLayout(this);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT);
+            activityLayout.setLayoutParams(lp);
+            activityLayout.setOrientation(LinearLayout.VERTICAL);
+            activityLayout.setPadding(16, 16, 16, 16);
 
-        LinearLayout activityLayout = new LinearLayout(this);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        activityLayout.setLayoutParams(lp);
-        activityLayout.setOrientation(LinearLayout.VERTICAL);
-        activityLayout.setPadding(16, 16, 16, 16);
-
-        ViewGroup.LayoutParams tlp = new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
+            ViewGroup.LayoutParams tlp = new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
              /*
           mCallApiButton = new Button(this);
           mCallApiButton.setText(BUTTON_TEXT);
@@ -95,28 +100,35 @@ public class LoginGoogleActivity extends Activity
           });
           activityLayout.addView(mCallApiButton);
 */
-        mOutputText = new TextView(this);
-        mOutputText.setLayoutParams(tlp);
-        mOutputText.setPadding(16, 16, 16, 16);
-        mOutputText.setVerticalScrollBarEnabled(true);
-        mOutputText.setMovementMethod(new ScrollingMovementMethod());
-        //mOutputText.setText(
-        //       "Click the \'" + BUTTON_TEXT + "\' button to test the API.");
-        activityLayout.addView(mOutputText);
+            mOutputText = new TextView(this);
+            mOutputText.setLayoutParams(tlp);
+            mOutputText.setPadding(16, 16, 16, 16);
+            mOutputText.setVerticalScrollBarEnabled(true);
+            mOutputText.setMovementMethod(new ScrollingMovementMethod());
+            //mOutputText.setText(
+            //       "Click the \'" + BUTTON_TEXT + "\' button to test the API.");
+            activityLayout.addView(mOutputText);
 
-        mProgress = new ProgressDialog(this);
-        mProgress.setMessage("Calling Drive API ...");
+            mProgress = new ProgressDialog(this);
+            mProgress.setMessage("Calling Drive API ...");
 
-        setContentView(activityLayout);
+            setContentView(activityLayout);
 
-        // Initialize credentials and service object.
-        mCredential = GoogleAccountCredential.usingOAuth2(
-                getApplicationContext(), Arrays.asList(SCOPES))
-                .setBackOff(new ExponentialBackOff());
-        mOutputText.setText("");
+            // Initialize credentials and service object.
+            mCredential = GoogleAccountCredential.usingOAuth2(
+                    getApplicationContext(), Arrays.asList(SCOPES))
+                    .setBackOff(new ExponentialBackOff());
+            mOutputText.setText("");
+
+        }
+
+    }
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
         getResultsFromApi();
-
-
     }
 
 
@@ -418,7 +430,7 @@ public class LoginGoogleActivity extends Activity
         public void CloseActivity()
         {
             //finishActivity(requestCode);
-            mApp.LoginClosed = true;
+            mApp.LoginGoogleClosed = true;
             finish();
         }
 
