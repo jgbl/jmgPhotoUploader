@@ -495,7 +495,7 @@ public class _MainActivity extends Activity
 			final int GroupPosition = data.getExtras().getInt("GroupPosition");
 
 			try {
-				lib.GetThumbnailsOneDrive(this, "/", app.GoogleFolder, GroupPosition, _MainActivity.this.lv);
+				lib.GetThumbnailsGoogle(this, "/", app.GoogleFolder, GroupPosition, _MainActivity.this.lv);
 				if (app.GoogleFolder!=null)app.GoogleFolder.fetched=true;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
