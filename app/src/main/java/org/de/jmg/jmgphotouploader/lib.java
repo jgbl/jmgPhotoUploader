@@ -427,7 +427,7 @@ public class lib {
                         try {
                             Drive.Files.List request = client.files().list()
                                         .setPageSize(1000)
-                                        .setFields("nextPageToken, files(id, name)");
+                                        ;
                             do
                             {
                                 result = request.execute();
@@ -468,28 +468,26 @@ public class lib {
                                         System.out.println(GoogleDriveItem.toString());
                                         final String itemName = GoogleDriveItem.getName();
                                         //final String itemType = oneDriveItem.optString("type");
-                                        final String itemType = GoogleDriveItem.getKind();
+                                        String itemType = (GoogleDriveItem.getImageMediaMetadata() != null)?"image":"file";
+                                        final String kind = GoogleDriveItem.getKind();
+                                        if (GoogleDriveItem.getMimeType().equalsIgnoreCase("application/vnd.google-apps.folder")) itemType = "folder";
                                         final String id = GoogleDriveItem.getId();
-                                        final String uri = GoogleDriveItem.getWebViewLink();
-                                        final String size = "" + GoogleDriveItem.getSize();
+                                        final String uri = GoogleDriveItem.getThumbnailLink();
+                                        String size = "0x0";
+                                        if (itemType == "image")
 
+                                        {
+                                            size = GoogleDriveItem.getImageMediaMetadata().getWidth() + "x" + GoogleDriveItem.getImageMediaMetadata().getHeight();
+                                        }
                                         //lib.ShowMessage(context,itemType);
                                         final String WebContentLink = GoogleDriveItem.getWebContentLink();
 
                                         final android.net.Uri auri = (WebContentLink!=null)?android.net.Uri.parse(WebContentLink):null;
 
-                                        final ImgListItem Item = (new ImgListItem(context, id, 0, itemName, auri, uri, ImgFolder.Type.Google, 0 + "x" + 0));
-
-                                        lib.BMList.add(Item);
-                                        ppa.notifyDataSetChanged();
-                                            /*
-                                            if (itemType.equals("photo"))
+                                            if (itemType.equals("image"))
                                             {
 
-                                                final int width = GoogleDriveItem.optInt("width");
-                                                final int height = oneDriveItem.optInt("height");
-                                                final android.net.Uri auri = android.net.Uri.parse(oneDriveItem.optString("source"));
-                                                ImgListItem Item = (new ImgListItem(context, id, 0, itemName, auri, uri,ImgFolder.Type.OneDriveAlbum,width + "x" + height));
+                                                ImgListItem Item = (new ImgListItem(context, id, 0, itemName, auri, uri,ImgFolder.Type.Google,size));
                                                 lib.BMList.add(Item);
                                                 ppa.notifyDataSetChanged();
                                             }
@@ -497,17 +495,17 @@ public class lib {
                                             {
                                                 ImgFolder.Type type;
                                                 if (itemType.equals("album")){
-                                                    type = ImgFolder.Type.OneDriveAlbum;
+                                                    type = ImgFolder.Type.Google;
                                                 }
                                                 else
                                                 {
-                                                    type = ImgFolder.Type.OneDriveFolder;
+                                                    type = ImgFolder.Type.Google;
                                                 }
                                                 int position = ppa.rows.indexOf(imgFolder);
                                                 countFolders ++;
                                                 ppa.rows.add(position + countFolders,new ImgFolder(folder + itemName + "/",type,id));
                                                 ppa.notifyDataSetChanged();
-                                            }*/
+                                            }
 
                                     }
                                 }
