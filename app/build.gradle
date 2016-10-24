@@ -31,7 +31,7 @@ apply plugin: 'com.android.application'
         }
         release {
             debuggable false
-            minifyEnabled true
+            minifyEnabled false
             shrinkResources true
             proguardFile 'proguard.cfg'
             //proguardFiles getDefaultProguardFile('proguard-android.txt') ,'proguard.cfg'

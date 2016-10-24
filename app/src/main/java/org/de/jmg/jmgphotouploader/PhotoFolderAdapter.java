@@ -287,8 +287,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 				lib.setClientGoogle(myApp.getGoogleDriveClient());
 				//LoadThumbnailOneDrive(item,Image);
 				isGoogle = true;
-			}
-
+            }
 			else
 			{
 				//BitmapWorkerAsyncTask Task = new BitmapWorkerAsyncTask(new ItemParams(item,Image,view), context);
@@ -414,8 +413,8 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 								}
 								else if (item.type == Type.Google)
 								{
-									//CursorItem = lib.dbpp.DataBase.query("Files", null, "FileName=?", new String[]{item.id}, null, null, null);
-                                    CursorItem = null;
+									CursorItem = lib.dbpp.DataBase.query("Files", null, "FileName=?", new String[]{item.id}, null, null, null);
+                                    //CursorItem = null;
                                 }
 								else
 								{
@@ -789,27 +788,24 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 							e.printStackTrace();
 						}
 					}
+					Folder.items = lib.BMList;
 				}
-				else
-				{
-					
-					if (lib.getClient(context) == null)
-					{
+				else {
+
+					if (lib.getClient(context) == null) {
 						Folder.Name = "One Drive";
 						//CountDownLatch Latch = new CountDownLatch(1);
 						//lib.Latch= Latch;
 						lib.BMList = new java.util.ArrayList<ImgListItem>();
-						((_MainActivity)context).StartLoginLive(Folder);
+						((_MainActivity) context).StartLoginLive(Folder);
 						//context.finish();
-					}
-					else
-					{
+					} else {
 						try {
-							if(Folder.fetched == false ){
+							if (Folder.fetched == false) {
 								lib.BMList = new java.util.ArrayList<ImgListItem>();
-								Folder.items= lib.BMList;
-								lib.GetThumbnailsOneDrive(context,Folder.Name, Folder, GroupPosition, ((_MainActivity)context).lv);
-								Folder.fetched=true;
+								Folder.items = lib.BMList;
+								lib.GetThumbnailsOneDrive(context, Folder.Name, Folder, GroupPosition, ((_MainActivity) context).lv);
+								Folder.fetched = true;
 							}
 						} catch (LiveOperationException e) {
 							// TODO Auto-generated catch block
@@ -842,7 +838,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 					e.printStackTrace();
 		         }
 		         */
-		         Folder.items= lib.BMList;
+					Folder.items = lib.BMList;
 				}
 			}
 		}

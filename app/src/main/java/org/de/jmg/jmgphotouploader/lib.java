@@ -30,6 +30,7 @@ import com.microsoft.live.LiveConnectClient;
 import com.microsoft.live.LiveOperation;
 import com.microsoft.live.LiveOperationException;
 import com.microsoft.live.LiveOperationListener;
+import com.microsoft.live.test.util.DownloadAsyncRunnable;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -410,24 +411,41 @@ public class lib {
         try {
             if (lib.getClientGoogle(context) != null)
             {
-                String queryString = "me/skydrive/files" + folder;//?filter=folders,albums";
+                String queryString = null;
+                if (folder == null) queryString = lib.getClientGoogle(context).getRootUrl();
                 if (imgFolder != null && imgFolder.id != null)
-                    queryString = imgFolder.id + "/files";
+                    queryString = imgFolder.id + "";
                 //Latch = new CountDownLatch(1);
-                AsyncTask<Void,Void,List<com.google.api.services.drive.model.File>> task = new AsyncTask<Void,Void,List<com.google.api.services.drive.model.File>>() {
+                final String finalQueryString = queryString;
+                AsyncTask<Void,Void,List<com.google.api.services.drive.model.File>> task = new AsyncTask<Void,Void,List<com.google.api.services.drive.model.File>>()
+                {
                     @Override
                     protected List<com.google.api.services.drive.model.File> doInBackground(Void... params) {
                         Drive client = lib.getClientGoogle(context);
                         FileList result = null;
+                        List<com.google.api.services.drive.model.File> L = null;
                         try {
-                            result = client.files().list()
-                                    .setPageSize(10)
-                                    .setFields("nextPageToken, files(id, name)")
-                                    .execute();
-                            return result.getFiles();
+                            Drive.Files.List request = client.files().list()
+                                        .setPageSize(1000)
+                                        .setFields("nextPageToken, files(id, name)");
+                            do
+                            {
+                                result = request.execute();
+                                if (L==null)
+                                {
+                                    L = result.getFiles();
+                                }
+                                else
+                                {
+                                    L.addAll(result.getFiles());
+                                }
+                                request.setPageToken(result.getNextPageToken());
+
+                        } while (request.getPageToken() != null && request.getPageToken().length() > 0);
+                           return L;
                         } catch (IOException e) {
                             e.printStackTrace();
-                            return null;
+                            return L;
                         }
 
 
