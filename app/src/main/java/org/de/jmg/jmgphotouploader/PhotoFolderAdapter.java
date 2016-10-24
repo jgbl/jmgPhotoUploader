@@ -401,8 +401,8 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 					first = false;
 					if (Cursor.getString(Cursor.getColumnIndex("visible")).equalsIgnoreCase("true"))
 					{
-						if (item.Uri != null)
-						{
+						if (item.Uri != null || (item.type == Type.Google && item.id != null))
+                                						{
 							lib.setgstatus("GetChildview Select Files");
 							try 
 							{
@@ -413,7 +413,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 								}
 								else if (item.type == Type.Google)
 								{
-									CursorItem = lib.dbpp.DataBase.query("Files", null, "FileName=?", new String[]{item.id}, null, null, null);
+									CursorItem = lib.dbpp.DataBase.query("Files", null, "URI=?", new String[]{item.id}, null, null, null);
                                     //CursorItem = null;
                                 }
 								else
@@ -972,8 +972,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 				}
 				else if (item.type == Type.Google)
 				{
-					//CursorItem = lib.dbpp.DataBase.query("Files", null, "FileName=?", new String[]{item.id}, null, null, null);
-					CursorItem = null;
+					CursorItem = lib.dbpp.DataBase.query("Files", null, "URI=?", new String[]{item.id}, null, null, null);
 					isGoogle = true;
 				}
 				else
@@ -989,7 +988,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 					}
 					if (isGoogle)
 					{
-						//values.put("URI", item.Uri.getPath());
+						values.put("URI", item.id);
 					}
 					else
 					{
@@ -1001,7 +1000,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 					}
 					else if (item.type == Type.Google)
 					{
-						//values.put("FileName", item.id);
+						values.put("FileName", item.FileName);
 					}
 					else
 					{
