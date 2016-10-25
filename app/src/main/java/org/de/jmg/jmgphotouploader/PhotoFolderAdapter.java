@@ -1218,6 +1218,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                         @Override
                                         protected Bitmap doInBackground(Void... params) {
                                             try {
+                                                if(ImgListItem.getImg() != null) return ImgListItem.getImg();
                                                 Uri Link = null;//ImgListItem.Uri;
                                                 String sLink = null;
                                                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -1300,8 +1301,9 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                             if (bMap != null) {
                                                 try {
                                                     if (bMap != null) {
+                                                        ImgListItem.setImg(bMap);
                                                         String path = Images.Media.insertImage(context.getContentResolver(),
-                                                                bMap, "Image Description", null);
+                                                                bMap, "Image", "Image" + id);
                                                         Uri newUri = Uri.parse(path);
                                                         ShareUri(ServiceCursor, id, newUri);
                                                     }
