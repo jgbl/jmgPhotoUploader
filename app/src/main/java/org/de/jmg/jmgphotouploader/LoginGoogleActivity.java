@@ -57,7 +57,7 @@ public class LoginGoogleActivity extends Activity
 
     private static final String BUTTON_TEXT = "Call Drive API";
     private static final String PREF_ACCOUNT_NAME = "accountName";
-    private static final String[] SCOPES = {DriveScopes.DRIVE_METADATA_READONLY};
+    private static final String[] SCOPES = {DriveScopes.DRIVE_READONLY};
     private JMPPPApplication mApp;
 
     /**
