@@ -412,9 +412,15 @@ public class lib {
             if (lib.getClientGoogle(context) != null)
             {
                 String queryString = null;
-                if (folder == null) queryString = lib.getClientGoogle(context).getRootUrl();
+                if (folder == null||folder.equalsIgnoreCase("/")) {
+                    queryString =  "'root' in parents";
+                }
+                else
+                {
+                    queryString =  "'" + folder + "' in parents";
+                }
                 if (imgFolder != null && imgFolder.id != null)
-                    queryString = imgFolder.id + "";
+                    queryString = "'" + imgFolder.id + "' in parents";
                 //Latch = new CountDownLatch(1);
                 final String finalQueryString = queryString;
                 AsyncTask<Void,Void,List<com.google.api.services.drive.model.File>> task = new AsyncTask<Void,Void,List<com.google.api.services.drive.model.File>>()
@@ -426,7 +432,9 @@ public class lib {
                         List<com.google.api.services.drive.model.File> L = null;
                         try {
                             Drive.Files.List request = client.files().list()
-                                        .setPageSize(1000)
+                                        .setPageSize(100)
+                                        .setFields("files,kind,nextPageToken")
+                                        .setQ(finalQueryString)
                                         ;
                             do
                             {
@@ -472,14 +480,16 @@ public class lib {
                                         final String kind = GoogleDriveItem.getKind();
                                         if (GoogleDriveItem.getMimeType().equalsIgnoreCase("application/vnd.google-apps.folder")) itemType = "folder";
                                         final String id = GoogleDriveItem.getId();
-                                        final String uri = GoogleDriveItem.getThumbnailLink();
                                         String size = "0x0";
-                                        if (itemType == "image")
+                                        if (itemType.equalsIgnoreCase("image"))
 
                                         {
                                             size = GoogleDriveItem.getImageMediaMetadata().getWidth() + "x" + GoogleDriveItem.getImageMediaMetadata().getHeight();
                                         }
                                         //lib.ShowMessage(context,itemType);
+                                        if (GoogleDriveItem.getMimeType().contains(("image/"))) itemType = "image";
+                                        final String uri = GoogleDriveItem.getThumbnailLink();
+                                        if (uri != null && itemType.equalsIgnoreCase("file")) itemType = "image";
                                         final String WebContentLink = GoogleDriveItem.getWebContentLink();
 
                                         final android.net.Uri auri = (WebContentLink!=null)?android.net.Uri.parse(WebContentLink):null;
