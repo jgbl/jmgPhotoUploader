@@ -57,7 +57,7 @@ public class LoginGoogleActivity extends Activity
 
     private static final String BUTTON_TEXT = "Call Drive API";
     private static final String PREF_ACCOUNT_NAME = "accountName";
-    private static final String[] SCOPES = {DriveScopes.DRIVE_READONLY};
+    private static final String[] SCOPES = {DriveScopes.DRIVE_READONLY,DriveScopes.DRIVE_METADATA_READONLY};
     private JMPPPApplication mApp;
 
     /**
@@ -371,7 +371,7 @@ public class LoginGoogleActivity extends Activity
         @Override
         protected List<String> doInBackground(Void... params) {
             try {
-                return null; //getDataFromApi();
+                return getDataFromApi();
             } catch (Exception e) {
                 mLastError = e;
                 cancel(true);
