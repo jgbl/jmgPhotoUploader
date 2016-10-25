@@ -460,6 +460,10 @@ public class _MainActivity extends Activity
 				{
 					lib.StartViewer(Context , ImgListItem.Uri);
 				}
+				else if (ImgListItem.type == ImgFolder.Type.Google)
+				{
+					lib.StartBrowser(Context,Uri.parse(ImgListItem.folder));
+				}
 				else
 				{
 					lib.StartViewer(Context, Uri.parse("file://" + ImgListItem.folder));

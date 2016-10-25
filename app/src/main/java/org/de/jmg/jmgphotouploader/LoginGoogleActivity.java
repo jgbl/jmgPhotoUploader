@@ -211,6 +211,7 @@ public class LoginGoogleActivity extends Activity
                                     "Google Play Services on your device and relaunch this app.");
                 } else {
                     getResultsFromApi();
+                    CloseActivity();
                 }
                 break;
             case REQUEST_ACCOUNT_PICKER:
@@ -226,12 +227,14 @@ public class LoginGoogleActivity extends Activity
                         editor.apply();
                         mCredential.setSelectedAccountName(accountName);
                         getResultsFromApi();
+                        CloseActivity();
                     }
                 }
                 break;
             case REQUEST_AUTHORIZATION:
                 if (resultCode == RESULT_OK) {
                     getResultsFromApi();
+                    CloseActivity();
                 }
                 break;
         }
@@ -427,12 +430,6 @@ public class LoginGoogleActivity extends Activity
             CloseActivity();
         }
 
-        public void CloseActivity()
-        {
-            //finishActivity(requestCode);
-            mApp.LoginGoogleClosed = true;
-            finish();
-        }
 
         @Override
         protected void onCancelled() {
@@ -458,4 +455,11 @@ public class LoginGoogleActivity extends Activity
             CloseActivity();
         }
     }
+    public void CloseActivity()
+    {
+        //finishActivity(requestCode);
+        mApp.LoginGoogleClosed = true;
+        finish();
+    }
+
 }

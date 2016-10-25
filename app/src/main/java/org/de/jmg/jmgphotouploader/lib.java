@@ -488,16 +488,16 @@ public class lib {
                                         }
                                         //lib.ShowMessage(context,itemType);
                                         if (GoogleDriveItem.getMimeType().contains(("image/"))) itemType = "image";
-                                        final String uri = GoogleDriveItem.getThumbnailLink();
-                                        if (uri != null && itemType.equalsIgnoreCase("file")) itemType = "image";
+                                        final String ThumbNailLink = GoogleDriveItem.getThumbnailLink();
                                         final String WebContentLink = GoogleDriveItem.getWebContentLink();
-
+                                        final String uri = GoogleDriveItem.getWebViewLink();
                                         final android.net.Uri auri = (WebContentLink!=null)?android.net.Uri.parse(WebContentLink):null;
 
                                             if (itemType.equals("image"))
                                             {
 
                                                 ImgListItem Item = (new ImgListItem(context, id, 0, itemName, auri, uri,ImgFolder.Type.Google,size));
+                                                Item.ThumbNailLink = ThumbNailLink;
                                                 lib.BMList.add(Item);
                                                 ppa.notifyDataSetChanged();
                                             }
@@ -543,6 +543,16 @@ public class lib {
         try {
             Intent i = new Intent(Intent.ACTION_VIEW);
             i.setDataAndType(uri, "image/*");
+            context.startActivity(i);
+        } catch (Exception ex) {
+            lib.ShowException(context, ex);
+        }
+    }
+
+    public static void StartBrowser(Context context, android.net.Uri uri) {
+        try {
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(uri);
             context.startActivity(i);
         } catch (Exception ex) {
             lib.ShowException(context, ex);
