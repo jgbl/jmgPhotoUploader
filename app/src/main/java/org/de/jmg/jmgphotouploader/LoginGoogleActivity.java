@@ -141,14 +141,20 @@ public class LoginGoogleActivity extends Activity
      *  
      */
     private void getResultsFromApi() {
-        if (!isGooglePlayServicesAvailable()) {
-            acquireGooglePlayServices();
-        } else if (mCredential.getSelectedAccountName() == null) {
-            chooseAccount();
-        } else if (!isDeviceOnline()) {
-            mOutputText.setText("No network connection available.");
-        } else {
-            new MakeRequestTask(mCredential).execute();
+        try {
+            if (!isGooglePlayServicesAvailable()) {
+                acquireGooglePlayServices();
+            } else if (mCredential.getSelectedAccountName() == null) {
+                chooseAccount();
+            } else if (!isDeviceOnline()) {
+                mOutputText.setText("No network connection available.");
+            } else {
+                new MakeRequestTask(mCredential).execute();
+            }
+        }
+        catch(Exception ex)
+        {
+            lib.ShowException(this,ex);
         }
     }
 
@@ -211,7 +217,7 @@ public class LoginGoogleActivity extends Activity
                                     "Google Play Services on your device and relaunch this app.");
                 } else {
                     getResultsFromApi();
-                    CloseActivity();
+                    //CloseActivity();
                 }
                 break;
             case REQUEST_ACCOUNT_PICKER:
@@ -227,14 +233,14 @@ public class LoginGoogleActivity extends Activity
                         editor.apply();
                         mCredential.setSelectedAccountName(accountName);
                         getResultsFromApi();
-                        CloseActivity();
+                        //CloseActivity();
                     }
                 }
                 break;
             case REQUEST_AUTHORIZATION:
                 if (resultCode == RESULT_OK) {
                     getResultsFromApi();
-                    CloseActivity();
+                    //CloseActivity();
                 }
                 break;
         }
@@ -422,13 +428,13 @@ public class LoginGoogleActivity extends Activity
             } else {
                 output.add(0, "Data retrieved using the Drive API:");
                 mOutputText.setText(TextUtils.join("\n", output));
+                mApp.setGoobleDriveClient(mService);
+                Intent i = new Intent();
+                i.putExtra("GroupPosition", 0);
+                //i.putExtra("client", client);
+                LoginGoogleActivity.this.setResult(Activity.RESULT_OK, i);
+                CloseActivity();
             }
-            mApp.setGoobleDriveClient(mService);
-            Intent i = new Intent();
-            i.putExtra("GroupPosition", 0);
-            //i.putExtra("client", client);
-            LoginGoogleActivity.this.setResult(Activity.RESULT_OK, i);
-            CloseActivity();
         }
 
 
@@ -452,9 +458,10 @@ public class LoginGoogleActivity extends Activity
             } else {
                 lib.ShowToast(LoginGoogleActivity.this,"Request cancelled.");
             }
-            Intent i = new Intent();
+            /*Intent i = new Intent();
             LoginGoogleActivity.this.setResult(Activity.RESULT_CANCELED, i);
             CloseActivity();
+            */
         }
     }
     public void CloseActivity()
