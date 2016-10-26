@@ -28,6 +28,9 @@ apply plugin: 'com.android.application'
         debug {
             debuggable true
             minifyEnabled false
+            //shrinkResources true
+            //proguardFile 'proguard.cfg'
+
         }
         release {
             debuggable false
