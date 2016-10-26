@@ -216,12 +216,14 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
         // Recycle a previous view if provided:
         lib.setgstatus("GetChildview Start");
         View view = convertView;
+        if (rows.size()<=groupPosition) return view;
         ImgFolder Folder = rows.get(groupPosition);
         lib.LastChildPosition = childPosition;
         //lib.LastgroupPosition = groupPosition;
         lib.LastisLastChild = isLastChild;
         lib.LastgroupPosition = groupPosition;
         GetFolderItems(Folder, groupPosition);
+        if(Folder.items.size()<=childPosition)return view;
         final ImgListItem item = Folder.items.get(childPosition);
         // If no recycled view, inflate a new view as a simple expandable list item 2:
         boolean isNewView = false;
