@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore.Images;
 import android.util.TypedValue;
@@ -52,6 +53,8 @@ import org.de.jmg.jmgphotouploader.ImgFolder.Type;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -1145,188 +1148,205 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                         ViewHolder holder = (ViewHolder) (v.getTag());
                         final ImgListItem ImgListItem = holder.item;
                         final Uri uri = ImgListItem.Uri;
-                        if (ImgListItem.type == Type.OneDriveAlbum) {
-                            final String file = ImgListItem.id + "/picture?type=full";
-                            if (lib.getClient(context) != null) {
-                            } else {
-                                JMPPPApplication myApp = (JMPPPApplication) context.getApplication();
-                                lib.setClient(myApp.getConnectClient());
-                            }
-
-                            final ProgressDialog mProgress = new ProgressDialog(context);
-                            mProgress.setTitle(getS(R.string.Download));
-                            mProgress.setMessage(getS(R.string.DownloadingImage));
-                            mProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                            mProgress.setMax(100);
-                            mProgress.setIndeterminate(true);
-                            mProgress.show();
-
-                            lib.getClient(context).downloadAsync(file, new LiveDownloadOperationListener() {
-
-                                @Override
-                                public void onDownloadProgress(int arg0, int arg1,
-                                                               LiveDownloadOperation arg2) {
-                                    // TODO Auto-generated method stub
-                                    int percentCompleted = (int) ((arg1 / arg0) * 100);
-                                    mProgress.setProgress(percentCompleted);
+                        if (ImgListItem.getImg()==null)
+                        {
+                            if (ImgListItem.type == Type.OneDriveAlbum) {
+                                final String file = ImgListItem.id + "/picture?type=full";
+                                if (lib.getClient(context) != null) {
+                                } else {
+                                    JMPPPApplication myApp = (JMPPPApplication) context.getApplication();
+                                    lib.setClient(myApp.getConnectClient());
                                 }
 
-                                @Override
-                                public void onDownloadFailed(LiveOperationException arg0,
-                                                             LiveDownloadOperation arg1) {
-                                    // TODO Auto-generated method stub
-                                    mProgress.dismiss();
-                                    lib.ShowToast(context, arg0.getMessage());
-                                }
+                                final ProgressDialog mProgress = new ProgressDialog(context);
+                                mProgress.setTitle(getS(R.string.Download));
+                                mProgress.setMessage(getS(R.string.DownloadingImage));
+                                mProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                                mProgress.setMax(100);
+                                mProgress.setIndeterminate(true);
+                                mProgress.show();
 
-                                @Override
-                                public void onDownloadCompleted(LiveDownloadOperation arg0) {
-                                    lib.ShowToast(context, getS(R.string.File) + " " + file + " " + getS(R.string.downloaded));
-                                    InputStream s = null;
-                                    Bitmap mBitmap = null;
-                                    // TODO Auto-generated method stub
-                                    try {
-                                        s = arg0.getStream();
-                                        mBitmap = BitmapFactory.decodeStream(s);
-                                        if (mBitmap != null) {
-                                            String path = Images.Media.insertImage(context.getContentResolver(),
-                                                    mBitmap, "Image Description", null);
-                                            Uri newUri = Uri.parse(path);
-                                            ShareUri(ServiceCursor, id, newUri);
-                                        }
-                                        s.close();
-                                    } catch (Exception e) {
-                                        // TODO Auto-generated catch block
-                                        e.printStackTrace();
-                                        lib.ShowToast(context, e.getMessage());
+                                lib.getClient(context).downloadAsync(file, new LiveDownloadOperationListener() {
+
+                                    @Override
+                                    public void onDownloadProgress(int arg0, int arg1,
+                                                                   LiveDownloadOperation arg2) {
+                                        // TODO Auto-generated method stub
+                                        int percentCompleted = (int) ((arg1 / arg0) * 100);
+                                        mProgress.setProgress(percentCompleted);
                                     }
-                                    mProgress.dismiss();
 
-                                }
-                            });
+                                    @Override
+                                    public void onDownloadFailed(LiveOperationException arg0,
+                                                                 LiveDownloadOperation arg1) {
+                                        // TODO Auto-generated method stub
+                                        mProgress.dismiss();
+                                        lib.ShowToast(context, arg0.getMessage());
+                                    }
+
+                                    @Override
+                                    public void onDownloadCompleted(LiveDownloadOperation arg0) {
+                                        lib.ShowToast(context, getS(R.string.File) + " " + file + " " + getS(R.string.downloaded));
+                                        InputStream s = null;
+                                        Bitmap mBitmap = null;
+                                        try {
+                                            s = arg0.getStream();
+                                            mBitmap = BitmapFactory.decodeStream(s);
+                                            if (mBitmap != null)
+                                            {
+                                                ShareBitmap
+                                                File cacheDir = context.getExternalCacheDir();
+                                                if (cacheDir == null) cacheDir=context.getCacheDir()
+                                                File sfile = File.createTempFile("SharePic",".jpg",cacheDir);
+                                                FileOutputStream filecon = new FileOutputStream(sfile);
+                                                mBitmap.compress(Bitmap.CompressFormat.JPEG, 90, filecon);
+                                                if(filecon!=null) filecon.close();
+                                                //file.delete();
+                                                //String path = Images.Media.insertImage(context.getContentResolver(),
+                                                //        mBitmap, "Image Description", null);
+                                                Uri newUri = Uri.fromFile(sfile);//Uri.parse(path);
+                                                ImgListItem.setImg((mBitmap));
+                                                ShareUri(ServiceCursor, id, newUri);
+                                            }
+                                            s.close();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                            lib.ShowToast(context, e.getMessage());
+                                        }
+                                        mProgress.dismiss();
+
+                                    }
+                                });
 
 
-                        } else if (ImgListItem.type == Type.Google) {
-                            try {
-                                final Drive drive = lib.getClientGoogle(context);
-                                if (drive != null) {
-                                    final ProgressDialog mProgress = new ProgressDialog(context);
-                                    mProgress.setTitle(getS(R.string.Download));
-                                    mProgress.setMessage(getS(R.string.DownloadingImage));
-                                    mProgress.setIndeterminate(true);
-                                    mProgress.show();
-                                    AsyncTask<Void, Void, Bitmap> Task = new AsyncTask<Void, Void, Bitmap>() {
-                                        Exception eex;
-                                        @Override
-                                        protected Bitmap doInBackground(Void... params) {
-                                            try {
-                                                if(ImgListItem.getImg() != null) return ImgListItem.getImg();
-                                                Uri Link = null;//ImgListItem.Uri;
-                                                String sLink = null;
-                                                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                                                InputStream input = null;
-                                                if (Link == null) {
-                                                    drive.files().get(ImgListItem.id)
-                                                            .executeMediaAndDownloadTo(byteArrayOutputStream);
-                                                    input = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-                                                    //sLink = file.getWebContentLink();
-                                                    //if (sLink != null) Link = Uri.parse((sLink));
-                                                }
-                                                else if (Link == null) {
-                                                    try {
-                                                        sLink = " https://drive.google.com/thumbnail?sz=w" + 1000 + "-h" + 1000 + "&id=" + ImgListItem.id + "";
-                                                        input = new BufferedInputStream(new URL(sLink).openStream());
-                                                    } catch (IOException eex) {
-                                                        return null;
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    HttpRequest request = drive.getRequestFactory().buildGetRequest(new GenericUrl(sLink));
-                                                    Future<HttpResponse> response = request.executeAsync(executor);
-                                                    response.get(200, TimeUnit.SECONDS).download(byteArrayOutputStream);
-                                                    input = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-                                                }
-                                                Bitmap bMap = null;
+                            } else if (ImgListItem.type == Type.Google) {
+                                try {
+                                    final Drive drive = lib.getClientGoogle(context);
+                                    if (drive != null) {
+                                        final ProgressDialog mProgress = new ProgressDialog(context);
+                                        mProgress.setTitle(getS(R.string.Download));
+                                        mProgress.setMessage(getS(R.string.DownloadingImage));
+                                        mProgress.setIndeterminate(true);
+                                        mProgress.show();
+                                        AsyncTask<Void, Void, Bitmap> Task = new AsyncTask<Void, Void, Bitmap>() {
+                                            Exception eex;
+
+                                            @Override
+                                            protected Bitmap doInBackground(Void... params) {
                                                 try {
-                                                    int i = 0;
-                                                    while (bMap == null) {
-                                                        i++;
-                                                        bMap = BitmapFactory.decodeStream(input);
-                                                        if (i > 0) break;
+                                                    if (ImgListItem.getImg() != null)
+                                                        return ImgListItem.getImg();
+                                                    Uri Link = null;//ImgListItem.Uri;
+                                                    String sLink = null;
+                                                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                                                    InputStream input = null;
+                                                    if (Link == null) {
+                                                        drive.files().get(ImgListItem.id)
+                                                                .executeMediaAndDownloadTo(byteArrayOutputStream);
+                                                        input = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+                                                        //sLink = file.getWebContentLink();
+                                                        //if (sLink != null) Link = Uri.parse((sLink));
+                                                    } else if (Link == null) {
+                                                        try {
+                                                            sLink = " https://drive.google.com/thumbnail?sz=w" + 1000 + "-h" + 1000 + "&id=" + ImgListItem.id + "";
+                                                            input = new BufferedInputStream(new URL(sLink).openStream());
+                                                        } catch (IOException eex) {
+                                                            return null;
+                                                        }
+                                                    } else {
+                                                        HttpRequest request = drive.getRequestFactory().buildGetRequest(new GenericUrl(sLink));
+                                                        Future<HttpResponse> response = request.executeAsync(executor);
+                                                        response.get(200, TimeUnit.SECONDS).download(byteArrayOutputStream);
+                                                        input = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+                                                    }
+                                                    Bitmap bMap = null;
+                                                    try {
+                                                        int i = 0;
+                                                        while (bMap == null) {
+                                                            i++;
+                                                            bMap = BitmapFactory.decodeStream(input);
+                                                            if (i > 0) break;
+                                                        }
+                                                    } catch (Exception ex) {
+                                                        eex = ex;
+                                                        cancel(true);
+                                                    }
+                                                    if (bMap != null) {
+                                                        return bMap;
+                                                    } else {
+                                                        eex = null;
+                                                        cancel(true);
+                                                        //lib.ShowToast(context, getS(R.string.Couldnotload) + ImgListItem.FileName);
+                                                    }
+                                                    if (input != null) {
+                                                        try {
+                                                            input.close();
+                                                        } catch (IOException e) {
+                                                            // TODO Auto-generated catch block
+                                                            e.printStackTrace();
+                                                        }
                                                     }
                                                 } catch (Exception ex) {
+                                                    //resultTextView.setText("Error downloading picture: " + ex.getMessage());
+                                                    cancel(true);
                                                     eex = ex;
-                                                    cancel(true);
+                                                } finally {
                                                 }
+                                                return null;
+                                            }
+
+                                            @Override
+                                            protected void onCancelled() {
+                                                String msg = context.getString(R.string.Couldnotload) + ImgListItem.FileName;
+                                                if (mProgress != null) mProgress.hide();
+                                                if (eex != null) {
+                                                    msg += context.getString(R.string.Error) + eex.getClass().getName() + " " + eex.getMessage() + (lib.getCauses(eex));
+                                                }
+                                                lib.ShowToast(context, msg);
+
+                                            }
+
+
+                                            @Override
+                                            protected void onPostExecute(Bitmap bMap) {
+                                                if (mProgress != null) mProgress.hide();
                                                 if (bMap != null) {
-                                                    return bMap;
-                                                } else {
-                                                    eex = null;
-                                                    cancel(true);
-                                                    //lib.ShowToast(context, getS(R.string.Couldnotload) + ImgListItem.FileName);
-                                                }
-                                                if (input != null) {
                                                     try {
-                                                        input.close();
-                                                    } catch (IOException e) {
+                                                        if (bMap != null) {
+                                                            ImgListItem.setImg(bMap);
+                                                            String path = Images.Media.insertImage(context.getContentResolver(),
+                                                                    bMap, "Image", "Image" + id);
+                                                            Uri newUri = Uri.parse(path);
+                                                            ShareUri(ServiceCursor, id, newUri);
+                                                        }
+                                                    } catch (Exception e) {
                                                         // TODO Auto-generated catch block
                                                         e.printStackTrace();
+                                                        lib.ShowToast(context, e.getMessage());
                                                     }
+                                                } else {
+                                                    lib.ShowToast(context, getS(R.string.Couldnotload) + ImgListItem.FileName);
                                                 }
-                                            } catch (Exception ex) {
-                                                //resultTextView.setText("Error downloading picture: " + ex.getMessage());
-                                                cancel(true);
-                                                eex = ex;
-                                            } finally {
                                             }
-                                            return null;
-                                        }
-
-                                        @Override
-                                        protected void onCancelled()
-                                        {
-                                            String msg = context.getString(R.string.Couldnotload) + ImgListItem.FileName;
-                                            if (mProgress != null) mProgress.hide();
-                                            if (eex != null)
-                                            {
-                                                msg += context.getString(R.string.Error) + eex.getClass().getName() + " " + eex.getMessage() + (lib.getCauses(eex));
-                                            }
-                                            lib.ShowToast(context, msg);
-
-                                        }
-
-
-                                        @Override
-                                        protected void onPostExecute(Bitmap bMap) {
-                                            if (mProgress != null) mProgress.hide();
-                                            if (bMap != null) {
-                                                try {
-                                                    if (bMap != null) {
-                                                        ImgListItem.setImg(bMap);
-                                                        String path = Images.Media.insertImage(context.getContentResolver(),
-                                                                bMap, "Image", "Image" + id);
-                                                        Uri newUri = Uri.parse(path);
-                                                        ShareUri(ServiceCursor, id, newUri);
-                                                    }
-                                                } catch (Exception e) {
-                                                    // TODO Auto-generated catch block
-                                                    e.printStackTrace();
-                                                    lib.ShowToast(context, e.getMessage());
-                                                }
-                                            } else {
-                                                lib.ShowToast(context, getS(R.string.Couldnotload) + ImgListItem.FileName);
-                                            }
-                                        }
-                                    };
-                                    Task.executeOnExecutor(executor);
+                                        };
+                                        Task.executeOnExecutor(executor);
+                                    }
+                                } catch (Exception ex) {
+                                    //resultTextView.setText("Error downloading picture: " + ex.getMessage());
+                                    lib.ShowToast(context, context.getString(R.string.Couldnotload) + ImgListItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
                                 }
-                            } catch (Exception ex) {
-                                //resultTextView.setText("Error downloading picture: " + ex.getMessage());
-                                lib.ShowToast(context, context.getString(R.string.Couldnotload) + ImgListItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
+                            } else {
+                                ShareUri(ServiceCursor, id, uri);
                             }
-                        } else {
-                            ShareUri(ServiceCursor, id, uri);
+                        }
+                        else
+                        {
+                            if (ImgListItem.getImg() != null) {
+                                String path = Images.Media.insertImage(context.getContentResolver(),
+                                        ImgListItem.getImg(), "Image Description", null);
+                                Uri newUri = Uri.parse(path);
+                                ShareUri(ServiceCursor, id, newUri);
+                            }
                         }
                     }
                 }
@@ -1339,6 +1359,8 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
         }
 
     };
+
+
 
     private void ShareUri(Cursor c, int id, Uri uri) {
 		/*
