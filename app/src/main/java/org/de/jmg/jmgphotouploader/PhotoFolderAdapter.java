@@ -580,7 +580,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                 }
                             } catch (Exception ex) {
                                 ex.printStackTrace();
-                                lib.ShowToast(context, context.getString(R.string.Couldnotload) + item.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage());
+                                lib.ShowToast(context, context.getString(R.string.Couldnotload) + " " + item.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage());
                             }
                             if (bMap != null) {
                                 if (ItemExists(Image, item)) {
@@ -592,7 +592,8 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                 //SetImageViewBitmap(new ItemParamsSet(p.img, bMap));
                                 //p.item.setsize(bMap.getWidth() + "*" + bMap.getHeight());
                             } else {
-                                lib.ShowToast(context, getS(R.string.Couldnotload) + item.FileName);
+                                lib.ShowToast(context, getS(R.string.Couldnotload) + " " + item.FileName);
+                                item.ThumbnailLoaded = true;
                             }
                             if (input != null) {
                                 try {
@@ -764,6 +765,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                 //p.item.setsize(bMap.getWidth() + "*" + bMap.getHeight());
                             } else {
                                 lib.ShowToast(context, getS(R.string.Couldnotload) + pItem.FileName);
+                                pItem.ThumbnailLoaded = true;
                             }
                         }
                     };
@@ -1148,7 +1150,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                         ViewHolder holder = (ViewHolder) (v.getTag());
                         final ImgListItem ImgListItem = holder.item;
                         final Uri uri = ImgListItem.Uri;
-                        if (ImgListItem.getImg()==null)
+                        if (ImgListItem.getDownImg()==null)
                         {
                             if (ImgListItem.type == Type.OneDriveAlbum) {
                                 final String file = ImgListItem.id + "/picture?type=full";
@@ -1194,7 +1196,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                             mBitmap = BitmapFactory.decodeStream(s);
                                             if (mBitmap != null)
                                             {
-                                                ImgListItem.setImg((mBitmap));
+                                                ImgListItem.setDownImg((mBitmap));
                                                 ShareBitmap(mBitmap,ServiceCursor,id);
                                             }
                                             s.close();
@@ -1286,7 +1288,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 
                                             @Override
                                             protected void onCancelled() {
-                                                String msg = context.getString(R.string.Couldnotload) + ImgListItem.FileName;
+                                                String msg = context.getString(R.string.Couldnotload) +" " + ImgListItem.FileName;
                                                 if (mProgress != null) mProgress.hide();
                                                 if (eex != null) {
                                                     msg += context.getString(R.string.Error) + eex.getClass().getName() + " " + eex.getMessage() + (lib.getCauses(eex));
@@ -1302,7 +1304,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                                 if (bMap != null) {
                                                     try {
                                                         if (bMap != null) {
-                                                            ImgListItem.setImg(bMap);
+                                                            ImgListItem.setDownImg(bMap);
                                                             ShareBitmap(bMap,ServiceCursor,id);
                                                             /*
                                                             String path = Images.Media.insertImage(context.getContentResolver(),
@@ -1317,7 +1319,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                                         lib.ShowToast(context, e.getMessage());
                                                     }
                                                 } else {
-                                                    lib.ShowToast(context, getS(R.string.Couldnotload) + ImgListItem.FileName);
+                                                    lib.ShowToast(context, getS(R.string.Couldnotload) + " " + ImgListItem.FileName);
                                                 }
                                             }
                                         };
@@ -1325,7 +1327,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                     }
                                 } catch (Exception ex) {
                                     //resultTextView.setText("Error downloading picture: " + ex.getMessage());
-                                    lib.ShowToast(context, context.getString(R.string.Couldnotload) + ImgListItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
+                                    lib.ShowToast(context, context.getString(R.string.Couldnotload) + " " + ImgListItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
                                 }
                             } else {
                                 ShareUri(ServiceCursor, id, uri);
@@ -1333,11 +1335,12 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                         }
                         else
                         {
-                            if (ImgListItem.getImg() != null) {
-                                String path = Images.Media.insertImage(context.getContentResolver(),
+                            if (ImgListItem.getDownImg() != null) {
+                                ShareBitmap(ImgListItem.getDownImg(),ServiceCursor,id);
+                                /*String path = Images.Media.insertImage(context.getContentResolver(),
                                         ImgListItem.getImg(), "Image Description", null);
                                 Uri newUri = Uri.parse(path);
-                                ShareUri(ServiceCursor, id, newUri);
+                                ShareUri(ServiceCursor, id, newUri);*/
                             }
                         }
                     }

@@ -239,26 +239,53 @@ public class _MainActivity extends Activity
 	}
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
-		if (app.dbpp != null && app.dbpp.DataBase.isOpen())app.dbpp.close();
-		for(File f: app.tempFiles)
-		{
-			try
-			{
-				f.delete();
-			}
-			catch(Exception ex)
-			{
-
-			}
-		}
-		app.tempFiles.clear();
 		super.onSaveInstanceState(savedInstanceState);
 	}
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (app.dbpp != null && !app.dbpp.DataBase.isOpen()) app.dbpp.openDataBase();
+		if (app.dbpp != null && app.dbpp.isClosed) app.dbpp.openDataBase();
 	}
+	@Override
+	public void onPause() {
+        //if (app.dbpp != null && app.dbpp.DataBase.isOpen())app.dbpp.close();
+        /*
+        for(File f: app.tempFiles)
+        {
+            try
+            {
+                f.delete();
+            }
+            catch(Exception ex)
+            {
+
+            }
+        }
+        app.tempFiles.clear();
+        */
+        super.onPause();
+	}
+
+	@Override
+	public void onStop() {
+        /*
+        if (app.dbpp != null && !app.dbpp.isClosed)app.dbpp.close();
+        for(File f: app.tempFiles)
+        {
+            try
+            {
+                f.delete();
+            }
+            catch(Exception ex)
+            {
+
+            }
+        }
+        app.tempFiles.clear();
+        */
+        super.onStop();
+	}
+
 	@Override
 	protected void onDestroy()
 	{
@@ -511,7 +538,7 @@ public class _MainActivity extends Activity
     @Override
     protected void onStart() {
         super.onStart();
-        
+        if (app.dbpp != null && app.dbpp.isClosed) app.dbpp.openDataBase();
         
     }
 

@@ -10,7 +10,7 @@
     <string name="btn_add">Hinzufügen</string>
     <string name="onActivityResultcalled">onActivityResult wurde aufgerufen</string>
     <string name="Download">Download</string>
-    <string name="Couldnotload">Konnte nicht laden</string>
+    <string name="Couldnotload">"Konnte nicht laden "</string>
     <string name="DownloadingImage">Lade Bild herunter</string>
     <string name="Error">"Fehler: "</string>
     <string name="Errorsigningin">"Fehler beim anmelden: "</string>

@@ -11,7 +11,7 @@
     <string name="action_refresh">refresh</string>
     <string name="search">search</string>
     <string name="onActivityResultcalled">onActivityResult called</string>
-    <string name="Couldnotload">Could not load</string>
+    <string name="Couldnotload">"Could not load "</string>
     <string name="Error">"Error: "</string>
     <string name="Notsignedin">Not signed in!</string>
     <string name="Errorsigningin">\"Error signing in: \"</string>

@@ -183,7 +183,7 @@ public class dbpp extends SQLiteOpenHelper
 		isClosed = false;
 	}
 
-	public boolean isClosed;
+	public boolean isClosed = true;
 	@Override
 	public void close()
 	{

@@ -20,6 +20,7 @@ public class ImgListItem extends Object
 		this.type = type;
 	}
 	private Bitmap _Img;
+	private Bitmap _DownImg;
 	public Context context;
 	public String id;
 	public int ImageID;
@@ -32,7 +33,15 @@ public class ImgListItem extends Object
 
 	public boolean ThumbnailLoaded;
 	private String _size;
-		
+
+	public final Bitmap getDownImg()
+	{
+		return _DownImg;
+	}
+	public void setDownImg(Bitmap value)
+	{
+		_DownImg = value;
+	}
 	public final Bitmap getImg()
 	{
 		if (_Img == null)

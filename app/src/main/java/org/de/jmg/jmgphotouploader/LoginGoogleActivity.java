@@ -364,6 +364,7 @@ public class LoginGoogleActivity extends Activity
         }
 
         public MakeRequestTask(GoogleAccountCredential credential) {
+            lib.setgstatus("create Start");
             HttpTransport transport = AndroidHttp.newCompatibleTransport();
             JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
             mService = new com.google.api.services.drive.Drive.Builder(
@@ -383,6 +384,7 @@ public class LoginGoogleActivity extends Activity
             try {
                 return getDataFromApi();
             } catch (Exception e) {
+                lib.setgstatus("getDataFromApi Error " + e.getMessage());
                 mLastError = e;
                 cancel(true);
                 return null;
@@ -396,8 +398,9 @@ public class LoginGoogleActivity extends Activity
          *  * @throws IOException
          *  
          */
-        private List<String> getDataFromApi() throws IOException {
+        private List<String> getDataFromApi() throws Exception {
             // Get a list of up to 10 files.
+            lib.setgstatus("getDataFromApi Start");
             List<String> fileInfo = new ArrayList<String>();
             FileList result = mService.files().list()
                     .setPageSize(10)
@@ -410,6 +413,7 @@ public class LoginGoogleActivity extends Activity
                             file.getName(), file.getId()));
                 }
             }
+            lib.setgstatus("getDataFromApi Finish");
             return fileInfo;
         }
 
@@ -422,11 +426,15 @@ public class LoginGoogleActivity extends Activity
 
         @Override
         protected void onPostExecute(List<String> output) {
+            lib.setgstatus("onPostExecute");
             mProgress.hide();
             mProgress.dismiss();;
+            mOutputText.setText("PostExecute");
             if (output == null || output.size() == 0) {
+                lib.setgstatus("No results returned");
                 mOutputText.setText("No results returned.");
             } else {
+                lib.setgstatus("Output size " + output.size());
                 output.add(0, "Data retrieved using the Drive API:");
                 mOutputText.setText(TextUtils.join("\n", output));
                 mApp.setGoobleDriveClient(mService);
@@ -441,9 +449,12 @@ public class LoginGoogleActivity extends Activity
 
         @Override
         protected void onCancelled() {
+            lib.setgstatus("onCancelled");
             mProgress.hide();
             mProgress.dismiss();
             if (mLastError != null) {
+                lib.setgstatus("The following error occurred:\n"
+                        + mLastError.getMessage());
                 if (mLastError instanceof GooglePlayServicesAvailabilityIOException) {
                     showGooglePlayServicesAvailabilityErrorDialog(
                             ((GooglePlayServicesAvailabilityIOException) mLastError)
@@ -453,11 +464,12 @@ public class LoginGoogleActivity extends Activity
                             ((UserRecoverableAuthIOException) mLastError).getIntent(),
                             LoginGoogleActivity.REQUEST_AUTHORIZATION);
                 } else {
-                    lib.ShowToast(LoginGoogleActivity.this,"The following error occurred:\n"
+                    mOutputText.setText("The following error occurred:\n"
                             + mLastError.getMessage());
                 }
             } else {
-                lib.ShowToast(LoginGoogleActivity.this,"Request cancelled.");
+                mOutputText.setText("Request cancelled.");
+                lib.setgstatus("Request cancelled");
             }
             /*Intent i = new Intent();
             LoginGoogleActivity.this.setResult(Activity.RESULT_CANCELED, i);
@@ -467,6 +479,7 @@ public class LoginGoogleActivity extends Activity
     }
     public void CloseActivity()
     {
+        lib.setgstatus("CloseActivity");
         //finishActivity(requestCode);
         mApp.LoginGoogleClosed = true;
         finish();
