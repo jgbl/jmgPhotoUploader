@@ -1194,19 +1194,8 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                             mBitmap = BitmapFactory.decodeStream(s);
                                             if (mBitmap != null)
                                             {
-                                                ShareBitmap
-                                                File cacheDir = context.getExternalCacheDir();
-                                                if (cacheDir == null) cacheDir=context.getCacheDir()
-                                                File sfile = File.createTempFile("SharePic",".jpg",cacheDir);
-                                                FileOutputStream filecon = new FileOutputStream(sfile);
-                                                mBitmap.compress(Bitmap.CompressFormat.JPEG, 90, filecon);
-                                                if(filecon!=null) filecon.close();
-                                                //file.delete();
-                                                //String path = Images.Media.insertImage(context.getContentResolver(),
-                                                //        mBitmap, "Image Description", null);
-                                                Uri newUri = Uri.fromFile(sfile);//Uri.parse(path);
                                                 ImgListItem.setImg((mBitmap));
-                                                ShareUri(ServiceCursor, id, newUri);
+                                                ShareBitmap(mBitmap,ServiceCursor,id);
                                             }
                                             s.close();
                                         } catch (Exception e) {
@@ -1314,10 +1303,13 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                                     try {
                                                         if (bMap != null) {
                                                             ImgListItem.setImg(bMap);
+                                                            ShareBitmap(bMap,ServiceCursor,id);
+                                                            /*
                                                             String path = Images.Media.insertImage(context.getContentResolver(),
                                                                     bMap, "Image", "Image" + id);
                                                             Uri newUri = Uri.parse(path);
                                                             ShareUri(ServiceCursor, id, newUri);
+                                                            */
                                                         }
                                                     } catch (Exception e) {
                                                         // TODO Auto-generated catch block
@@ -1359,9 +1351,22 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
         }
 
     };
+    private void ShareBitmap(Bitmap mBitmap, Cursor c, int id) throws IOException {
 
-
-
+        File cacheDir = context.getExternalCacheDir();
+        if (cacheDir == null) cacheDir = context.getCacheDir();
+        File sfile = File.createTempFile("SharePic", ".jpg", cacheDir);
+        JMPPPApplication myApp = (JMPPPApplication) context.getApplication();
+        myApp.tempFiles.add (sfile);
+        FileOutputStream filecon = new FileOutputStream(sfile);
+        mBitmap.compress(Bitmap.CompressFormat.JPEG, 90, filecon);
+        if (filecon != null) filecon.close();
+        //file.delete();
+        //String path = Images.Media.insertImage(context.getContentResolver(),
+        //        mBitmap, "Image Description", null);
+        Uri newUri = Uri.fromFile(sfile);//Uri.parse(path);
+        ShareUri(c,id,newUri);
+    }
     private void ShareUri(Cursor c, int id, Uri uri) {
 		/*
 		if (service.contains("Facebook")){

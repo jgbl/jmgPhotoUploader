@@ -33,6 +33,9 @@ import com.microsoft.live.LiveAuthListener;
 import com.microsoft.live.LiveConnectClient;
 import com.microsoft.live.LiveConnectSession;
 
+import java.io.File;
+import java.util.LinkedList;
+
 public class JMPPPApplication extends Application {
 
     private LiveAuthClient mAuthClient;
@@ -47,6 +50,7 @@ public class JMPPPApplication extends Application {
     public ImgFolder OneDriveFolder;
     public ImgFolder GoogleFolder;
     public boolean LoginGoogleClosed = false;
+    public LinkedList<File> tempFiles = new LinkedList<>();
 
     public LiveAuthClient getAuthClient() {
         return mAuthClient;

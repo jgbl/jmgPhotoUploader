@@ -30,8 +30,8 @@ public class dbpp extends SQLiteOpenHelper
 	public dbpp(Context context)
 	{
 		super(context, DB_NAME, null, 1);
-
-		//base(context, DB_NAME, null, 1);
+		File FilesDir = context.getFilesDir();
+		DB_PATH = Path.combine(FilesDir.getParent(),"databases");
 		this.myContext = context;
 		String extPath = Environment.getExternalStorageDirectory().getPath();
 		File F = new File(extPath);
@@ -180,10 +180,10 @@ public class dbpp extends SQLiteOpenHelper
 		//Open the database
 		String myPath = DB_PATH + DB_NAME;
 		DataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
-
+		isClosed = false;
 	}
 
-
+	public boolean isClosed;
 	@Override
 	public void close()
 	{
@@ -191,6 +191,7 @@ public class dbpp extends SQLiteOpenHelper
 		if (DataBase != null)
 		{
 			DataBase.close();
+			isClosed = true;
 		}
 
 		super.close();

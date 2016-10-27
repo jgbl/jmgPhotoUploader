@@ -28,6 +28,8 @@ import com.microsoft.live.LiveOperation;
 import com.microsoft.live.LiveOperationException;
 import com.microsoft.live.LiveStatus;
 
+import java.io.File;
+
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 
 //C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
@@ -235,12 +237,46 @@ public class _MainActivity extends Activity
 		app.ppa.ServiceCursor = null;
 		lv.setAdapter(app.ppa);
 	}
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		if (app.dbpp != null && app.dbpp.DataBase.isOpen())app.dbpp.close();
+		for(File f: app.tempFiles)
+		{
+			try
+			{
+				f.delete();
+			}
+			catch(Exception ex)
+			{
 
+			}
+		}
+		app.tempFiles.clear();
+		super.onSaveInstanceState(savedInstanceState);
+	}
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (app.dbpp != null && !app.dbpp.DataBase.isOpen()) app.dbpp.openDataBase();
+	}
 	@Override
 	protected void onDestroy()
 	{
+		if (app.dbpp != null && app.dbpp.DataBase.isOpen())app.dbpp.close();
+		for(File f: app.tempFiles)
+		{
+			try
+			{
+				f.delete();
+			}
+			catch(Exception ex)
+			{
+
+			}
+		}
+		app.tempFiles.clear();
 		super.onDestroy();
-		lib.dbpp.close();
+
 		/*
 		LiveAuthClient client = app.getAuthClient();
 		if (client != null) client.logout(new LiveAuthListener() {
