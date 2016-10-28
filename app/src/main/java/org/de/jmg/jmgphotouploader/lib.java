@@ -817,7 +817,7 @@ public class lib {
         if (ScreenInches != null) return ScreenInches;
         DisplayMetrics metrics = new DisplayMetrics();
         Display display = context.getWindowManager().getDefaultDisplay();
-
+        display.getMetrics(metrics);
         float widthDpi = metrics.xdpi;
         float heightDpi = metrics.ydpi;
 

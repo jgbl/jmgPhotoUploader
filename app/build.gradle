@@ -27,9 +27,9 @@ apply plugin: 'com.android.application'
     buildTypes {
         debug {
             debuggable true
-            minifyEnabled true
-            shrinkResources true
-            proguardFile 'proguard.cfg'
+            minifyEnabled false
+            //shrinkResources true
+            //proguardFile 'proguard.cfg'
         }
         release {
             debuggable false

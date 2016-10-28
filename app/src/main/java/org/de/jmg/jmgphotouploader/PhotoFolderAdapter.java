@@ -316,7 +316,9 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
             if (isNewView) {
                 Text1.setTextSize(TypedValue.COMPLEX_UNIT_PX, lib.convertFromDp(context.getApplicationContext(), Text1.getTextSize()));
                 int newSize = lib.getScreenSize(context).x / 70;
-                if (newSize > Text1.getTextSize()) {
+                if (lib.getScreenInches(context).x < 2.5) newSize *= 1.8;
+                if (newSize > Text1.getTextSize())
+                {
                     Text1.setTextSize(TypedValue.COMPLEX_UNIT_PX, newSize);
                 }
             }//Text1.Click+= (object sender, EventArgs e) => Console.WriteLine("Text1 clicked");
@@ -1150,7 +1152,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                         ViewHolder holder = (ViewHolder) (v.getTag());
                         final ImgListItem ImgListItem = holder.item;
                         final Uri uri = ImgListItem.Uri;
-                        if (ImgListItem.getDownImg()==null && ImgListItem.getDownUri() == null)
+                        if (ImgListItem.getDownImg() == null && ImgListItem.getDownUri() == null)
                         {
                             if (ImgListItem.type == Type.OneDriveAlbum) {
                                 final String file = ImgListItem.id + "/picture?type=full";
@@ -1340,7 +1342,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                 ShareUri(ServiceCursor,id,ImgListItem.getDownUri());
                             }
                             else if (ImgListItem.getDownImg() != null) {
-                                ShareBitmap(ImgListItem.getDownImg(),ServiceCursor,id);
+                               ImgListItem.setDownUri(ShareBitmap(ImgListItem.getDownImg(),ServiceCursor,id));
                                 /*String path = Images.Media.insertImage(context.getContentResolver(),
                                         ImgListItem.getImg(), "Image Description", null);
                                 Uri newUri = Uri.parse(path);
