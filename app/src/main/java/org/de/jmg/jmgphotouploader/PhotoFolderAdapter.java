@@ -1150,7 +1150,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                         ViewHolder holder = (ViewHolder) (v.getTag());
                         final ImgListItem ImgListItem = holder.item;
                         final Uri uri = ImgListItem.Uri;
-                        if (ImgListItem.getDownImg()==null)
+                        if (ImgListItem.getDownImg()==null && ImgListItem.getDownUri() == null)
                         {
                             if (ImgListItem.type == Type.OneDriveAlbum) {
                                 final String file = ImgListItem.id + "/picture?type=full";
@@ -1197,7 +1197,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                             if (mBitmap != null)
                                             {
                                                 ImgListItem.setDownImg((mBitmap));
-                                                ShareBitmap(mBitmap,ServiceCursor,id);
+                                                ImgListItem.setDownUri(ShareBitmap(mBitmap,ServiceCursor,id));
                                             }
                                             s.close();
                                         } catch (Exception e) {
@@ -1305,7 +1305,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                                     try {
                                                         if (bMap != null) {
                                                             ImgListItem.setDownImg(bMap);
-                                                            ShareBitmap(bMap,ServiceCursor,id);
+                                                            ImgListItem.setDownUri(ShareBitmap(bMap,ServiceCursor,id));
                                                             /*
                                                             String path = Images.Media.insertImage(context.getContentResolver(),
                                                                     bMap, "Image", "Image" + id);
@@ -1335,7 +1335,11 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                         }
                         else
                         {
-                            if (ImgListItem.getDownImg() != null) {
+                            if (ImgListItem.getDownUri() != null)
+                            {
+                                ShareUri(ServiceCursor,id,ImgListItem.getDownUri());
+                            }
+                            else if (ImgListItem.getDownImg() != null) {
                                 ShareBitmap(ImgListItem.getDownImg(),ServiceCursor,id);
                                 /*String path = Images.Media.insertImage(context.getContentResolver(),
                                         ImgListItem.getImg(), "Image Description", null);
@@ -1354,7 +1358,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
         }
 
     };
-    private void ShareBitmap(Bitmap mBitmap, Cursor c, int id) throws IOException {
+    private Uri ShareBitmap(Bitmap mBitmap, Cursor c, int id) throws IOException {
 
         File cacheDir = context.getExternalCacheDir();
         if (cacheDir == null) cacheDir = context.getCacheDir();
@@ -1369,6 +1373,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
         //        mBitmap, "Image Description", null);
         Uri newUri = Uri.fromFile(sfile);//Uri.parse(path);
         ShareUri(c,id,newUri);
+        return newUri;
     }
     private void ShareUri(Cursor c, int id, Uri uri) {
 		/*

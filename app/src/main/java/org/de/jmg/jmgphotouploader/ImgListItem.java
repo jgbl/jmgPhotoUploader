@@ -2,6 +2,7 @@ package org.de.jmg.jmgphotouploader;
 
 import android.graphics.*;
 import android.content.*;
+import android.net.Uri;
 import android.provider.*;
 import android.provider.MediaStore.Images.Thumbnails;
 
@@ -21,6 +22,7 @@ public class ImgListItem extends Object
 	}
 	private Bitmap _Img;
 	private Bitmap _DownImg;
+	private android.net.Uri _DownUri = null;
 	public Context context;
 	public String id;
 	public int ImageID;
@@ -34,6 +36,15 @@ public class ImgListItem extends Object
 	public boolean ThumbnailLoaded;
 	private String _size;
 
+
+	public Uri getDownUri()
+	{
+		return _DownUri;
+	}
+	public void setDownUri(Uri uri)
+	{
+		_DownUri = uri;
+	}
 	public final Bitmap getDownImg()
 	{
 		return _DownImg;

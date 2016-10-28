@@ -60,6 +60,7 @@ public class LoginGoogleActivity extends Activity
     private static final String PREF_ACCOUNT_NAME = "accountName";
     private static final String[] SCOPES = {DriveScopes.DRIVE_READONLY,DriveScopes.DRIVE_METADATA_READONLY};
     private JMPPPApplication mApp;
+    private int GroupPosition;
 
     /**
      *  * Create the main activity.
@@ -69,6 +70,7 @@ public class LoginGoogleActivity extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        GroupPosition = getIntent().getExtras().getInt("GroupPosition");
         mApp = (JMPPPApplication) getApplication();
         if (mApp.LoginGoogleClosed)
         {
@@ -445,13 +447,14 @@ public class LoginGoogleActivity extends Activity
                 lib.setgstatus("Output size " + output.size());
                 output.add(0, "Data retrieved using the Drive API:");
                 mOutputText.setText(TextUtils.join("\n", output));
-                mApp.setGoobleDriveClient(mService);
-                Intent i = new Intent();
-                i.putExtra("GroupPosition", 0);
-                //i.putExtra("client", client);
-                LoginGoogleActivity.this.setResult(Activity.RESULT_OK, i);
-                CloseActivity();
+
             }
+            mApp.setGoobleDriveClient(mService);
+            Intent i = new Intent();
+            i.putExtra("GroupPosition", GroupPosition);
+            //i.putExtra("client", client);
+            LoginGoogleActivity.this.setResult(Activity.RESULT_OK, i);
+            CloseActivity();
         }
 
 
@@ -479,10 +482,10 @@ public class LoginGoogleActivity extends Activity
                 mOutputText.setText("Request cancelled.");
                 lib.setgstatus("Request cancelled");
             }
-            /*Intent i = new Intent();
+            Intent i = new Intent();
+            i.putExtra("GroupPosition", GroupPosition);
             LoginGoogleActivity.this.setResult(Activity.RESULT_CANCELED, i);
-            CloseActivity();
-            */
+            //CloseActivity();
         }
     }
     public void CloseActivity()

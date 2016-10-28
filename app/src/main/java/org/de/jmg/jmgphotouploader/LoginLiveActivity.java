@@ -47,7 +47,8 @@ public class LoginLiveActivity extends Activity implements LiveAuthListener
         	setContentView(R.layout.livelogin);
             _btnLogin = (Button)findViewById(R.id.btnLogin);
             _btnClose = (Button)findViewById(R.id.btnClose);
-            
+            _btnLogin.setVisibility(View.INVISIBLE);
+            _btnClose.setVisibility(View.INVISIBLE);
             auth = new LiveAuthClient(this, secrets.LoginLive);
 
             mApp.setAuthClient(auth);
