@@ -406,13 +406,21 @@ public class LoginGoogleActivity extends Activity
                     .setPageSize(10)
                     .setFields("nextPageToken, files(id, name)")
                     .execute();
+            lib.setgstatus(result.toString());
             List<File> files = result.getFiles();
+
             if (files != null) {
+                lib.setgstatus("getDataFromApi files.size:" + files.size());
                 for (File file : files) {
                     fileInfo.add(String.format("%s (%s)\n",
                             file.getName(), file.getId()));
                 }
             }
+            else
+            {
+                lib.setgstatus("getDataFromApi files is null");
+            }
+
             lib.setgstatus("getDataFromApi Finish");
             return fileInfo;
         }
