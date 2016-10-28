@@ -317,6 +317,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                 Text1.setTextSize(TypedValue.COMPLEX_UNIT_PX, lib.convertFromDp(context.getApplicationContext(), Text1.getTextSize()));
                 int newSize = lib.getScreenSize(context).x / 70;
                 if (lib.getScreenInches(context).x < 2.5) newSize *= 1.8;
+                if (newSize < 12) newSize = 12;
                 if (newSize > Text1.getTextSize())
                 {
                     Text1.setTextSize(TypedValue.COMPLEX_UNIT_PX, newSize);
@@ -335,7 +336,11 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
             Text2.setFocusableInTouchMode(false);
             Text2.setLongClickable(false);
             if (isNewView)
+            {
                 Text2.setTextSize(TypedValue.COMPLEX_UNIT_PX, lib.convertFromDp(context.getApplicationContext(), Text2.getTextSize()));
+                if (Text2.getTextSize() < 8) Text2.setTextSize(TypedValue.COMPLEX_UNIT_PX,8);
+            }
+
             //Text2.Click += (object sender, EventArgs e) => Console.WriteLine("Text2 clicked");
 
             //if (item.Img != null) view.FindViewById<TextView> (Resource.Id.Text2).Text = (item.size != null) ? item.size : item.Img.Width + "*" + item.Img.Height;
@@ -1144,8 +1149,8 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
             // TODO Auto-generated method stub
             try {
                 CheckBox cb = (CheckBox) arg0;
+                final String service = (String) cb.getText();
                 if (cb.isChecked()) {
-                    final String service = (String) cb.getText();
                     final int id = cb.getId();
                     View v = (View) cb.getParent().getParent();
                     if (v.getTag() != null) {
@@ -1350,6 +1355,10 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                             }
                         }
                     }
+                }
+                else
+                {
+                    lib.ShowToast(context,service);
                 }
                 return true;
             } catch (Exception ex) {

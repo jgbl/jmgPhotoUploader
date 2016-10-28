@@ -20,7 +20,7 @@ import android.widget.TextView;
 public class SettingsActivity extends Activity {
 	public JMPPPApplication app;
 	public android.database.Cursor Cursor;
-	public static int requestCode = 9998;
+	public static int requestCode = 9999;
 	private boolean _changed = false;
 	public SettingsActivity() {
 		// TODO Auto-generated constructor stub

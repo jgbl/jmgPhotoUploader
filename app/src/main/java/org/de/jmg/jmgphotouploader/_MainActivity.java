@@ -568,7 +568,7 @@ public class _MainActivity extends Activity
 				}
 			}
 		}
-		if (requestCode == LoginGoogleActivity.requestCode)
+		else if (requestCode == LoginGoogleActivity.requestCode)
 		{
 			_GoogleLock = false;
 			if (resultCode == Activity.RESULT_OK && lib.getClientGoogle(this) != null) {
