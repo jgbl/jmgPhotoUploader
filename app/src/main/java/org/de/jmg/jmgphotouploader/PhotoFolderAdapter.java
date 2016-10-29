@@ -104,7 +104,10 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                 for (int ii = i + 1; ii< rows.size(); ii++)
                 {
                     ImgFolder Folder2 = rows.get(ii);
-                    if (!(Folder2.type == Folder.type))
+                    if (!(Folder2.type == Folder.type
+                            || (Folder2.type == Type.OneDriveAlbum && Folder.type == Type.OneDriveFolder)
+                            || (Folder.type == Type.OneDriveAlbum && Folder2.type == Type.OneDriveFolder)
+                    ))
                     {
                         break;
                     }
@@ -120,6 +123,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                 }
                 PhotoFolderAdapter.this.notifyDataSetChanged();
                 Folder.fetched = false;
+                Folder.items.clear();
             }
         });
         //((_MainActivity)context).lv.setOverScrollMode(View.OVER_SCROLL_NEVER);
