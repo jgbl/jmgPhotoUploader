@@ -463,6 +463,7 @@ public class LoginGoogleActivity extends Activity
             lib.setgstatus("onCancelled");
             mProgress.hide();
             mProgress.dismiss();
+            boolean blnClose = false;
             if (mLastError != null) {
                 lib.setgstatus("The following error occurred:\n"
                         + mLastError.getMessage());
@@ -470,6 +471,7 @@ public class LoginGoogleActivity extends Activity
                     showGooglePlayServicesAvailabilityErrorDialog(
                             ((GooglePlayServicesAvailabilityIOException) mLastError)
                                     .getConnectionStatusCode());
+                    blnClose = true;
                 } else if (mLastError instanceof UserRecoverableAuthIOException) {
                     startActivityForResult(
                             ((UserRecoverableAuthIOException) mLastError).getIntent(),
@@ -485,7 +487,7 @@ public class LoginGoogleActivity extends Activity
             Intent i = new Intent();
             i.putExtra("GroupPosition", GroupPosition);
             LoginGoogleActivity.this.setResult(Activity.RESULT_CANCELED, i);
-            //CloseActivity();
+            if (blnClose) CloseActivity();
         }
     }
     public void CloseActivity()

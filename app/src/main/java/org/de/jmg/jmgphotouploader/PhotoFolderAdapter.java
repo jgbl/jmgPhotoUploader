@@ -88,15 +88,34 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
             @Override
             public void onGroupCollapse(int i) {
                 ImgFolder Folder = rows.get(i);
-                if (Folder.Name.equalsIgnoreCase("/")) return;
+                String Name = Folder.Name;
+                if (Name.equalsIgnoreCase("/"))
+                {
+                 switch (Folder.type)
+                    {
+                        case Google:
+                            Folder.Name = "Google Drive";
+                            break;
+                        case OneDriveAlbum: case OneDriveFolder:
+                            Folder.Name = "One Drive";
+                            break;
+                    }
+                }
                 for (int ii = i + 1; ii< rows.size(); ii++)
                 {
                     ImgFolder Folder2 = rows.get(ii);
-                    if (Folder2.type != Folder.type) break;
-                    if(Folder2.Name.startsWith(Folder.Name))
+                    if (!(Folder2.type == Folder.type))
+                    {
+                        break;
+                    }
+                    if(Folder2.Name.startsWith(Name))
                     {
                         rows.remove(ii);
                         ii--;
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
                 PhotoFolderAdapter.this.notifyDataSetChanged();
