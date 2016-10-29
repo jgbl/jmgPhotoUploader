@@ -89,6 +89,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
             public void onGroupCollapse(int i) {
                 ImgFolder Folder = rows.get(i);
                 String Name = Folder.Name;
+                boolean blnRemoved = false;
                 if (Name.equalsIgnoreCase("/"))
                 {
                  switch (Folder.type)
@@ -115,15 +116,20 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                     {
                         rows.remove(ii);
                         ii--;
+                        blnRemoved = true;
                     }
                     else
                     {
                         break;
                     }
                 }
-                PhotoFolderAdapter.this.notifyDataSetChanged();
-                Folder.fetched = false;
-                Folder.items.clear();
+
+                if (blnRemoved) {
+                    Folder.fetched = false;
+                    Folder.items.clear();
+                    PhotoFolderAdapter.this.notifyDataSetChanged();
+                }
+
             }
         });
         //((_MainActivity)context).lv.setOverScrollMode(View.OVER_SCROLL_NEVER);

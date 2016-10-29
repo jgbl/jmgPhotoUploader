@@ -28,5 +28,7 @@
     <string name="CallingDriveApi">\"Calling Drive API ...\"</string>
     <string name="NoResultsReturned">\"No results returned.\"</string>
     <string name="DataReturned">\"Data retrieved using the Drive API:\"</string>
+    <string name="AccessAccount">\"This app needs to access your Google account (via Contacts).\"</string>
+    <string name="PlayServicesRequired">\"This app requires Google Play Services. Please install Google Play Services on your device and relaunch this app.\"</string>
 
 </resources>

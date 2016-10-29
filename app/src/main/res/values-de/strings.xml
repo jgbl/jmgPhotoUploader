@@ -24,7 +24,9 @@
     <string name="isnomorevisible">" ist nicht mehr sichtbar!"</string>
     <string name="search">suchen</string>
     <string name="packagename">Paketname</string>
-    <string name="CallingDriveApi">\"Rufe Drive API auf...\"</string>
-    <string name="DataReturned">\"Ergebnis des Aufrufs der Drive API:\"</string>
-    <string name="NoResultsReturned">\"Der Aufruf lieferte keine Einträge zurück!\"</string>
+    <string name="CallingDriveApi">\"Rufe Drive API auf ...\"</string>
+    <string name="DataReturned">\"Die Daten, die von der Drive API zurückgegeben wurden:\"</string>
+    <string name="NoResultsReturned">\"Es wurden keine Ergebnisse zurückgegeben!\"</string>
+    <string name="AccessAccount">\"Diese Anwendung braucht Zugang zu Ihrem Google Account!\"</string>
+    <string name="PlayServicesRequired">\"Diese Anwendung benötigt die Google Play Services. Bitte installieren Sie die Google Play Services und starten diese Anwendung neu.\"</string>
 </resources>

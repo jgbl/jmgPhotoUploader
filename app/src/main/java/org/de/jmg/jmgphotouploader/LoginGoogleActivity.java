@@ -191,7 +191,7 @@ public class LoginGoogleActivity extends Activity
             // Request the GET_ACCOUNTS permission via a user dialog
             EasyPermissions.requestPermissions(
                     this,
-                    "This app needs to access your Google account (via Contacts).",
+                    getString(R.string.AccessAccount),
                     REQUEST_PERMISSION_GET_ACCOUNTS,
                     Manifest.permission.GET_ACCOUNTS);
         }
@@ -216,8 +216,7 @@ public class LoginGoogleActivity extends Activity
             case REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode != RESULT_OK) {
                     mOutputText.setText(
-                            "This app requires Google Play Services. Please install " +
-                                    "Google Play Services on your device and relaunch this app.");
+                            getString(R.string.PlayServicesRequired));
                 } else {
                     getResultsFromApi();
                     //CloseActivity();
