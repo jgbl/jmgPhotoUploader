@@ -113,7 +113,7 @@ public class LoginGoogleActivity extends Activity
             activityLayout.addView(mOutputText);
 
             mProgress = new ProgressDialog(this);
-            mProgress.setMessage("Calling Drive API ...");
+            mProgress.setMessage(getString(R.string.CallingDriveApi));
 
             setContentView(activityLayout);
 
@@ -442,10 +442,10 @@ public class LoginGoogleActivity extends Activity
             mOutputText.setText("PostExecute");
             if (output == null || output.size() == 0) {
                 lib.setgstatus("No results returned");
-                mOutputText.setText("No results returned.");
+                mOutputText.setText(getString(R.string.NoResultsReturned));
             } else {
                 lib.setgstatus("Output size " + output.size());
-                output.add(0, "Data retrieved using the Drive API:");
+                output.add(0, getString(R.string.DataReturned));
                 mOutputText.setText(TextUtils.join("\n", output));
 
             }

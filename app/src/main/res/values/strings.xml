@@ -25,5 +25,8 @@
     <string name="File">File</string>
     <string name="downloaded">" downloaded."</string>
     <string name="packagename">package name</string>
+    <string name="CallingDriveApi">\"Calling Drive API ...\"</string>
+    <string name="NoResultsReturned">\"No results returned.\"</string>
+    <string name="DataReturned">\"Data retrieved using the Drive API:\"</string>
 
 </resources>

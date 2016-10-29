@@ -84,6 +84,25 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
         this.context = context;
         this.rows = List;
         ((_MainActivity) context).lv.setOnScrollListener(onScrollListener);
+        ((_MainActivity) context).lv.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+            @Override
+            public void onGroupCollapse(int i) {
+                ImgFolder Folder = rows.get(i);
+                if (Folder.Name.equalsIgnoreCase("/")) return;
+                for (int ii = i + 1; ii< rows.size(); ii++)
+                {
+                    ImgFolder Folder2 = rows.get(ii);
+                    if (Folder2.type != Folder.type) break;
+                    if(Folder2.Name.startsWith(Folder.Name))
+                    {
+                        rows.remove(ii);
+                        ii--;
+                    }
+                }
+                PhotoFolderAdapter.this.notifyDataSetChanged();
+                Folder.fetched = false;
+            }
+        });
         //((_MainActivity)context).lv.setOverScrollMode(View.OVER_SCROLL_NEVER);
         //SyncContext = (SynchronizationContext.Current != null) ? SynchronizationContext.Current : new SynchronizationContext();
     }

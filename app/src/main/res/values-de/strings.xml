@@ -24,4 +24,7 @@
     <string name="isnomorevisible">" ist nicht mehr sichtbar!"</string>
     <string name="search">suchen</string>
     <string name="packagename">Paketname</string>
+    <string name="CallingDriveApi">\"Rufe Drive API auf...\"</string>
+    <string name="DataReturned">\"Ergebnis des Aufrufs der Drive API:\"</string>
+    <string name="NoResultsReturned">\"Der Aufruf lieferte keine Einträge zurück!\"</string>
 </resources>
