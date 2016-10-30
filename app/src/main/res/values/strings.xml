@@ -30,5 +30,7 @@
     <string name="DataReturned">\"Data retrieved using the Drive API:\"</string>
     <string name="AccessAccount">\"This app needs to access your Google account (via Contacts).\"</string>
     <string name="PlayServicesRequired">\"This app requires Google Play Services. Please install Google Play Services on your device and relaunch this app.\"</string>
+    <string name="MaxLogin">Maximum number of login attempts reached!</string>
+    <string name="NoNetwork">\"No network connection available.\"</string>
 
 </resources>

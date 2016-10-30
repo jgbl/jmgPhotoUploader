@@ -29,4 +29,6 @@
     <string name="NoResultsReturned">\"Es wurden keine Ergebnisse zurückgegeben!\"</string>
     <string name="AccessAccount">\"Diese Anwendung braucht Zugang zu Ihrem Google Account!\"</string>
     <string name="PlayServicesRequired">\"Diese Anwendung benötigt die Google Play Services. Bitte installieren Sie die Google Play Services und starten diese Anwendung neu.\"</string>
+    <string name="MaxLogin">Die maximale Anzahl von Login Versuchen wurde erreicht!</string>
+    <string name="NoNetwork">\"Es besteht keine Netzwerk Verbindung!\"</string>
 </resources>

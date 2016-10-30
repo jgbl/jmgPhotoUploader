@@ -289,19 +289,26 @@ public class _MainActivity extends Activity
 	@Override
 	protected void onDestroy()
 	{
-		if (app.dbpp != null && app.dbpp.DataBase.isOpen())app.dbpp.close();
-		for(File f: app.tempFiles)
+		try
 		{
-			try
+			if (app.dbpp != null && app.dbpp.DataBase.isOpen())app.dbpp.close();
+			for(File f: app.tempFiles)
 			{
-				f.delete();
-			}
-			catch(Exception ex)
-			{
+				try
+				{
+					f.delete();
+				}
+				catch(Exception ex)
+				{
 
+				}
 			}
+			app.tempFiles.clear();
 		}
-		app.tempFiles.clear();
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
 		super.onDestroy();
 
 		/*

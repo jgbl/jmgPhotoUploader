@@ -113,8 +113,12 @@ public class LoginLiveActivity extends Activity implements LiveAuthListener
     			@Override
     			public void onClick(View v) {
     				// TODO Auto-generated method stub
-    				LoginLive();
-    			}
+                    try {
+                        LoginLive();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
     		});
     		_btnClose.setOnClickListener(new OnClickListener() {
     			
@@ -127,7 +131,7 @@ public class LoginLiveActivity extends Activity implements LiveAuthListener
 
         }
     }
-    private void LoginLive()
+    private void LoginLive() throws Exception
     {
 		final Iterable<String> scopes = Arrays.asList("wl.signin", "wl.basic", "wl.skydrive", "wl.offline_access" );
         //LoginLiveActivity.this.auth = new LiveAuthClient(LoginLiveActivity.this.getApplicationContext(), "0000000048135143");
@@ -145,6 +149,7 @@ public class LoginLiveActivity extends Activity implements LiveAuthListener
         }
         else
         {
+            _LoginStarted = true;
             LoginLiveActivity.this.auth.login(LoginLiveActivity.this, scopes, LoginLiveActivity.this);
         }
 
@@ -157,12 +162,16 @@ public class LoginLiveActivity extends Activity implements LiveAuthListener
     	
     }
     
-    
+    private boolean _LoginStarted = false;
     @Override
     protected void onStart()
     {
     	super.onStart();
-    	LoginLive();
+        try {
+            if (! _LoginStarted) LoginLive();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     @Override
     protected void onStop() 

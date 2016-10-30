@@ -126,12 +126,16 @@ public class LoginGoogleActivity extends Activity
         }
 
     }
-
+    private boolean blnStarted = false;
     @Override
     protected void onStart()
     {
         super.onStart();
-        getResultsFromApi();
+        if (!blnStarted)
+        {
+            blnStarted = true;
+            getResultsFromApi();
+        }
     }
 
 
@@ -143,14 +147,23 @@ public class LoginGoogleActivity extends Activity
      *  * appropriate.
      *  
      */
+    private int LoginCount = 0;
     private void getResultsFromApi() {
         try {
             if (!isGooglePlayServicesAvailable()) {
                 acquireGooglePlayServices();
             } else if (mCredential.getSelectedAccountName() == null) {
-                chooseAccount();
+                if (LoginCount < 5)
+                {
+                    LoginCount++;
+                    chooseAccount();
+                }
+                else
+                {
+                    mOutputText.setText(getString(R.string.MaxLogin));
+                }
             } else if (!isDeviceOnline()) {
-                mOutputText.setText("No network connection available.");
+                mOutputText.setText(getString(R.string.NoNetwork));
             } else {
                 new MakeRequestTask(mCredential).execute();
             }
@@ -178,7 +191,7 @@ public class LoginGoogleActivity extends Activity
                 this, Manifest.permission.GET_ACCOUNTS)) {
             String accountName = getPreferences(Context.MODE_PRIVATE)
                     .getString(PREF_ACCOUNT_NAME, null);
-            if (accountName != null) {
+            if (accountName != null && LoginCount < 4) {
                 mCredential.setSelectedAccountName(accountName);
                 getResultsFromApi();
             } else {
