@@ -47,6 +47,26 @@
             android:permission="android.permission.INTERNET"
             >
         </activity>
+        <activity
+            android:name=".DropBox.DropBoxUserActivity"
+            android:permission="android.permission.INTERNET"
+            >
+        </activity>
+        <activity
+            android:name="com.dropbox.core.android.AuthActivity"
+            android:configChanges="orientation|keyboard"
+            android:launchMode="singleTask" >
+        <intent-filter>
+
+            <!-- Change this to be db- followed by your app key -->
+            <data android:scheme="db-ixtjqjxqjrgqk99" />
+
+            <action android:name="android.intent.action.VIEW" />
+
+            <category android:name="android.intent.category.BROWSABLE" />
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+        </activity>
     </application>
 
 </manifest>

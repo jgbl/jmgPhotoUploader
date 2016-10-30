@@ -51,6 +51,8 @@ public class JMPPPApplication extends Application {
     public ImgFolder GoogleFolder;
     public boolean LoginGoogleClosed = false;
     public LinkedList<File> tempFiles = new LinkedList<>();
+    public boolean LoginDropboxClosed;
+    public ImgFolder DropboxFolder;
 
     public LiveAuthClient getAuthClient() {
         return mAuthClient;

@@ -20,6 +20,8 @@ import android.widget.*;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.provider.*;
 import org.de.jmg.jmgphotouploader.Controls.*;
+import org.de.jmg.jmgphotouploader.DropBox.DropBoxUserActivity;
+
 import com.microsoft.live.LiveAuthClient;
 import com.microsoft.live.LiveAuthException;
 import com.microsoft.live.LiveAuthListener;
@@ -192,6 +194,7 @@ public class _MainActivity extends Activity
 			if (app.ppa == null) {
 				app.BMList.add(new ImgFolder("One Drive",ImgFolder.Type.OneDriveAlbum));
 				app.BMList.add(new ImgFolder("Google Drive",ImgFolder.Type.Google));
+				app.BMList.add(new ImgFolder("Dropbox",ImgFolder.Type.Dropbox));
 			}
 		}
 		setContentView(R.layout.activity_main);
@@ -498,6 +501,18 @@ public class _MainActivity extends Activity
 		LoginIntent.putExtra("GroupPosition", lib.LastgroupPosition);
 		this.startActivityForResult(LoginIntent, LoginGoogleActivity.requestCode);
 	}
+
+	private boolean _DBLock = false;
+	public void StartLoginDropbox(ImgFolder Dropbox)
+	{
+		if (_DBLock) return;
+		_DBLock = true;
+		app.LoginDropboxClosed=false;
+		app.DropboxFolder = Dropbox;
+		Intent LoginIntent = new Intent(this, DropBoxUserActivity.class);
+		LoginIntent.putExtra("GroupPosition", lib.LastgroupPosition);
+		this.startActivityForResult(LoginIntent, DropBoxUserActivity.requestCode);
+	}
 	
 	private void openSettings()
 	{
@@ -584,6 +599,22 @@ public class _MainActivity extends Activity
 				try {
 					lib.GetThumbnailsGoogle(this, "/", app.GoogleFolder, GroupPosition, _MainActivity.this.lv);
 					if (app.GoogleFolder != null) app.GoogleFolder.fetched = true;
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		}
+		else if (requestCode == DropBoxUserActivity.requestCode)
+		{
+			_DBLock = false;
+			if (resultCode == Activity.RESULT_OK && lib.getClientDropbox(this) != null) {
+				final int GroupPosition = data.getExtras().getInt("GroupPosition");
+
+				try {
+					//lib.GetThumbnailsDropbox(this, "/", app.DropboxFolder, GroupPosition, _MainActivity.this.lv);
+					if (app.DropboxFolder != null) app.DropboxFolder.fetched = true;
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

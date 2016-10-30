@@ -47,6 +47,8 @@ import java.util.Locale;
 
 public class lib {
 
+    private static com.dropbox.core.v2.DbxClientV2 _ClientDropbox;
+
     public lib() {
     }
 
@@ -826,6 +828,10 @@ public class lib {
         float heightInches = getScreenSize(context).y / heightDpi;
         ScreenInches = new PointF(widthInches, heightInches);
         return ScreenInches;
+    }
+
+    public static Object getClientDropbox(Activity context) {
+        return _ClientDropbox;
     }
 
     private static class ExStateInfo {

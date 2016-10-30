@@ -100,6 +100,9 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                         case OneDriveAlbum: case OneDriveFolder:
                             Folder.Name = "One Drive";
                             break;
+                        case Dropbox:
+                            Folder.Name = "Dropbox";
+                            break;
                     }
                 }
                 for (int ii = i + 1; ii< rows.size(); ii++)
@@ -204,6 +207,12 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
             if (isExpanded == false && imgFolder.items != null && imgFolder.items.size() == 0 && imgFolder.Name == "/" && imgFolder.fetched == false) {
                 imgFolder.fetched = false;
                 imgFolder.Name = "Google Drive";
+            }
+        } else if (imgFolder.type == Type.Dropbox) {
+            textView.setTextColor(Color.parseColor("#ffa500"));
+            if (isExpanded == false && imgFolder.items != null && imgFolder.items.size() == 0 && imgFolder.Name == "/" && imgFolder.fetched == false) {
+                imgFolder.fetched = false;
+                imgFolder.Name = "Dropbox";
             }
         } else {
             textView.setTextColor(Color.WHITE);
@@ -323,6 +332,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
             context = (Activity) myApp.MainContext;
             boolean isOneDrive = false;
             boolean isGoogle = false;
+            boolean isDropbox = false;
             if (item.type == Type.OneDriveAlbum || item.type == Type.OneDriveFolder) {
                 lib.setClient(myApp.getConnectClient());
                 LoadThumbnailOneDrive(item, Image);
@@ -331,6 +341,10 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                 lib.setClientGoogle(myApp.getGoogleDriveClient());
                 LoadThumbnailGoogle(item, Image);
                 isGoogle = true;
+            } else if (item.type == Type.Dropbox) {
+                //lib.setClientGoogle(myApp.getGoogleDriveClient());
+                //LoadThumbnailGoogle(item, Image);
+                isDropbox = true;
             } else {
                 //BitmapWorkerAsyncTask Task = new BitmapWorkerAsyncTask(new ItemParams(item,Image,view), context);
                 if (mIsScrolling) {
@@ -444,6 +458,9 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                                 } else if (item.type == Type.Google) {
                                     CursorItem = lib.dbpp.DataBase.query("Files", null, "URI=?", new String[]{item.id}, null, null, null);
                                     //CursorItem = null;
+                                } else if (item.type == Type.Dropbox) {
+                                    //CursorItem = lib.dbpp.DataBase.query("Files", null, "URI=?", new String[]{item.id}, null, null, null);
+                                    CursorItem = null;
                                 } else {
                                     String uri = item.folder; //item.Uri.getPath();
                                     CursorItem = lib.dbpp.DataBase.query("Files", null, "URI=?", new String[]{uri}, null, null, null);
@@ -851,8 +868,12 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 
 
     private void GetFolderItems(ImgFolder Folder, int GroupPosition) {
-        if ((Folder.type == ImgFolder.Type.OneDriveAlbum || Folder.type == ImgFolder.Type.OneDriveFolder || Folder.type == ImgFolder.Type.Google) && (Folder.Name != "/") && (Folder.items.size() == 0)) {
-            if (Folder.Name == "One Drive" || Folder.Name == "Google Drive") {
+        if ((Folder.type == ImgFolder.Type.OneDriveAlbum
+                || Folder.type == ImgFolder.Type.OneDriveFolder
+                || Folder.type == ImgFolder.Type.Google
+                || Folder.type == ImgFolder.Type.Dropbox)
+                && (Folder.Name != "/") && (Folder.items.size() == 0)) {
+            if (Folder.Name == "One Drive" || Folder.Name == "Google Drive" || Folder.Name == "Dropbox") {
                 Folder.Name = "/";
             }
             if (Folder.items.size() == 0 && Folder.fetched == false) {
@@ -882,7 +903,26 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                         }
                     }
                     Folder.items = lib.BMList;
-                } else {
+                } else if (Folder.type == Type.Dropbox) {
+                    if (lib.getClientDropbox(context) == null) {
+
+                        Folder.Name = "Dropbox";
+                        lib.BMList = new java.util.ArrayList<ImgListItem>();
+                        ((_MainActivity) context).StartLoginDropbox(Folder);
+                    } else {
+                        try {
+                            if (Folder.fetched == false) {
+                                lib.BMList = new java.util.ArrayList<ImgListItem>();
+                                Folder.items = lib.BMList;
+                                //lib.GetThumbnailsDropbox(context, Folder.Name, Folder, GroupPosition, ((_MainActivity) context).lv);
+                                Folder.fetched = true;
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    Folder.items = lib.BMList;
+                }else {
 
                     if (lib.getClient(context) == null) {
                         Folder.Name = "One Drive";
@@ -1054,13 +1094,17 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                 //CursorItem = lib.dbpp.DataBase.query("Files", null, "URI=?", new String[]{item.Uri.getPath()}, null, null, null);
                 boolean isOneDrive = false;
                 boolean isGoogle = false;
+                boolean isDropbox = false;
                 if (item.type == Type.OneDriveAlbum) {
                     CursorItem = lib.dbpp.DataBase.query("Files", null, "FileName=?", new String[]{item.id}, null, null, null);
                     isOneDrive = true;
                 } else if (item.type == Type.Google) {
                     CursorItem = lib.dbpp.DataBase.query("Files", null, "URI=?", new String[]{item.id}, null, null, null);
                     isGoogle = true;
-                } else {
+                } else if (item.type == Type.Dropbox) {
+                    CursorItem = lib.dbpp.DataBase.query("Files", null, "URI=?", new String[]{item.id}, null, null, null);
+                    isDropbox = true;
+                }else {
                     CursorItem = lib.dbpp.DataBase.query("Files", null, "URI=?", new String[]{item.folder}, null, null, null);
                 }
                 if (CursorItem != null && CursorItem.getCount() == 0) {
@@ -1068,16 +1112,20 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                     if (isOneDrive) {
                         values.put("URI", item.Uri.getPath());
                     }
-                    if (isGoogle) {
+                    else if (isGoogle) {
                         values.put("URI", item.id);
-                    } else {
+                    } else if (isDropbox) {
+                        values.put("URI", item.id);
+                    }else {
                         values.put("URI", item.folder);
                     }
                     if (item.type == Type.OneDriveAlbum) {
                         values.put("FileName", item.id);
                     } else if (item.type == Type.Google) {
                         values.put("FileName", item.FileName);
-                    } else {
+                    } else if (item.type == Type.Dropbox) {
+                        values.put("FileName", item.FileName);
+                    }else {
                         values.put("FileName", item.FileName);
                     }
                     lib.setgstatus("cb_checkedChanged Insert Files");
@@ -1172,7 +1220,13 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                     } catch (Exception e) {
                                         lib.ShowException(context, e);
                                     }
-                                } else {
+                                } else if (item.type == Type.Dropbox) {
+                                    try {
+                                        //LoadThumbnailGoogle(item, Image);
+                                    } catch (Exception e) {
+                                        lib.ShowException(context, e);
+                                    }
+                                }else {
                                     //BitmapWorkerAsyncTask Task = new BitmapWorkerAsyncTask(new ItemParams(item,Image,view), context);
                                     Runnable worker = new getBitmapWorkerThread(new ItemParams(item, Image, view), context);
                                     executor.submit(worker);

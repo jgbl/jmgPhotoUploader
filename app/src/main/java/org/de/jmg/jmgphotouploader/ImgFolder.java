@@ -8,7 +8,7 @@ public class ImgFolder extends Object
 		Local,
 		OneDriveAlbum,
 		OneDriveFolder,
-		Google
+		Dropbox, Google
 	}
 	public ImgFolder(String Name, Type type)
 	{
