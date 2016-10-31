@@ -20,9 +20,15 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.webkit.MimeTypeMap;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
+import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.FolderMetadata;
+import com.dropbox.core.v2.files.ListFolderResult;
+import com.dropbox.core.v2.files.Metadata;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
 import com.microsoft.live.LiveAuthListener;
@@ -43,18 +49,20 @@ import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.Locale;
 
+import static com.dropbox.core.android.AuthActivity.result;
+
 //import android.runtime.*;
 
 public class lib {
 
-    private static com.dropbox.core.v2.DbxClientV2 _ClientDropbox;
-
+    
     public lib() {
     }
 
     private static String _status = "";
     private static final String ONEDRIVE_APP_ID = "48122D4E";
     private static Drive mClientGoogle;
+    private static DbxClientV2 mclientDropbox;
     public static java.util.ArrayList<ImgListItem> BMList;
     public static dbpp dbpp;
     public static int LastgroupPosition;
@@ -213,9 +221,18 @@ public class lib {
         mClientGoogle = myApp.getGoogleDriveClient();
         return mClientGoogle;
     }
+    public static DbxClientV2 getClientDropbox(Activity context) {
+        JMPPPApplication myApp = (JMPPPApplication) context.getApplication();
+        mclientDropbox = myApp.getDropboxClient();
+        return mclientDropbox;
+    }
 
     public static void setClientGoogle(Drive client) {
         mClientGoogle = client;
+    }
+
+    public static void setClientDropbox(DbxClientV2 clientDropbox) {
+        mclientDropbox = clientDropbox;
     }
 
     public static void GetThumbnailsOneDrive(final Activity context, final String folder, final ImgFolder imgFolder, final int GroupPosition, final ExpandableListView lv) throws LiveOperationException, InterruptedException {
@@ -533,6 +550,136 @@ public class lib {
         }
     }
 
+    public static void GetThumbnailsDropbox(final Activity context, final String folder, final ImgFolder imgFolder, final int GroupPosition, final ExpandableListView lv) throws LiveOperationException, InterruptedException, IOException {
+
+        try {
+            if (lib.getClientDropbox(context) != null)
+            {
+                String queryString = "";
+                if (folder == null||folder.equalsIgnoreCase("/")) {
+                    queryString =  "";
+                }
+                else
+                {
+                    queryString =  folder;
+                }
+                //if (imgFolder != null && imgFolder.id != null) queryString = imgFolder.id;
+
+                //Latch = new CountDownLatch(1);
+                final String finalQueryString = queryString;
+                AsyncTask<Void,Void,List<Metadata>> task = new AsyncTask<Void,Void,List<Metadata>>()
+                {
+                    @Override
+                    protected List<Metadata> doInBackground(Void... params) {
+                        DbxClientV2 client = lib.getClientDropbox(context);
+                        List<Metadata> L = null;
+                        ListFolderResult  result;
+                        String cursor = null;
+                        try {
+                            do {
+                                if (cursor == null) {
+                                    result = client.files().listFolder(finalQueryString);
+                                    L = result.getEntries();
+                                } else {
+                                    result = client.files().listFolderContinue(cursor);
+                                    L.addAll(result.getEntries());
+                                }
+                                cursor = result.getCursor();
+                            }while(result.getHasMore());
+
+                            return L;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return L;
+                        }
+
+
+                    }
+
+                    @Override
+                    protected void onPostExecute(List<Metadata> result)
+                    {
+                        if (result != null) {
+                            final _MainActivity Main = (_MainActivity) context;
+                            final JMPPPApplication app = (JMPPPApplication) Main.getApplication();
+                            final PhotoFolderAdapter ppa = app.ppa;
+                            List<Metadata> files = result;
+                            if (files != null) {
+                                lib.BMList.clear();
+                                int countFolders = 0;
+                                for (int i = 0; i < files.size(); i++) {
+                                    final Metadata DropboxItem = files.get(i);
+                                    if (DropboxItem != null) {
+                                        System.out.println(DropboxItem.toString());
+                                        final String itemName = DropboxItem.getName();
+                                        String itemType = null;
+                                        String id = null;
+                                        if (DropboxItem instanceof FileMetadata) {
+                                            MimeTypeMap mime = MimeTypeMap.getSingleton();
+                                            String ext = DropboxItem.getName().substring(DropboxItem.getName().lastIndexOf(".") + 1);
+                                            String type = mime.getMimeTypeFromExtension(ext);
+                                            if (type != null && type.startsWith("image/")) {
+                                                itemType = "image";
+                                            } else {
+                                                itemType = "file";
+                                            }
+                                            id = ((FileMetadata) DropboxItem).getId();
+                                        }
+                                        else if (DropboxItem instanceof FolderMetadata)
+                                        {
+                                            itemType = "folder";
+                                            id = ((FolderMetadata) DropboxItem).getId();
+                                        }
+                                        String size = "0x0";
+                                        if (itemType.equalsIgnoreCase("image"))
+
+                                        {
+                                            size = "" + ((FileMetadata)DropboxItem).getSize();
+                                        }
+                                        //lib.ShowMessage(context,itemType);
+                                        final String ThumbNailLink = null;//DropboxItem.getThumbnailLink();
+                                        final String WebContentLink = null;// DropboxItem.getWebContentLink();
+                                        final String uri = DropboxItem.getPathLower(); //DropboxItem.getWebViewLink();
+                                        final android.net.Uri auri = (WebContentLink!=null)?android.net.Uri.parse(WebContentLink):null;
+
+                                        if (itemType.equals("image"))
+                                        {
+
+                                            ImgListItem Item = (new ImgListItem(context, id, 0, itemName, auri, uri,ImgFolder.Type.Dropbox,size));
+                                            Item.ThumbNailLink = ThumbNailLink;
+                                            lib.BMList.add(Item);
+                                            ppa.notifyDataSetChanged();
+                                        }
+                                        else if(itemType.equals("album") || itemType.equals ("folder"))
+                                        {
+                                            ImgFolder.Type type;
+                                            if (itemType.equals("album")){
+                                                type = ImgFolder.Type.Dropbox;
+                                            }
+                                            else
+                                            {
+                                                type = ImgFolder.Type.Dropbox;
+                                            }
+                                            int position = ppa.rows.indexOf(imgFolder);
+                                            countFolders ++;
+                                            ppa.rows.add(position + countFolders,new ImgFolder(folder + itemName + "/",type,id));
+                                            ppa.notifyDataSetChanged();
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+                task.execute();
+
+            }
+        } catch (Exception ex) {
+            lib.ShowException(context, ex);
+        }
+    }
+
 
     private static ImgFolder FindFolder(java.util.ArrayList<ImgFolder> BMList, String Bucket) {
         for (ImgFolder f : BMList) {
@@ -830,9 +977,7 @@ public class lib {
         return ScreenInches;
     }
 
-    public static Object getClientDropbox(Activity context) {
-        return _ClientDropbox;
-    }
+    
 
     private static class ExStateInfo {
         public Context context;

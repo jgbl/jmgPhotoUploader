@@ -613,7 +613,7 @@ public class _MainActivity extends Activity
 				final int GroupPosition = data.getExtras().getInt("GroupPosition");
 
 				try {
-					//lib.GetThumbnailsDropbox(this, "/", app.DropboxFolder, GroupPosition, _MainActivity.this.lv);
+					lib.GetThumbnailsDropbox(this, "/", app.DropboxFolder, GroupPosition, _MainActivity.this.lv);
 					if (app.DropboxFolder != null) app.DropboxFolder.fetched = true;
 				} catch (Exception e) {
 					// TODO Auto-generated catch block

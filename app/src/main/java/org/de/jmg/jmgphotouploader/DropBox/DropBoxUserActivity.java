@@ -1,5 +1,7 @@
 package org.de.jmg.jmgphotouploader.DropBox;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -10,6 +12,7 @@ import android.widget.TextView;
 import com.dropbox.core.android.Auth;
 import com.dropbox.core.v2.users.FullAccount;
 
+import org.de.jmg.jmgphotouploader.LoginGoogleActivity;
 import org.de.jmg.jmgphotouploader.R;
 import org.de.jmg.jmgphotouploader.secrets;
 
@@ -20,11 +23,12 @@ import org.de.jmg.jmgphotouploader.secrets;
 public class DropBoxUserActivity extends DropboxActivity {
 
     public static int requestCode = 9991;
+    private int GroupPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        GroupPosition = getIntent().getExtras().getInt("GroupPosition");
         setContentView(R.layout.activity_user);
 
         //Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
@@ -75,11 +79,17 @@ public class DropBoxUserActivity extends DropboxActivity {
                 ((TextView) findViewById(R.id.email_text)).setText(result.getEmail());
                 ((TextView) findViewById(R.id.name_text)).setText(result.getName().getDisplayName());
                 ((TextView) findViewById(R.id.type_text)).setText(result.getAccountType().name());
+                Intent i = new Intent();
+                i.putExtra("GroupPosition", GroupPosition);
+                DropBoxUserActivity.this.setResult(Activity.RESULT_OK, i);
             }
 
             @Override
             public void onError(Exception e) {
                 Log.e(getClass().getName(), "Failed to get account details.", e);
+                Intent i = new Intent();
+                i.putExtra("GroupPosition", GroupPosition);
+                DropBoxUserActivity.this.setResult(Activity.RESULT_CANCELED, i);
             }
         }).execute();
     }

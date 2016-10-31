@@ -342,7 +342,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                 LoadThumbnailGoogle(item, Image);
                 isGoogle = true;
             } else if (item.type == Type.Dropbox) {
-                //lib.setClientGoogle(myApp.getGoogleDriveClient());
+                lib.setClientDropbox(myApp.getDropboxClient());
                 //LoadThumbnailGoogle(item, Image);
                 isDropbox = true;
             } else {
@@ -459,8 +459,8 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                                     CursorItem = lib.dbpp.DataBase.query("Files", null, "URI=?", new String[]{item.id}, null, null, null);
                                     //CursorItem = null;
                                 } else if (item.type == Type.Dropbox) {
-                                    //CursorItem = lib.dbpp.DataBase.query("Files", null, "URI=?", new String[]{item.id}, null, null, null);
-                                    CursorItem = null;
+                                    CursorItem = lib.dbpp.DataBase.query("Files", null, "URI=?", new String[]{item.id}, null, null, null);
+                                    //CursorItem = null;
                                 } else {
                                     String uri = item.folder; //item.Uri.getPath();
                                     CursorItem = lib.dbpp.DataBase.query("Files", null, "URI=?", new String[]{uri}, null, null, null);
@@ -914,7 +914,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                             if (Folder.fetched == false) {
                                 lib.BMList = new java.util.ArrayList<ImgListItem>();
                                 Folder.items = lib.BMList;
-                                //lib.GetThumbnailsDropbox(context, Folder.Name, Folder, GroupPosition, ((_MainActivity) context).lv);
+                                lib.GetThumbnailsDropbox(context, Folder.Name, Folder, GroupPosition, ((_MainActivity) context).lv);
                                 Folder.fetched = true;
                             }
                         } catch (Exception e) {
