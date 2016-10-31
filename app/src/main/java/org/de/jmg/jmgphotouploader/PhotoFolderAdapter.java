@@ -33,6 +33,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.dropbox.core.DbxDownloader;
+import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.ThumbnailFormat;
+import com.dropbox.core.v2.files.ThumbnailSize;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
@@ -343,7 +348,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                 isGoogle = true;
             } else if (item.type == Type.Dropbox) {
                 lib.setClientDropbox(myApp.getDropboxClient());
-                //LoadThumbnailGoogle(item, Image);
+                LoadThumbnailDropbox(item, Image);
                 isDropbox = true;
             } else {
                 //BitmapWorkerAsyncTask Task = new BitmapWorkerAsyncTask(new ItemParams(item,Image,view), context);
@@ -449,7 +454,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                 while ((first) ? (Cursor.moveToFirst()) : (Cursor.moveToNext())) {
                     first = false;
                     if (Cursor.getString(Cursor.getColumnIndex("visible")).equalsIgnoreCase("true")) {
-                        if (item.Uri != null || (item.type == Type.Google && item.id != null)) {
+                        if (item.Uri != null || ((item.type == Type.Google || item.type == Type.Dropbox) && item.id != null)) {
                             lib.setgstatus("GetChildview Select Files");
                             try {
                                 android.database.Cursor CursorItem;
@@ -850,6 +855,131 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
         }
     }
 
+    private void LoadThumbnailDropbox(final ImgListItem pItem, final ImageView pImage) throws Exception {
+        final ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).lv;
+
+
+        if (pItem.ThumbnailLoaded) {
+            return;
+        }
+        if (!ItemExists(pImage, pItem)) {
+            return;
+        }
+        try {
+            final DbxClientV2 client = lib.getClientDropbox(context);
+            if (client != null) {
+
+                if (mIsScrolling || lv.getIsScaled() || !ItemExists(pImage, pItem)) {
+        		/*
+        		lib.ShowToast(context, "Item " + item.FileName
+        				+ " can not be displayed!"
+        				+ " IsScrolling " + mIsScrolling
+        				+ " IsScaled " + lv.getIsScaled()
+        				+ " ItemExists " + ItemExists(Image,item));
+        		return;
+        		*/
+                } else {
+                    //resultTextView.setText("Picture downloaded.");
+                    LinearLayout.LayoutParams LP = (LinearLayout.LayoutParams) pImage.getLayoutParams();
+                    final int width = LP.width;// pImage.getWidth();
+                    final int height = LP.height; //pImage.getHeight();
+                    AsyncTask<Void, Void, Bitmap> Task = new AsyncTask<Void, Void, Bitmap>() {
+                        @Override
+                        protected Bitmap doInBackground(Void... params) {
+                            try {
+                                ThumbnailSize ts = ThumbnailSize.W64H64;
+                                if (width <= 64)
+                                {
+
+                                }
+                                else if (width <= 128)
+                                {
+                                    ts = ThumbnailSize.W128H128;
+                                }
+                                else if (width <= 640)
+                                {
+                                    ts = ThumbnailSize.W640H480;
+                                }
+                                else
+                                {
+                                    ts = ThumbnailSize.W1024H768;
+                                }
+                                DbxDownloader<FileMetadata> downloader = client.files().getThumbnailBuilder(pItem.folder)
+                                        .withFormat(ThumbnailFormat.JPEG)
+                                        .withSize(ts)
+                                        .start();
+                                //ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                                InputStream input = null;
+                                if (downloader != null) {
+                                    try {
+                                        input = new BufferedInputStream(downloader.getInputStream());
+                                    } catch (Exception eex) {
+                                        return null;
+                                    }
+                                }
+                                Bitmap bMap = null;
+                                try {
+                                    int i = 0;
+                                    while (bMap == null) {
+                                        i++;
+                                        bMap = BitmapFactory.decodeStream(input);
+                                        if (i > 0) break;
+                                    }
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
+                                    lib.ShowToast(context, context.getString(R.string.Couldnotload) + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage());
+                                }
+                                if (bMap != null) {
+                                    return bMap;
+                                } else {
+                                    lib.ShowToast(context, getS(R.string.Couldnotload) + pItem.FileName);
+                                }
+                                if (input != null) {
+                                    try {
+                                        input.close();
+                                    } catch (IOException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    }
+                                }
+                            } catch (Exception ex) {
+                                //resultTextView.setText("Error downloading picture: " + ex.getMessage());
+                                lib.ShowToast(context, context.getString(R.string.Couldnotload) + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
+                            } finally {
+                                //f.delete();
+                            }
+                            return null;
+                        }
+
+
+                        @Override
+                        protected void onPostExecute(Bitmap bMap) {
+
+                            if (bMap != null) {
+                                if (ItemExists(pImage, pItem)) {
+                                    pImage.setImageBitmap(bMap);
+                                    pItem.ThumbnailLoaded = true;
+                                } else {
+                                    lib.ShowToast(context, getS(R.string.Item) + pItem.FileName + getS(R.string.isnomorevisible));
+                                }
+                                //SetImageViewBitmap(new ItemParamsSet(p.img, bMap));
+                                //p.item.setsize(bMap.getWidth() + "*" + bMap.getHeight());
+                            } else {
+                                lib.ShowToast(context, getS(R.string.Couldnotload) + pItem.FileName);
+                                pItem.ThumbnailLoaded = true;
+                            }
+                        }
+                    };
+                    Task.executeOnExecutor(executor);
+                }
+            }
+        } catch (Exception ex) {
+            //resultTextView.setText("Error downloading picture: " + ex.getMessage());
+            lib.ShowToast(context, context.getString(R.string.Couldnotload) + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
+        }
+    }
+
+
     private boolean ItemExists(ImageView Image, ImgListItem item) {
         View view = (View) Image.getParent().getParent();
         Boolean ItemExists = false;
@@ -1222,7 +1352,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                     }
                                 } else if (item.type == Type.Dropbox) {
                                     try {
-                                        //LoadThumbnailGoogle(item, Image);
+                                        LoadThumbnailDropbox(item, Image);
                                     } catch (Exception e) {
                                         lib.ShowException(context, e);
                                     }
