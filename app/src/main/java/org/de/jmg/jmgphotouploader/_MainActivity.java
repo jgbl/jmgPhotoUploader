@@ -22,6 +22,8 @@ import android.provider.*;
 import org.de.jmg.jmgphotouploader.Controls.*;
 import org.de.jmg.jmgphotouploader.DropBox.DropBoxUserActivity;
 
+import com.dropbox.core.DbxException;
+import com.dropbox.core.v2.sharing.SharedLinkMetadata;
 import com.microsoft.live.LiveAuthClient;
 import com.microsoft.live.LiveAuthException;
 import com.microsoft.live.LiveAuthListener;
@@ -548,6 +550,18 @@ public class _MainActivity extends Activity
 				else if (ImgListItem.type == ImgFolder.Type.Google)
 				{
 					lib.StartBrowser(Context,Uri.parse(ImgListItem.folder));
+				}
+				else if (ImgListItem.type == ImgFolder.Type.Dropbox)
+				{
+					try
+					{
+						//SharedLinkMetadata M = lib.getClientDropbox(_MainActivity.this).sharing().createSharedLinkWithSettings(ImgListItem.folder);
+						lib.StartBrowser(Context , Uri.parse(lib.getClientDropbox(_MainActivity.this).sharing().getFileMetadata(ImgListItem.folder).getPreviewUrl()));
+					}
+					catch (DbxException e)
+					{
+						e.printStackTrace();
+					}
 				}
 				else
 				{

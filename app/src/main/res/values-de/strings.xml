@@ -31,4 +31,5 @@
     <string name="PlayServicesRequired">\"Diese Anwendung benötigt die Google Play Services. Bitte installieren Sie die Google Play Services und starten diese Anwendung neu.\"</string>
     <string name="MaxLogin">Die maximale Anzahl von Login Versuchen wurde erreicht!</string>
     <string name="NoNetwork">\"Es besteht keine Netzwerk Verbindung!\"</string>
+    <string name="send_to">send to</string>
 </resources>

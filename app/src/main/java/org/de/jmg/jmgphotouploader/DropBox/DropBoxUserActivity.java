@@ -50,6 +50,7 @@ public class DropBoxUserActivity extends DropboxActivity {
                 //startActivity(FilesActivity.getIntent(DropBoxUserActivity.this, ""));
             }
         });
+        filesButton.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -71,6 +72,17 @@ public class DropBoxUserActivity extends DropboxActivity {
         }
     }
 
+    private boolean _hasStarted = false;
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (!_hasStarted)
+        {
+            _hasStarted = true;
+            Auth.startOAuth2Authentication(DropBoxUserActivity.this, secrets.DropBAppkey);
+        }
+    }
+
     @Override
     protected void loadData() {
         new GetCurrentAccountTask(DropboxClientFactory.getClient(), new GetCurrentAccountTask.Callback() {
@@ -82,6 +94,7 @@ public class DropBoxUserActivity extends DropboxActivity {
                 Intent i = new Intent();
                 i.putExtra("GroupPosition", GroupPosition);
                 DropBoxUserActivity.this.setResult(Activity.RESULT_OK, i);
+                DropBoxUserActivity.this.finish();
             }
 
             @Override

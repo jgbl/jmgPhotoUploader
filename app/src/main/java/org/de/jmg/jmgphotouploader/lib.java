@@ -24,10 +24,12 @@ import android.webkit.MimeTypeMap;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
+import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
+import com.dropbox.core.v2.files.MediaInfo;
 import com.dropbox.core.v2.files.Metadata;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
@@ -618,6 +620,7 @@ public class lib {
                                             MimeTypeMap mime = MimeTypeMap.getSingleton();
                                             String ext = DropboxItem.getName().substring(DropboxItem.getName().lastIndexOf(".") + 1);
                                             String type = mime.getMimeTypeFromExtension(ext);
+                                            MediaInfo M = ((FileMetadata) DropboxItem).getMediaInfo();
                                             if (type != null && type.startsWith("image/")) {
                                                 itemType = "image";
                                             } else {
@@ -634,11 +637,17 @@ public class lib {
                                         if (itemType.equalsIgnoreCase("image"))
 
                                         {
+
                                             size = "" + ((FileMetadata)DropboxItem).getSize();
                                         }
                                         //lib.ShowMessage(context,itemType);
                                         final String ThumbNailLink = null;//DropboxItem.getThumbnailLink();
-                                        final String WebContentLink = null;// DropboxItem.getWebContentLink();
+                                        String WebContentLink = null;
+                                        try {
+                                            if (itemType == "image") WebContentLink = getClientDropbox(context).sharing().getFileMetadata(id).getPreviewUrl();
+                                        } catch (DbxException e) {
+                                            e.printStackTrace();
+                                        }
                                         final String uri = DropboxItem.getPathLower(); //DropboxItem.getWebViewLink();
                                         final android.net.Uri auri = (WebContentLink!=null)?android.net.Uri.parse(WebContentLink):null;
 
@@ -706,6 +715,16 @@ public class lib {
         } catch (Exception ex) {
             lib.ShowException(context, ex);
         }
+    }
+
+
+    public static void ShareImage(Context context, Uri uri)
+    {
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        shareIntent.setType("image/jpeg");
+        context.startActivity(Intent.createChooser(shareIntent, context.getResources().getText(R.string.send_to)));
     }
 
     public static void SharePictureOnFacebook(Context context, android.net.Uri uri) {

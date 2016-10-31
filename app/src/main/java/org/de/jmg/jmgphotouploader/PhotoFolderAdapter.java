@@ -34,10 +34,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dropbox.core.DbxDownloader;
+import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ThumbnailFormat;
 import com.dropbox.core.v2.files.ThumbnailSize;
+import com.dropbox.core.v2.sharing.SharedLinkMetadata;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
@@ -276,6 +278,71 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 
     public android.database.Cursor ServiceCursor;
 
+    private OnLongClickListener ImgOnLongClickListener = new OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            View vv = (View) v.getParent().getParent();
+            if (vv.getTag() != null) {
+                ViewHolder holder = (ViewHolder) (vv.getTag());
+                final ImgListItem ImgListItem = holder.item;
+                Uri uri = ImgListItem.Uri;
+                if (ImgListItem.type == Type.Dropbox)
+                {
+                    try {
+                        SharedLinkMetadata M = lib.getClientDropbox(context).sharing().createSharedLinkWithSettings(ImgListItem.folder);
+                        uri = Uri.parse((M.getUrl()));
+                    } catch (DbxException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                //lib.ShowMessage(context, "Image LongClick " + uri.toString());
+                lib.ShareImage(context,uri);
+            }
+            return true;
+        }
+    };
+
+    private View.OnClickListener ImgClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            View vv = (View) v.getParent().getParent();
+            if (vv.getTag() != null)
+            {
+                ViewHolder holder = (ViewHolder)(vv.getTag());
+                ImgListItem ImgListItem = holder.item;
+                boolean isOneDrive = ImgListItem.type == ImgFolder.Type.OneDriveAlbum
+                        || ImgListItem.type == ImgFolder.Type.OneDriveFolder;
+                if (isOneDrive)
+                {
+                    lib.StartViewer(context , ImgListItem.Uri);
+                }
+                else if (ImgListItem.type == ImgFolder.Type.Google)
+                {
+                    lib.StartBrowser(context,Uri.parse(ImgListItem.folder));
+                }
+                else if (ImgListItem.type == ImgFolder.Type.Dropbox)
+                {
+                    try
+                    {
+                        //SharedLinkMetadata M = lib.getClientDropbox(_MainActivity.this).sharing().createSharedLinkWithSettings(ImgListItem.folder);
+                        lib.StartBrowser(context , Uri.parse(lib.getClientDropbox(context).sharing().getFileMetadata(ImgListItem.folder).getPreviewUrl()));
+                    }
+                    catch (DbxException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    lib.StartViewer(context, Uri.parse("file://" + ImgListItem.folder));
+                }
+            }
+
+        }
+    };
+
     @Override
     public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         // Recycle a previous view if provided:
@@ -360,13 +427,15 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                 }
             }
 
-            Image.setClickable(false);
+            Image.setClickable(true);
             Image.setFocusable(false);
             Image.setFocusableInTouchMode(false);
-            Image.setLongClickable(false);
+            Image.setLongClickable(true);
             if (isNewView) {
                 Image.setMaxHeight((int) lib.convertFromDp(context.getApplicationContext(), Image.getHeight()));
                 Image.setMaxWidth((int) lib.convertFromDp(context.getApplicationContext(), Image.getWidth()));
+                Image.setOnLongClickListener(ImgOnLongClickListener);
+                Image.setOnClickListener(ImgClick);
             }
             //Image.Click+= (object sender, EventArgs e) => Console.WriteLine("IMG clicked");
             //view.FindViewById<ImageView> (Android.Resource.Id.Icon).ScaleX = 5;
@@ -1449,7 +1518,9 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                 });
 
 
-                            } else if (ImgListItem.type == Type.Google) {
+                            }
+                            else if (ImgListItem.type == Type.Google)
+                            {
                                 try {
                                     final Drive drive = lib.getClientGoogle(context);
                                     if (drive != null) {
@@ -1568,10 +1639,118 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                     //resultTextView.setText("Error downloading picture: " + ex.getMessage());
                                     lib.ShowToast(context, context.getString(R.string.Couldnotload) + " " + ImgListItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
                                 }
-                            } else {
+                            }
+                            else if (ImgListItem.type == Type.Dropbox)
+                            {
+                                try {
+                                    final DbxClientV2 client = lib.getClientDropbox(context);
+                                    if (client != null) {
+                                        final ProgressDialog mProgress = new ProgressDialog(context);
+                                        mProgress.setTitle(getS(R.string.Download));
+                                        mProgress.setMessage(getS(R.string.DownloadingImage));
+                                        mProgress.setIndeterminate(true);
+                                        mProgress.show();
+                                        AsyncTask<Void, Void, Bitmap> Task = new AsyncTask<Void, Void, Bitmap>() {
+                                            Exception eex;
+
+                                            @Override
+                                            protected Bitmap doInBackground(Void... params) {
+                                                try {
+                                                    if (ImgListItem.getImg() != null)
+                                                        return ImgListItem.getImg();
+                                                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                                                    InputStream input = null;
+                                                    client.files().download(ImgListItem.folder).download(byteArrayOutputStream);
+                                                    input = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+                                                        //sLink = file.getWebContentLink();
+                                                        //if (sLink != null) Link = Uri.parse((sLink));
+
+                                                    Bitmap bMap = null;
+                                                    try {
+                                                        int i = 0;
+                                                        while (bMap == null) {
+                                                            i++;
+                                                            bMap = BitmapFactory.decodeStream(input);
+                                                            if (i > 0) break;
+                                                        }
+                                                    } catch (Exception ex) {
+                                                        eex = ex;
+                                                        cancel(true);
+                                                    }
+                                                    if (bMap != null) {
+                                                        return bMap;
+                                                    } else {
+                                                        eex = null;
+                                                        cancel(true);
+                                                        //lib.ShowToast(context, getS(R.string.Couldnotload) + ImgListItem.FileName);
+                                                    }
+                                                    if (input != null) {
+                                                        try {
+                                                            input.close();
+                                                        } catch (IOException e) {
+                                                            // TODO Auto-generated catch block
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                } catch (Exception ex) {
+                                                    //resultTextView.setText("Error downloading picture: " + ex.getMessage());
+                                                    cancel(true);
+                                                    eex = ex;
+                                                } finally {
+                                                }
+                                                return null;
+                                            }
+
+                                            @Override
+                                            protected void onCancelled() {
+                                                String msg = context.getString(R.string.Couldnotload) +" " + ImgListItem.FileName;
+                                                if (mProgress != null) mProgress.hide();
+                                                if (eex != null) {
+                                                    msg += context.getString(R.string.Error) + eex.getClass().getName() + " " + eex.getMessage() + (lib.getCauses(eex));
+                                                }
+                                                lib.ShowToast(context, msg);
+
+                                            }
+
+
+                                            @Override
+                                            protected void onPostExecute(Bitmap bMap) {
+                                                if (mProgress != null) mProgress.hide();
+                                                if (bMap != null) {
+                                                    try {
+                                                        if (bMap != null) {
+                                                            ImgListItem.setDownImg(bMap);
+                                                            ImgListItem.setDownUri(ShareBitmap(bMap,ServiceCursor,id));
+                                                            /*
+                                                            String path = Images.Media.insertImage(context.getContentResolver(),
+                                                                    bMap, "Image", "Image" + id);
+                                                            Uri newUri = Uri.parse(path);
+                                                            ShareUri(ServiceCursor, id, newUri);
+                                                            */
+                                                        }
+                                                    } catch (Exception e) {
+                                                        // TODO Auto-generated catch block
+                                                        e.printStackTrace();
+                                                        lib.ShowToast(context, e.getMessage());
+                                                    }
+                                                } else {
+                                                    lib.ShowToast(context, getS(R.string.Couldnotload) + " " + ImgListItem.FileName);
+                                                }
+                                            }
+                                        };
+                                        Task.executeOnExecutor(executor);
+                                    }
+                                } catch (Exception ex) {
+                                    //resultTextView.setText("Error downloading picture: " + ex.getMessage());
+                                    lib.ShowToast(context, context.getString(R.string.Couldnotload) + " " + ImgListItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
+                                }
+                            }
+                            else
+                            {
                                 ShareUri(ServiceCursor, id, uri);
                             }
                         }
+
                         else
                         {
                             if (ImgListItem.getDownUri() != null)
