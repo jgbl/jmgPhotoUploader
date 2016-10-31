@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.dropbox.core.android.Auth;
 
+import org.de.jmg.jmgphotouploader.JMPPPApplication;
+
 
 /**
  * Base class for Activities that require auth tokens
@@ -32,7 +34,9 @@ public abstract class DropboxActivity extends Activity {
 
     private void initAndLoadData(String accessToken) {
         DropboxClientFactory.init(accessToken);
-        PicassoClient.init(getApplicationContext(), DropboxClientFactory.getClient());
+        JMPPPApplication app = (JMPPPApplication)getApplication();
+        app.setDropboxClient(DropboxClientFactory.getClient());
+        //PicassoClient.init(getApplicationContext(), DropboxClientFactory.getClient());
         loadData();
     }
 

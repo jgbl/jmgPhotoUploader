@@ -27,6 +27,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 
+import com.dropbox.core.v2.DbxClientV2;
 import com.google.api.services.drive.Drive;
 import com.microsoft.live.LiveAuthClient;
 import com.microsoft.live.LiveAuthListener;
@@ -41,6 +42,7 @@ public class JMPPPApplication extends Application {
     private LiveAuthClient mAuthClient;
     private LiveConnectClient mConnectClient;
     private com.google.api.services.drive.Drive mGoogleDriveClient;
+    private DbxClientV2 mDropboxClient;
     private LiveConnectSession mSession;
     public java.util.ArrayList<ImgFolder> BMList = new java.util.ArrayList<ImgFolder>();
     public PhotoFolderAdapter ppa;
@@ -108,5 +110,12 @@ public class JMPPPApplication extends Application {
     public void setSession(LiveConnectSession session) {
         mSession = session;
     }
-    
+
+    public void setDropboxClient(DbxClientV2 dropboxClient) {
+        mDropboxClient = dropboxClient;
+    }
+    public DbxClientV2 getDropboxClient()
+    {
+        return  mDropboxClient;
+    }
 }
