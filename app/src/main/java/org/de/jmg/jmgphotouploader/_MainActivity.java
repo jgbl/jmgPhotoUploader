@@ -587,6 +587,8 @@ public class _MainActivity extends Activity
     	Toast.makeText(this, getString(R.string.onActivityResultcalled), Toast.LENGTH_LONG).show();
         lib.setClient(app.getConnectClient());
     	lib.setClientGoogle(app.getGoogleDriveClient());
+		lib.setClientDropbox(app.getDropboxClient());
+		
 		if (requestCode == LoginLiveActivity.requestCode)
 		{
 			_liveLock = false;
