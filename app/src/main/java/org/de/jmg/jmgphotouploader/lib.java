@@ -126,49 +126,57 @@ public class lib {
 
 
     public static void GetThumbnails(Activity context, boolean Internal, android.database.Cursor mediaCursor, java.util.ArrayList<ImgFolder> BMList) {
-        if (mediaCursor.getCount() > 0) {
-            //await System.Threading.Tasks.Task.Run (() => {
-            mediaCursor.moveToFirst();
-            int ColumnIndexID = mediaCursor.getColumnIndex(MediaStore.Images.Media._ID);
-            int ColumnIndexData = mediaCursor.getColumnIndex(MediaStore.Images.Media.DATA);
-            int ColumnIndexBucket = mediaCursor.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
-            // int ColumnIndexSize = mediaCursor.GetColumnIndex (MediaStore.Images.Media.InterfaceConsts.Size);
-            try {
-                context.setProgressBarVisibility(true);
-                for (int i = 0; i <= (mediaCursor.getCount() - 1); i++) {
-                    mediaCursor.moveToPosition(i);
-                    context.setProgress(i);
-                    int imageId = mediaCursor.getInt(ColumnIndexID);
-
-                    if (true) {
-                        android.net.Uri Uri;
-                        //String size = "";
-                        if (!Internal) {
-                            Uri = Images.Media.INTERNAL_CONTENT_URI;//android.support.v4.media. MediaStore.Files.getContentUri("external", imageId);
-                        } else {
-                            Uri = Images.Media.EXTERNAL_CONTENT_URI;//MediaStore.Files.getContentUri("internal", imageId);
-                        }
-
-                        //if (bitmap != null) {
-                        String folder = mediaCursor.getString(ColumnIndexData);
-                        //img.Dispose();
-                        //System.Diagnostics.Debug.Print (lib.getRealPathFromURI (context, Uri));
-                        String Bucket = mediaCursor.getString(ColumnIndexBucket);
-
-                        ImgFolder Folder = FindFolder(BMList, Bucket);
-                        if (Folder == null) {
-                            Folder = new ImgFolder(Bucket, ImgFolder.Type.Local);
-                            BMList.add(Folder);
-                        }
-                        Folder.items.add(new ImgListItem(context, "", imageId, (new java.io.File(folder)).getName(), Uri.parse("file://" + folder), folder, ImgFolder.Type.Local, null));
-                        //}
-                    }
-                }
-            } finally {
-                context.setProgressBarVisibility(false);
+        boolean blnFolderItemLockInc = false;
+        try {
+            if (getFolderItemLock++ > 1) {
+                getFolderItemLock--;
+                return;
+            } else {
+                blnFolderItemLockInc = true;
             }
-            //});
-        } else {
+            if (mediaCursor.getCount() > 0) {
+                //await System.Threading.Tasks.Task.Run (() => {
+                mediaCursor.moveToFirst();
+                int ColumnIndexID = mediaCursor.getColumnIndex(MediaStore.Images.Media._ID);
+                int ColumnIndexData = mediaCursor.getColumnIndex(MediaStore.Images.Media.DATA);
+                int ColumnIndexBucket = mediaCursor.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
+                // int ColumnIndexSize = mediaCursor.GetColumnIndex (MediaStore.Images.Media.InterfaceConsts.Size);
+                try {
+                    context.setProgressBarVisibility(true);
+                    for (int i = 0; i <= (mediaCursor.getCount() - 1); i++) {
+                        mediaCursor.moveToPosition(i);
+                        context.setProgress(i);
+                        int imageId = mediaCursor.getInt(ColumnIndexID);
+
+                        if (true) {
+                            android.net.Uri Uri;
+                            //String size = "";
+                            if (!Internal) {
+                                Uri = Images.Media.INTERNAL_CONTENT_URI;//android.support.v4.media. MediaStore.Files.getContentUri("external", imageId);
+                            } else {
+                                Uri = Images.Media.EXTERNAL_CONTENT_URI;//MediaStore.Files.getContentUri("internal", imageId);
+                            }
+
+                            //if (bitmap != null) {
+                            String folder = mediaCursor.getString(ColumnIndexData);
+                            //img.Dispose();
+                            //System.Diagnostics.Debug.Print (lib.getRealPathFromURI (context, Uri));
+                            String Bucket = mediaCursor.getString(ColumnIndexBucket);
+
+                            ImgFolder Folder = FindFolder(BMList, Bucket);
+                            if (Folder == null) {
+                                Folder = new ImgFolder(Bucket, ImgFolder.Type.Local);
+                                BMList.add(Folder);
+                            }
+                            Folder.items.add(new ImgListItem(context, "", imageId, (new java.io.File(folder)).getName(), Uri.parse("file://" + folder), folder, ImgFolder.Type.Local, null));
+                            //}
+                        }
+                    }
+                } finally {
+                    context.setProgressBarVisibility(false);
+                }
+                //});
+            } else {
 
 			/*
             foreach (System.IO.FileInfo F in new System.IO.DirectoryInfo(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryPictures).Path).GetFiles("*.*",SearchOption.AllDirectories))
@@ -183,21 +191,25 @@ public class lib {
 				}
 
 			}*/
-            if (BMList.isEmpty()) {
-                //this.Resources.GetDrawable(Resource.Drawable.P1040598)
-                ImgFolder Folder1 = new ImgFolder("Test1", ImgFolder.Type.Local);
-                ImgFolder Folder2 = new ImgFolder("Test2", ImgFolder.Type.Local);
-                BMList.add(Folder1);
-                BMList.add(Folder2);
-                for (int i = 1; i <= 10; i++) {
-                    ImgListItem newItem1 = new ImgListItem(context, "", -1, "RES", null, null, ImgFolder.Type.unknown, "0");
-                    newItem1.setImg(BitmapFactory.decodeResource(context.getResources(), R.drawable.ressmall));
-                    Folder1.items.add(newItem1);
-                    ImgListItem newItem2 = new ImgListItem(context, "", -1, "RES2", null, null, ImgFolder.Type.unknown, "0");
-                    newItem2.setImg(BitmapFactory.decodeResource(context.getResources(), R.drawable.res2small));
-                    Folder2.items.add(newItem2);
+                if (BMList.isEmpty()) {
+                    //this.Resources.GetDrawable(Resource.Drawable.P1040598)
+                    ImgFolder Folder1 = new ImgFolder("Test1", ImgFolder.Type.Local);
+                    ImgFolder Folder2 = new ImgFolder("Test2", ImgFolder.Type.Local);
+                    BMList.add(Folder1);
+                    BMList.add(Folder2);
+                    for (int i = 1; i <= 10; i++) {
+                        ImgListItem newItem1 = new ImgListItem(context, "", -1, "RES", null, null, ImgFolder.Type.unknown, "0");
+                        newItem1.setImg(BitmapFactory.decodeResource(context.getResources(), R.drawable.ressmall));
+                        Folder1.items.add(newItem1);
+                        ImgListItem newItem2 = new ImgListItem(context, "", -1, "RES2", null, null, ImgFolder.Type.unknown, "0");
+                        newItem2.setImg(BitmapFactory.decodeResource(context.getResources(), R.drawable.res2small));
+                        Folder2.items.add(newItem2);
+                    }
                 }
             }
+        }
+        finally {
+            getFolderItemLock--;
         }
     }
 
@@ -238,7 +250,7 @@ public class lib {
         mclientDropbox = clientDropbox;
     }
 
-    public static void GetThumbnailsOneDrive(final Activity context, final String folder, final ImgFolder imgFolder, final int GroupPosition, final ExpandableListView lv) throws LiveOperationException, InterruptedException {
+    public static void GetThumbnailsOneDrive(final Activity context, String folder, final ImgFolder imgFolder, final int GroupPosition, final ExpandableListView lv) throws LiveOperationException, InterruptedException {
         boolean blnFolderItemLockInc = false;
         try {
             if (getFolderItemLock++ > 1)
@@ -250,10 +262,11 @@ public class lib {
             {
                 blnFolderItemLockInc = true;
             }
+            if (folder.equalsIgnoreCase("One Drive")) folder = "/";
             String queryString = "me/skydrive/files" + folder;//?filter=folders,albums";
             if (imgFolder != null && imgFolder.id != null) queryString = imgFolder.id + "/files";
             //Latch = new CountDownLatch(1);
-
+            final String finalfolder = folder;
             lib.getClient(context).getAsync(queryString, new LiveOperationListener() {
                 @Override
                 public void onError(LiveOperationException exception,
@@ -281,6 +294,7 @@ public class lib {
 
                                     lib.BMList.clear();
                                     int countFolders = 0;
+                                    boolean blnChanged = false;
                                     for (int i = 0; i < data.length(); i++) {
                                         final JSONObject oneDriveItem = data.optJSONObject(i);
                                         if (oneDriveItem != null) {
@@ -299,7 +313,8 @@ public class lib {
                                                 final android.net.Uri auri = android.net.Uri.parse(oneDriveItem.optString("source"));
                                                 ImgListItem Item = (new ImgListItem(context, id, 0, itemName, auri, uri, ImgFolder.Type.OneDriveAlbum, width + "x" + height));
                                                 lib.BMList.add(Item);
-                                                ppa.notifyDataSetChanged();
+                                                blnChanged = true;
+                                                //ppa.notifyDataSetChanged();
                                             } else if (itemType.equals("album") || itemType.equals("folder")) {
                                                 ImgFolder.Type type;
                                                 if (itemType.equals("album")) {
@@ -309,12 +324,18 @@ public class lib {
                                                 }
                                                 int position = ppa.rows.indexOf(imgFolder);
                                                 countFolders++;
-                                                ppa.rows.add(position + countFolders, new ImgFolder(folder + itemName + "/", type, id));
-                                                ppa.notifyDataSetChanged();
+                                                ppa.rows.add(position + countFolders, new ImgFolder(finalfolder + itemName + "/", type, id));
+                                                //ppa.notifyDataSetChanged();
+                                                blnChanged = true;
                                             }
 
                                         }
                                     }
+                                    imgFolder.fetched = true;
+                                    if (imgFolder.Name == "One Drive") {
+                                        imgFolder.Name = "/";
+                                    }
+                                    if (blnChanged) ppa.notifyDataSetChanged();
                                 }
                             }
                         }
@@ -440,12 +461,13 @@ public class lib {
         }
     }
     public static int getFolderItemLock = 0;
-    public static void GetThumbnailsGoogle(final Activity context, final String folder, final ImgFolder imgFolder, final int GroupPosition, final ExpandableListView lv) throws LiveOperationException, InterruptedException, IOException {
+    public static void GetThumbnailsGoogle(final Activity context, String folder, final ImgFolder imgFolder, final int GroupPosition, final ExpandableListView lv) throws LiveOperationException, InterruptedException, IOException {
         boolean blnFolderItemLockInc = false;
         try {
             if (lib.getClientGoogle(context) != null)
             {
                 String queryString = null;
+                if (folder.equalsIgnoreCase("Google Drive")) folder = "/";
                 if (folder == null||folder.equalsIgnoreCase("/")) {
                     queryString =  "'root' in parents";
                 }
@@ -457,6 +479,7 @@ public class lib {
                     queryString = "'" + imgFolder.id + "' in parents";
                 //Latch = new CountDownLatch(1);
                 final String finalQueryString = queryString;
+                final String finalfolder = folder;
                 if (getFolderItemLock++ > 1)
                 {
                     getFolderItemLock--;
@@ -512,6 +535,7 @@ public class lib {
                                 List<com.google.api.services.drive.model.File> files = result;
                                 if (files != null) {
                                     lib.BMList.clear();
+                                    boolean blnChanged = false;
                                     int countFolders = 0;
                                     for (int i = 0; i < files.size(); i++) {
                                         final com.google.api.services.drive.model.File GoogleDriveItem = files.get(i);
@@ -543,7 +567,8 @@ public class lib {
                                                 ImgListItem Item = (new ImgListItem(context, id, 0, itemName, auri, uri, ImgFolder.Type.Google, size));
                                                 Item.ThumbNailLink = ThumbNailLink;
                                                 lib.BMList.add(Item);
-                                                ppa.notifyDataSetChanged();
+                                                blnChanged = true;
+                                                //ppa.notifyDataSetChanged();
                                             } else if (itemType.equals("album") || itemType.equals("folder")) {
                                                 ImgFolder.Type type;
                                                 if (itemType.equals("album")) {
@@ -553,12 +578,18 @@ public class lib {
                                                 }
                                                 int position = ppa.rows.indexOf(imgFolder);
                                                 countFolders++;
-                                                ppa.rows.add(position + countFolders, new ImgFolder(folder + itemName + "/", type, id));
-                                                ppa.notifyDataSetChanged();
+                                                ppa.rows.add(position + countFolders, new ImgFolder(finalfolder + itemName + "/", type, id));
+                                                blnChanged = true;
+                                                //ppa.notifyDataSetChanged();
                                             }
 
                                         }
                                     }
+                                    imgFolder.fetched = true;
+                                    if (imgFolder.Name == "Google Drive") {
+                                        imgFolder.Name = "/";
+                                    }
+                                    if (blnChanged) ppa.notifyDataSetChanged();
                                 }
                             }
 
@@ -581,7 +612,7 @@ public class lib {
         }
     }
 
-    public static void GetThumbnailsDropbox(final Activity context, final String folder, final ImgFolder imgFolder, final int GroupPosition, final ExpandableListView lv) throws LiveOperationException, InterruptedException, IOException {
+    public static void GetThumbnailsDropbox(final Activity context, String folder, final ImgFolder imgFolder, final int GroupPosition, final ExpandableListView lv) throws LiveOperationException, InterruptedException, IOException {
         boolean blnFolderItemLockInc = false;
         try {
             if (lib.getClientDropbox(context) != null)
@@ -596,6 +627,7 @@ public class lib {
                     blnFolderItemLockInc = true;
                 }
                 String queryString = "";
+                if (folder.equalsIgnoreCase("Dropbox")) folder = "/";
                 if (folder == null||folder.equalsIgnoreCase("/")) {
                     queryString =  "";
                 }
@@ -607,6 +639,7 @@ public class lib {
 
                 //Latch = new CountDownLatch(1);
                 final String finalQueryString = queryString;
+                final String finalfolder = folder;
 
                 AsyncTask<Void,Void,List<Metadata>> task = new AsyncTask<Void,Void,List<Metadata>>()
                 {
@@ -649,6 +682,7 @@ public class lib {
                                 if (files != null) {
                                     lib.BMList.clear();
                                     int countFolders = 0;
+                                    boolean blnChanged = false;
                                     for (int i = 0; i < files.size(); i++) {
                                         final Metadata DropboxItem = files.get(i);
                                         if (DropboxItem != null) {
@@ -695,7 +729,8 @@ public class lib {
                                                 ImgListItem Item = (new ImgListItem(context, id, 0, itemName, auri, uri, ImgFolder.Type.Dropbox, size));
                                                 Item.ThumbNailLink = ThumbNailLink;
                                                 lib.BMList.add(Item);
-                                                ppa.notifyDataSetChanged();
+                                                blnChanged = true;
+                                                //ppa.notifyDataSetChanged();
                                             } else if (itemType.equals("album") || itemType.equals("folder")) {
                                                 ImgFolder.Type type;
                                                 if (itemType.equals("album")) {
@@ -705,12 +740,19 @@ public class lib {
                                                 }
                                                 int position = ppa.rows.indexOf(imgFolder);
                                                 countFolders++;
-                                                ppa.rows.add(position + countFolders, new ImgFolder(folder + itemName + "/", type, id));
-                                                ppa.notifyDataSetChanged();
+                                                ppa.rows.add(position + countFolders, new ImgFolder(finalfolder + itemName + "/", type, id));
+                                                blnChanged = true;
+                                                //ppa.notifyDataSetChanged();
                                             }
 
                                         }
                                     }
+                                    imgFolder.fetched = true;
+                                    if (imgFolder.Name == "Dropbox") {
+                                        imgFolder.Name = "/";
+                                    }
+                                    if (blnChanged) ppa.notifyDataSetChanged();
+
                                 }
                             }
                         }

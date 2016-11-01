@@ -596,7 +596,7 @@ public class _MainActivity extends Activity
 				final int GroupPosition = data.getExtras().getInt("GroupPosition");
 				try {
 					lib.GetThumbnailsOneDrive(this, "/", app.OneDriveFolder, GroupPosition, _MainActivity.this.lv);
-					if (app.OneDriveFolder != null) app.OneDriveFolder.fetched = true;
+					//if (app.OneDriveFolder != null) app.OneDriveFolder.fetched = true;
 				} catch (LiveOperationException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -614,7 +614,7 @@ public class _MainActivity extends Activity
 
 				try {
 					lib.GetThumbnailsGoogle(this, "/", app.GoogleFolder, GroupPosition, _MainActivity.this.lv);
-					if (app.GoogleFolder != null) app.GoogleFolder.fetched = true;
+					//if (app.GoogleFolder != null) app.GoogleFolder.fetched = true;
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -630,7 +630,7 @@ public class _MainActivity extends Activity
 
 				try {
 					lib.GetThumbnailsDropbox(this, "/", app.DropboxFolder, GroupPosition, _MainActivity.this.lv);
-					if (app.DropboxFolder != null) app.DropboxFolder.fetched = true;
+					//if (app.DropboxFolder != null) app.DropboxFolder.fetched = true;
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
