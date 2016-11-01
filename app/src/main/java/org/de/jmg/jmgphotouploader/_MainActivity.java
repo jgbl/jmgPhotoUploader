@@ -588,7 +588,7 @@ public class _MainActivity extends Activity
         lib.setClient(app.getConnectClient());
     	lib.setClientGoogle(app.getGoogleDriveClient());
 		lib.setClientDropbox(app.getDropboxClient());
-		
+
 		if (requestCode == LoginLiveActivity.requestCode)
 		{
 			_liveLock = false;
