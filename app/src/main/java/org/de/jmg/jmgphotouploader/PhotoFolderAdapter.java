@@ -1068,7 +1068,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 
     private void GetFolderItems(ImgFolder Folder, int GroupPosition)
     {
-        if(getFolderItemsLock) return;
+
         if ((Folder.type == ImgFolder.Type.OneDriveAlbum
                 || Folder.type == ImgFolder.Type.OneDriveFolder
                 || Folder.type == ImgFolder.Type.Google
@@ -1077,6 +1077,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
             if (Folder.Name == "One Drive" || Folder.Name == "Google Drive" || Folder.Name == "Dropbox") {
                 Folder.Name = "/";
             }
+            if(lib.getFolderItemLock>0) return;
             if (Folder.items.size() == 0 && Folder.fetched == false) {
                 lib.LastgroupPosition = GroupPosition;
                 if (Folder.type == ImgFolder.Type.Google) {
