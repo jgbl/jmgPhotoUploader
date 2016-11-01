@@ -1064,9 +1064,11 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
     public String getS(int resid) {
         return context.getString(resid);
     }
+    private boolean getFolderItemsLock = false;
 
-
-    private void GetFolderItems(ImgFolder Folder, int GroupPosition) {
+    private void GetFolderItems(ImgFolder Folder, int GroupPosition)
+    {
+        if(getFolderItemsLock) return;
         if ((Folder.type == ImgFolder.Type.OneDriveAlbum
                 || Folder.type == ImgFolder.Type.OneDriveFolder
                 || Folder.type == ImgFolder.Type.Google

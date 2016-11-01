@@ -432,6 +432,7 @@ public class lib {
         try {
             if (lib.getClientGoogle(context) != null)
             {
+                getFolderItemsLock = true;
                 String queryString = null;
                 if (folder == null||folder.equalsIgnoreCase("/")) {
                     queryString =  "'root' in parents";
