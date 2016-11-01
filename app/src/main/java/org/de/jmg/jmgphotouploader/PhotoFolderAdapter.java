@@ -336,7 +336,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                                     if (mBitmap != null)
                                     {
                                         ImgListItem.setDownImg((mBitmap));
-                                        ImgListItem.setDownUri(ShareBitmapShare(mBitmap));
+                                        ImgListItem.setDownUri(ShareBitmapShare(mBitmap,ImgListItem.Name));
                                     }
                                     s.close();
                                 } catch (Exception e) {
@@ -446,7 +446,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                                             try {
                                                 if (bMap != null) {
                                                     ImgListItem.setDownImg(bMap);
-                                                    ImgListItem.setDownUri(ShareBitmapShare(bMap));
+                                                    ImgListItem.setDownUri(ShareBitmapShare(bMap,ImgListItem.Name));
                                                             /*
                                                             String path = Images.Media.insertImage(context.getContentResolver(),
                                                                     bMap, "Image", "Image" + id);
@@ -551,7 +551,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                                             try {
                                                 if (bMap != null) {
                                                     ImgListItem.setDownImg(bMap);
-                                                    ImgListItem.setDownUri(ShareBitmapShare(bMap));
+                                                    ImgListItem.setDownUri(ShareBitmapShare(bMap,ImgListItem.Name));
                                                             /*
                                                             String path = Images.Media.insertImage(context.getContentResolver(),
                                                                     bMap, "Image", "Image" + id);
@@ -590,7 +590,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                     }
                     else if (ImgListItem.getDownImg() != null) {
                         try {
-                            ImgListItem.setDownUri(ShareBitmapShare(ImgListItem.getDownImg()));
+                            ImgListItem.setDownUri(ShareBitmapShare(ImgListItem.getDownImg(),ImgListItem.Name));
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -1807,7 +1807,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                             if (mBitmap != null)
                                             {
                                                 ImgListItem.setDownImg((mBitmap));
-                                                ImgListItem.setDownUri(ShareBitmap(mBitmap,ServiceCursor,id));
+                                                ImgListItem.setDownUri(ShareBitmap(mBitmap,ServiceCursor,id,ImgListItem.Name));
                                             }
                                             s.close();
                                         } catch (Exception e) {
@@ -1917,7 +1917,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                                     try {
                                                         if (bMap != null) {
                                                             ImgListItem.setDownImg(bMap);
-                                                            ImgListItem.setDownUri(ShareBitmap(bMap,ServiceCursor,id));
+                                                            ImgListItem.setDownUri(ShareBitmap(bMap,ServiceCursor,id,ImgListItem.Name));
                                                             /*
                                                             String path = Images.Media.insertImage(context.getContentResolver(),
                                                                     bMap, "Image", "Image" + id);
@@ -2022,7 +2022,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                                     try {
                                                         if (bMap != null) {
                                                             ImgListItem.setDownImg(bMap);
-                                                            ImgListItem.setDownUri(ShareBitmap(bMap,ServiceCursor,id));
+                                                            ImgListItem.setDownUri(ShareBitmap(bMap,ServiceCursor,id,ImgListItem.Name));
                                                             /*
                                                             String path = Images.Media.insertImage(context.getContentResolver(),
                                                                     bMap, "Image", "Image" + id);
@@ -2060,7 +2060,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                 ShareUri(ServiceCursor,id,ImgListItem.getDownUri());
                             }
                             else if (ImgListItem.getDownImg() != null) {
-                               ImgListItem.setDownUri(ShareBitmap(ImgListItem.getDownImg(),ServiceCursor,id));
+                               ImgListItem.setDownUri(ShareBitmap(ImgListItem.getDownImg(),ServiceCursor,id,ImgListItem.Name));
                                 /*String path = Images.Media.insertImage(context.getContentResolver(),
                                         ImgListItem.getImg(), "Image Description", null);
                                 Uri newUri = Uri.parse(path);
@@ -2082,11 +2082,14 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
         }
 
     };
-    private Uri ShareBitmap(Bitmap mBitmap, Cursor c, int id) throws IOException {
+    private Uri ShareBitmap(Bitmap mBitmap, Cursor c, int id,String name) throws IOException {
 
         File cacheDir = context.getExternalCacheDir();
         if (cacheDir == null) cacheDir = context.getCacheDir();
-        File sfile = File.createTempFile("SharePic", ".jpg", cacheDir);
+        if (name == null) name = "SharePic";
+        int f = name.lastIndexOf(".");
+        if (f>0) name = name.substring(0,f);
+        File sfile = File.createTempFile(name, ".jpg", cacheDir);
         JMPPPApplication myApp = (JMPPPApplication) context.getApplication();
         myApp.tempFiles.add (sfile);
         FileOutputStream filecon = new FileOutputStream(sfile);
@@ -2100,11 +2103,14 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
         return newUri;
     }
 
-    private Uri ShareBitmapShare(Bitmap mBitmap) throws IOException {
+    private Uri ShareBitmapShare(Bitmap mBitmap,String name) throws IOException {
 
         File cacheDir = context.getExternalCacheDir();
         if (cacheDir == null) cacheDir = context.getCacheDir();
-        File sfile = File.createTempFile("SharePic", ".jpg", cacheDir);
+        if (name == null) name = "SharePic";
+        int f = name.lastIndexOf(".");
+        if (f>0) name = name.substring(0,f);
+        File sfile = File.createTempFile(name, ".jpg", cacheDir);
         JMPPPApplication myApp = (JMPPPApplication) context.getApplication();
         myApp.tempFiles.add (sfile);
         FileOutputStream filecon = new FileOutputStream(sfile);
