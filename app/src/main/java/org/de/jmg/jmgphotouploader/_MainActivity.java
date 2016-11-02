@@ -309,6 +309,9 @@ public class _MainActivity extends Activity
 				}
 			}
 			app.tempFiles.clear();
+			app.BMList.clear();
+			app.ppa = null;
+			app = null;
 		}
 		catch(Exception ex)
 		{

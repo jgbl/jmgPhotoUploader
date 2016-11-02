@@ -445,6 +445,8 @@ public class lib
         }
         catch (Exception e)
         {
+            mProgress.hide();
+            mProgress.dismiss();
             if (blnFolderItemLockInc) getFolderItemLock--;
             lib.ShowException(context, e);
             if (e instanceof LiveOperationException)
@@ -609,13 +611,18 @@ public class lib
                     blnFolderItemLockInc = true;
                 }
 
-                mProgress = new ProgressDialog(context);
-                mProgress.setMessage(context.getString(R.string.gettingData));
-                mProgress.show();
                 ;
 
                 AsyncTask<Void, Void, List<com.google.api.services.drive.model.File>> task = new AsyncTask<Void, Void, List<com.google.api.services.drive.model.File>>()
                 {
+                    @Override
+                    protected void onPreExecute()
+                    {
+                        mProgress = new ProgressDialog(context);
+                        mProgress.setMessage(context.getString(R.string.gettingData));
+                        mProgress.show();
+                    }
+
                     @Override
                     protected List<com.google.api.services.drive.model.File> doInBackground(Void... params)
                     {
@@ -805,12 +812,16 @@ public class lib
                 //Latch = new CountDownLatch(1);
                 final String finalQueryString = queryString;
                 final String finalfolder = folder;
-                mProgress = new ProgressDialog(context);
-                mProgress.setMessage(context.getString(R.string.gettingData));
-                mProgress.show();
                 ;
                 AsyncTask<Void, Void, List<Metadata>> task = new AsyncTask<Void, Void, List<Metadata>>()
                 {
+                    protected void onPreExecute()
+                    {
+                        mProgress = new ProgressDialog(context);
+                        mProgress.setMessage(context.getString(R.string.gettingData));
+                        mProgress.show();
+                    }
+
                     @Override
                     protected List<Metadata> doInBackground(Void... params)
                     {

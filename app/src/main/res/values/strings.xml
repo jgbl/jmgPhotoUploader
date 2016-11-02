@@ -33,6 +33,6 @@
     <string name="MaxLogin">Maximum number of login attempts reached!</string>
     <string name="NoNetwork">\"No network connection available.\"</string>
     <string name="send_to">send to</string>
-    <string name="gettingData">hole Daten ....</string>
+    <string name="gettingData">getting data ....</string>
 
 </resources>

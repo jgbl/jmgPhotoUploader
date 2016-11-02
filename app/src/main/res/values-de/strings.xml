@@ -32,5 +32,5 @@
     <string name="MaxLogin">Die maximale Anzahl von Login Versuchen wurde erreicht!</string>
     <string name="NoNetwork">\"Es besteht keine Netzwerk Verbindung!\"</string>
     <string name="send_to">send to</string>
-    <string name="gettingData">getting data....</string>
+    <string name="gettingData">hole Daten ....</string>
 </resources>
