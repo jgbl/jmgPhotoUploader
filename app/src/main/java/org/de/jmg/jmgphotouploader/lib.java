@@ -294,6 +294,7 @@ public class lib {
 
                                     lib.BMList.clear();
                                     int countFolders = 0;
+                                    final int position = ppa.rows.indexOf(imgFolder);
                                     boolean blnChanged = false;
                                     for (int i = 0; i < data.length(); i++) {
                                         final JSONObject oneDriveItem = data.optJSONObject(i);
@@ -322,7 +323,6 @@ public class lib {
                                                 } else {
                                                     type = ImgFolder.Type.OneDriveFolder;
                                                 }
-                                                int position = ppa.rows.indexOf(imgFolder);
                                                 countFolders++;
                                                 ppa.rows.add(position + countFolders, new ImgFolder(finalfolder + itemName + "/", type, id));
                                                 //ppa.notifyDataSetChanged();
@@ -335,7 +335,20 @@ public class lib {
                                     if (imgFolder.Name == "One Drive") {
                                         imgFolder.Name = "/";
                                     }
-                                    if (blnChanged) ppa.notifyDataSetChanged();
+                                    if (blnChanged) {
+                                        for (int i = position + countFolders; i < ppa.rows.size(); i++)
+                                        {
+                                            if(ppa.rows.get(i).expanded)
+                                            {
+                                                ppa.lv.expandGroup(i);
+                                            }
+                                            else
+                                            {
+                                                ppa.lv.collapseGroup(i);
+                                            }
+                                        }
+                                        ppa.notifyDataSetChanged();
+                                    }
                                 }
                             }
                         }
@@ -537,6 +550,8 @@ public class lib {
                                     lib.BMList.clear();
                                     boolean blnChanged = false;
                                     int countFolders = 0;
+                                    final int position = ppa.rows.indexOf(imgFolder);
+
                                     for (int i = 0; i < files.size(); i++) {
                                         final com.google.api.services.drive.model.File GoogleDriveItem = files.get(i);
                                         if (GoogleDriveItem != null) {
@@ -576,7 +591,6 @@ public class lib {
                                                 } else {
                                                     type = ImgFolder.Type.Google;
                                                 }
-                                                int position = ppa.rows.indexOf(imgFolder);
                                                 countFolders++;
                                                 ppa.rows.add(position + countFolders, new ImgFolder(finalfolder + itemName + "/", type, id));
                                                 blnChanged = true;
@@ -589,7 +603,20 @@ public class lib {
                                     if (imgFolder.Name == "Google Drive") {
                                         imgFolder.Name = "/";
                                     }
-                                    if (blnChanged) ppa.notifyDataSetChanged();
+                                    if (blnChanged) {
+                                        for (int i = position + countFolders; i < ppa.rows.size(); i++)
+                                        {
+                                            if(ppa.rows.get(i).expanded)
+                                            {
+                                                ppa.lv.expandGroup(i);
+                                            }
+                                            else
+                                            {
+                                                ppa.lv.collapseGroup(i);
+                                            }
+                                        }
+                                        ppa.notifyDataSetChanged();
+                                    }
                                 }
                             }
 
@@ -683,6 +710,8 @@ public class lib {
                                     lib.BMList.clear();
                                     int countFolders = 0;
                                     boolean blnChanged = false;
+                                    final int position = ppa.rows.indexOf(imgFolder);
+
                                     for (int i = 0; i < files.size(); i++) {
                                         final Metadata DropboxItem = files.get(i);
                                         if (DropboxItem != null) {
@@ -738,7 +767,6 @@ public class lib {
                                                 } else {
                                                     type = ImgFolder.Type.Dropbox;
                                                 }
-                                                int position = ppa.rows.indexOf(imgFolder);
                                                 countFolders++;
                                                 ppa.rows.add(position + countFolders, new ImgFolder(finalfolder + itemName + "/", type, id));
                                                 blnChanged = true;
@@ -751,8 +779,20 @@ public class lib {
                                     if (imgFolder.Name == "Dropbox") {
                                         imgFolder.Name = "/";
                                     }
-                                    if (blnChanged) ppa.notifyDataSetChanged();
-
+                                    if (blnChanged) {
+                                        for (int i = position + countFolders; i < ppa.rows.size(); i++)
+                                        {
+                                            if(ppa.rows.get(i).expanded)
+                                            {
+                                                ppa.lv.expandGroup(i);
+                                            }
+                                            else
+                                            {
+                                                ppa.lv.collapseGroup(i);
+                                            }
+                                        }
+                                        ppa.notifyDataSetChanged();
+                                    }
                                 }
                             }
                         }

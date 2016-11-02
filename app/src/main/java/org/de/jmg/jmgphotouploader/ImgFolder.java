@@ -25,5 +25,6 @@ public class ImgFolder extends Object
 	public Type type = Type.Local;
 	public String id;
 	public boolean fetched;
+	public boolean expanded;
 	public java.util.ArrayList<ImgListItem> items = new java.util.ArrayList<ImgListItem>();
 }
