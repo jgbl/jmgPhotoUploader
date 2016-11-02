@@ -5,6 +5,7 @@ package org.de.jmg.jmgphotouploader;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -59,6 +60,8 @@ import static com.dropbox.core.android.AuthActivity.result;
 public class lib
 {
 
+
+    private static ProgressDialog mProgress;
 
     public lib()
     {
@@ -316,6 +319,12 @@ public class lib
             if (imgFolder != null && imgFolder.id != null) queryString = imgFolder.id + "/files";
             //Latch = new CountDownLatch(1);
             final String finalfolder = folder;
+
+            mProgress = new ProgressDialog(context);
+            mProgress.setMessage(context.getString(R.string.gettingData));
+            mProgress.show();
+            ;
+
             lib.getClient(context).getAsync(queryString, new LiveOperationListener()
             {
                 @Override
@@ -323,6 +332,8 @@ public class lib
                                     LiveOperation operation)
                 {
                     getFolderItemLock--;
+                    mProgress.hide();
+                    mProgress.dismiss();
                     lib.ShowException(context, exception);
                     if (imgFolder != null) imgFolder.fetched = false;
                     LiveOp = operation;
@@ -426,6 +437,8 @@ public class lib
                     finally
                     {
                         getFolderItemLock--;
+                        mProgress.hide();
+                        mProgress.dismiss();
                     }
                 }
             });
@@ -595,6 +608,12 @@ public class lib
                 {
                     blnFolderItemLockInc = true;
                 }
+
+                mProgress = new ProgressDialog(context);
+                mProgress.setMessage(context.getString(R.string.gettingData));
+                mProgress.show();
+                ;
+
                 AsyncTask<Void, Void, List<com.google.api.services.drive.model.File>> task = new AsyncTask<Void, Void, List<com.google.api.services.drive.model.File>>()
                 {
                     @Override
@@ -739,6 +758,8 @@ public class lib
                         finally
                         {
                             getFolderItemLock--;
+                            mProgress.hide();
+                            mProgress.dismiss();
                         }
                     }
                 };
@@ -784,7 +805,10 @@ public class lib
                 //Latch = new CountDownLatch(1);
                 final String finalQueryString = queryString;
                 final String finalfolder = folder;
-
+                mProgress = new ProgressDialog(context);
+                mProgress.setMessage(context.getString(R.string.gettingData));
+                mProgress.show();
+                ;
                 AsyncTask<Void, Void, List<Metadata>> task = new AsyncTask<Void, Void, List<Metadata>>()
                 {
                     @Override
@@ -950,6 +974,8 @@ public class lib
                         finally
                         {
                             getFolderItemLock--;
+                            mProgress.hide();
+                            mProgress.dismiss();
                         }
                     }
                 };
