@@ -147,7 +147,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 
                 if (blnRemoved)
                 {
-                    for (int iii = ii ; ii < rows.size(); ii++)
+                    for (int iii = ii; iii < rows.size(); iii++)
                     {
                         ImgFolder Folder3 = rows.get(iii);
                         if (Folder3.expanded)
