@@ -138,10 +138,20 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                     Folder.fetched = false;
                     Folder.items.clear();
                     PhotoFolderAdapter.this.notifyDataSetChanged();
+                    lib.ShowToast(PhotoFolderAdapter.this.context,"Expoanding group " + i + " " + rows.get(i).Name);
+
                 }
 
             }
         });
+
+
+        ((_MainActivity) context).lv.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+                                                                    @Override
+                                                                    public void onGroupExpand(int groupPosition) {
+                                                                        lib.ShowToast(PhotoFolderAdapter.this.context,"Expoanding group " + groupPosition + " " + rows.get(groupPosition).Name);
+                                                                    }
+                                                                });
         //((_MainActivity)context).lv.setOverScrollMode(View.OVER_SCROLL_NEVER);
         //SyncContext = (SynchronizationContext.Current != null) ? SynchronizationContext.Current : new SynchronizationContext();
     }
