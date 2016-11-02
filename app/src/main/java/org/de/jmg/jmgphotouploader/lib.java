@@ -402,7 +402,7 @@ public class lib
                                     }
                                     if (blnChanged)
                                     {
-                                        for (int i = position + countFolders; i < ppa.rows.size(); i++)
+                                        for (int i = position + 1; i < ppa.rows.size(); i++)
                                         {
                                             if (ppa.rows.get(i).expanded)
                                             {
@@ -715,7 +715,7 @@ public class lib
                                     }
                                     if (blnChanged)
                                     {
-                                        for (int i = position + countFolders; i < ppa.rows.size(); i++)
+                                        for (int i = position + 1; i < ppa.rows.size(); i++)
                                         {
                                             if (ppa.rows.get(i).expanded)
                                             {
@@ -927,7 +927,7 @@ public class lib
                                     }
                                     if (blnChanged)
                                     {
-                                        for (int i = position + countFolders; i < ppa.rows.size(); i++)
+                                        for (int i = position + 1; i < ppa.rows.size(); i++)
                                         {
                                             if (ppa.rows.get(i).expanded)
                                             {
