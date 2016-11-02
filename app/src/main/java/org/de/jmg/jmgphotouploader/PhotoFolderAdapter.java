@@ -12,9 +12,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Environment;
 import android.os.StrictMode;
-import android.provider.MediaStore.Images;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -39,7 +37,6 @@ import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ThumbnailFormat;
 import com.dropbox.core.v2.files.ThumbnailSize;
-import com.dropbox.core.v2.sharing.SharedLinkMetadata;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
@@ -720,12 +717,12 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                 LoadThumbnailDropbox(item, Image);
                 isDropbox = true;
             } else {
-                //BitmapWorkerAsyncTask Task = new BitmapWorkerAsyncTask(new ItemParams(item,Image,view), context);
                 if (mIsScrolling) {
                 } else {
-                    Runnable worker = new getBitmapWorkerThread(new ItemParams(item, Image, view), context);
-                    executor.submit(worker);
-                    //Task.execute();
+                    BitmapWorkerAsyncTask Task = new BitmapWorkerAsyncTask(new ItemParams(item,Image,view), context);
+                    //Runnable worker = new getBitmapWorkerThread(new ItemParams(item, Image, view), context);
+                    //executor.submit(worker);
+                    Task.executeOnExecutor(executor);
                 }
             }
 
@@ -1505,7 +1502,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
         //GetThumbnailsOneDriveAndSetLV(false);
     }
 
-
+    /*
     public class getBitmapWorkerThread implements Runnable {
 
         private String command;
@@ -1534,8 +1531,9 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
             return this.command;
         }
     }
+    */
 
-    public class BitmapWorkerAsyncTask extends AsyncTask {
+    public class BitmapWorkerAsyncTask extends AsyncTask<Void,Void,Bitmap> {
 
         private String command;
         private ItemParams p;
@@ -1547,14 +1545,23 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
         }
 
         @Override
-        protected Object doInBackground(Object... arg0) {
-            // TODO Auto-generated method stub
-            Bitmap img = p.item.getImg();
-            SetImageViewBitmap(new ItemParamsSet(p.img, img, p.view));
-            return null;
+        protected Bitmap doInBackground(Void... arg0) {
+            android.graphics.Bitmap img = null;
+            try {
+                img = p.item.getImg();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return img;
+        }
+        @Override
+        protected void onPostExecute(android.graphics.Bitmap bMap)
+        {
+            SetImageViewBitmap(new ItemParamsSet(p.img, bMap, p.view));
         }
 
-        private synchronized void SetImageViewBitmap(ItemParamsSet p) {
+        private void SetImageViewBitmap(ItemParamsSet p) {
+            if (p.img == null) return;
             p.IView.setImageBitmap(p.img);
             //p.IView.invalidate();
             p.view.invalidate();
@@ -1728,10 +1735,10 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                         lib.ShowException(context, e);
                                     }
                                 }else {
-                                    //BitmapWorkerAsyncTask Task = new BitmapWorkerAsyncTask(new ItemParams(item,Image,view), context);
-                                    Runnable worker = new getBitmapWorkerThread(new ItemParams(item, Image, view), context);
-                                    executor.submit(worker);
-                                    //Task.execute();
+                                    BitmapWorkerAsyncTask Task = new BitmapWorkerAsyncTask(new ItemParams(item,Image,view), context);
+                                    //Runnable worker = new getBitmapWorkerThread(new ItemParams(item, Image, view), context);
+                                    //executor.submit(worker);
+                                    Task.executeOnExecutor(executor);
                                 }
                             }
                         }
@@ -1889,7 +1896,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                                             e.printStackTrace();
                                                         }
                                                     }
-                                                } catch (Exception ex) {
+                                               } catch (Exception ex) {
                                                     //resultTextView.setText("Error downloading picture: " + ex.getMessage());
                                                     cancel(true);
                                                     eex = ex;

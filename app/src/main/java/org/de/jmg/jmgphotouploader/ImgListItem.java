@@ -53,7 +53,7 @@ public class ImgListItem extends Object
 	{
 		_DownImg = value;
 	}
-	public final Bitmap getImg()
+	public final Bitmap getImg() throws Exception
 	{
 		if (_Img == null)
 		{
@@ -91,10 +91,6 @@ public class ImgListItem extends Object
 					_size = sizeOptions.outWidth + "*" + sizeOptions.outHeight;
 				}
 					//return bitmap;
-			}
-			catch (RuntimeException ex)
-			{
-				lib.ShowException(context, ex);
 			}
 			finally
 			{
