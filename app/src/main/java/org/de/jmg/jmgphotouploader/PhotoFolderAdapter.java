@@ -170,7 +170,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
         });
 
 
-        ((_MainActivity) context).lv.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener()
+        lv.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener()
         {
             @Override
             public void onGroupExpand(int groupPosition)
@@ -178,6 +178,16 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                 ImgFolder Folder = rows.get(groupPosition);
                 Folder.expanded = true;
                 //lib.ShowToast(PhotoFolderAdapter.this.context, "Expanding group " + groupPosition + " " + rows.get(groupPosition).Name);
+            }
+        });
+
+        lv.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener()
+        {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent,
+                                        View v, int groupPosition, long id)
+            {
+                return !parent.isGroupExpanded(groupPosition) && lib.getFolderItemLock > 0;
             }
         });
         //((_MainActivity)context).lv.setOverScrollMode(View.OVER_SCROLL_NEVER);
@@ -1121,8 +1131,8 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                     }
                 }
             }
-			/*
-			Text1.LayoutParameters.Width = 0;
+            /*
+            Text1.LayoutParameters.Width = 0;
 			((LinearLayout.LayoutParams)Text1.LayoutParameters).Weight= 0.3f;
 			Text2.LayoutParameters.Width = 0;
 			((LinearLayout.LayoutParams)Text2.LayoutParameters).Weight= 0.2f;
