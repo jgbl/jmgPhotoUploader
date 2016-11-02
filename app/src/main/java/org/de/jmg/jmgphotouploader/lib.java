@@ -711,7 +711,7 @@ public class lib {
                                     int countFolders = 0;
                                     boolean blnChanged = false;
                                     final int position = ppa.rows.indexOf(imgFolder);
-
+                                    //enumerate files
                                     for (int i = 0; i < files.size(); i++) {
                                         final Metadata DropboxItem = files.get(i);
                                         if (DropboxItem != null) {
