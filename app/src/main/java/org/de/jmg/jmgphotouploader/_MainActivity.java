@@ -193,6 +193,9 @@ public class _MainActivity extends Activity
 			mediaCursor = getContentResolver().query(MediaStore.Images.Media.INTERNAL_CONTENT_URI,projection,selection,selectionArgs, "");
 			if (mediaCursor != null) lib.GetThumbnails(this, true, mediaCursor, app.BMList);
 
+			mediaCursor = getContentResolver().query(MediaStore.Images.Media.getContentUri("content://com.google.android.apps.photos.contentprovider"), projection, selection, selectionArgs, "");
+			if (mediaCursor != null) lib.GetThumbnails(this, true, mediaCursor, app.BMList);
+
 			if (app.ppa == null) {
 				app.BMList.add(new ImgFolder("One Drive",ImgFolder.Type.OneDriveAlbum));
 				app.BMList.add(new ImgFolder("Google Drive",ImgFolder.Type.Google));
