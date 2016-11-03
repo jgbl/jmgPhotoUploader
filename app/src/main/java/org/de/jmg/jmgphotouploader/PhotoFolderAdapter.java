@@ -1678,6 +1678,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                         }
                     };
                     Task.executeOnExecutor(executor);
+                    Task.cancel.....
                 }
             }
         }

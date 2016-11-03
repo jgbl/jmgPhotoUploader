@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.dropbox.core.android.Auth;
 import com.dropbox.core.v2.users.FullAccount;
 
+import org.de.jmg.jmgphotouploader.JMPPPApplication;
 import org.de.jmg.jmgphotouploader.LoginGoogleActivity;
 import org.de.jmg.jmgphotouploader.R;
 import org.de.jmg.jmgphotouploader.secrets;
@@ -93,8 +94,18 @@ public class DropBoxUserActivity extends DropboxActivity {
                 ((TextView) findViewById(R.id.type_text)).setText(result.getAccountType().name());
                 Intent i = new Intent();
                 i.putExtra("GroupPosition", GroupPosition);
-                DropBoxUserActivity.this.setResult(Activity.RESULT_OK, i);
-                DropBoxUserActivity.this.finish();
+                if (result.getAccountType().name() != null)
+                {
+                    JMPPPApplication app = (JMPPPApplication) getApplication();
+                    app.setDropboxClient(DropboxClientFactory.getClient());
+                    DropBoxUserActivity.this.setResult(Activity.RESULT_OK, i);
+                    DropBoxUserActivity.this.finish();
+                }
+                else
+                {
+                    DropBoxUserActivity.this.setResult(Activity.RESULT_CANCELED, i);
+                }
+
             }
 
             @Override
@@ -103,6 +114,7 @@ public class DropBoxUserActivity extends DropboxActivity {
                 Intent i = new Intent();
                 i.putExtra("GroupPosition", GroupPosition);
                 DropBoxUserActivity.this.setResult(Activity.RESULT_CANCELED, i);
+                ((TextView) findViewById(R.id.email_text)).setText(e.getMessage());
             }
         }).execute();
     }

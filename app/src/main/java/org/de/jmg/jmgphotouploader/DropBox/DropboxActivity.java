@@ -34,8 +34,6 @@ public abstract class DropboxActivity extends Activity {
 
     private void initAndLoadData(String accessToken) {
         DropboxClientFactory.init(accessToken);
-        JMPPPApplication app = (JMPPPApplication)getApplication();
-        app.setDropboxClient(DropboxClientFactory.getClient());
         //PicassoClient.init(getApplicationContext(), DropboxClientFactory.getClient());
         loadData();
     }
