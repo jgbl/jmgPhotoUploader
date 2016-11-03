@@ -19,7 +19,7 @@ public abstract class DropboxActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-        SharedPreferences prefs = getSharedPreferences("dropbox-sample", MODE_PRIVATE);
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
         String accessToken = prefs.getString("access-token", null);
         if (accessToken == null) {
             accessToken = Auth.getOAuth2Token();
@@ -41,7 +41,7 @@ public abstract class DropboxActivity extends Activity {
     protected abstract void loadData();
 
     protected boolean hasToken() {
-        SharedPreferences prefs = getSharedPreferences("dropbox-sample", MODE_PRIVATE);
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
         String accessToken = prefs.getString("access-token", null);
         return accessToken != null;
     }

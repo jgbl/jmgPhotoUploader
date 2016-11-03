@@ -14,7 +14,7 @@ public class DropboxClientFactory {
 
     public static void init(String accessToken) {
         if (sDbxClient == null) {
-            DbxRequestConfig requestConfig = DbxRequestConfig.newBuilder("examples-v2-demo")
+            DbxRequestConfig requestConfig = DbxRequestConfig.newBuilder("jmgphotouploader")
                 .withHttpRequestor(OkHttp3Requestor.INSTANCE)
                 .build();
 
