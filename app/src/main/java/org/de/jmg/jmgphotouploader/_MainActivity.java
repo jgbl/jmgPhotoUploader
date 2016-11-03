@@ -213,7 +213,7 @@ public class _MainActivity extends Activity
 		lv.setFocusableInTouchMode(true);
 		SetPPA();
 
-		lv.setOnChildClickListener(lv_ChildClick);
+		//lv.setOnChildClickListener(lv_ChildClick);
 		lv.setOnScrollListener(app.ppa.onScrollListener);
 
 		//lv.setOverScrollMode(View.OVER_SCROLL_NEVER);

@@ -930,10 +930,10 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 
             TextView Text1 = (TextView) view.findViewById(R.id.Text1);
             Text1.setText(item.FileName);
-            Text1.setClickable(false);
+            Text1.setClickable(true);
             Text1.setFocusable(false);
             Text1.setFocusableInTouchMode(false);
-            Text1.setLongClickable(false);
+            Text1.setLongClickable(true);
             if (isNewView)
             {
                 Text1.setTextSize(TypedValue.COMPLEX_UNIT_PX, lib.convertFromDp(context.getApplicationContext(), Text1.getTextSize()));
@@ -944,6 +944,8 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                 {
                     Text1.setTextSize(TypedValue.COMPLEX_UNIT_PX, newSize);
                 }
+                Text1.setOnClickListener(ImgClick);
+                Text1.setOnLongClickListener(ImgOnLongClickListener);
             }//Text1.Click+= (object sender, EventArgs e) => Console.WriteLine("Text1 clicked");
             lib.setgstatus("GetChildview Text2");
             TextView Text2 = (TextView) view.findViewById(R.id.Text2);
@@ -979,6 +981,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
             view.setFocusable(false);
             view.setFocusableInTouchMode(false);
             view.setLongClickable(false);
+
             /*view.Click += (object sender, EventArgs e) => {
                 System.Diagnostics.Debug.Print ("Click");
 			};
