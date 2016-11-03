@@ -1049,6 +1049,18 @@ public class lib
         context.startActivity(Intent.createChooser(shareIntent, context.getResources().getText(R.string.send_to)));
     }
 
+    public static final int SelectImageResultCode = 9981;
+
+    public static void SelectImage(Activity context)
+    {
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_GET_CONTENT);
+        //shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        shareIntent.setType("image/*");
+        context.startActivityForResult(Intent.createChooser(shareIntent, context.getResources().getText(R.string.selectImage)), SelectImageResultCode);
+    }
+
+
     public static void SharePictureOnFacebook(Context context, android.net.Uri uri)
     {
 

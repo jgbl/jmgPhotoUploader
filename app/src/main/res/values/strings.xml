@@ -34,5 +34,6 @@
     <string name="NoNetwork">\"No network connection available.\"</string>
     <string name="send_to">send to</string>
     <string name="gettingData">getting data ....</string>
+    <string name="selectImage">select image</string>
 
 </resources>

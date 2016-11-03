@@ -192,10 +192,16 @@ public class _MainActivity extends Activity
 
 			mediaCursor = getContentResolver().query(MediaStore.Images.Media.INTERNAL_CONTENT_URI,projection,selection,selectionArgs, "");
 			if (mediaCursor != null) lib.GetThumbnails(this, true, mediaCursor, app.BMList);
-
-			mediaCursor = getContentResolver().query(MediaStore.Images.Media.getContentUri("content://com.google.android.apps.photos.contentprovider"), projection, selection, selectionArgs, "");
-			if (mediaCursor != null) lib.GetThumbnails(this, true, mediaCursor, app.BMList);
-
+			try
+			{
+				Uri ImageUri = Uri.parse("content://com.google.android.gallery3d.provider/picasa/images/media");
+				mediaCursor = getContentResolver().query(ImageUri, projection, selection, selectionArgs, "");
+				if (mediaCursor != null) lib.GetThumbnails(this, true, mediaCursor, app.BMList);
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
+			}
 			if (app.ppa == null) {
 				app.BMList.add(new ImgFolder("One Drive",ImgFolder.Type.OneDriveAlbum));
 				app.BMList.add(new ImgFolder("Google Drive",ImgFolder.Type.Google));
@@ -577,12 +583,19 @@ public class _MainActivity extends Activity
 			return false;
 		}
 	};
-    @Override
-    protected void onStart() {
+
+	boolean firstStart = true;
+
+	@Override
+	protected void onStart() {
         super.onStart();
         if (app.dbpp != null && app.dbpp.isClosed) app.dbpp.openDataBase();
-        
-    }
+		if (firstStart)
+		{
+			firstStart = false;
+			//lib.SelectImage(this);
+		}
+	}
 
         	
     
