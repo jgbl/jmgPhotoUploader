@@ -62,6 +62,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -1152,41 +1155,15 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
         }
     }
 
-    //List<imgListViewLiveDownloadListener> list = new ArrayList<imgListViewLiveDownloadListener>();
     private void LoadThumbnailOneDrive(ImgListItem pItem, ImageView pImage) throws Exception
     {
         final ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).lv;
-		/*
-        try
-		{
-			for (int i = 0; i < list.size(); i++)
-			{
-				imgListViewLiveDownloadListener ldl = list.get(i);
-				if (!ItemExists(ldl.Image, ldl.item))
-				{
-					try
-					{
-						ldl.cancel();
-						list.remove((ldl));
-						i--;
-						//lib.ShowToast(context, "Item " + ldl.item.FileName + " download cancelled!");
-					}
-					catch (Exception ex)
-					{
-						lib.ShowException(context, ex);
-					}
+        for (LoadThumbnailTask T : listThumbTasks)
+        {
+            T.checkExists();
+        }
 
-				}
-			}
-		}
-		catch (Exception ex)
-		{
-			lib.ShowException(context,ex);
-		}
-
-	    */
-
-        String file = pItem.id + "/picture?type=thumbnail";
+        final String file = pItem.id + "/picture?type=thumbnail";
         if (pItem.ThumbnailLoaded)
         {
             return;
@@ -1227,6 +1204,41 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
             }
             else
             {
+                LoadThumbnailTask Task = new LoadThumbnailTask(pItem, pImage)
+                {
+                    @Override
+                    protected Bitmap doInBackground(Void... voids)
+                    {
+                        Bitmap bMap = null;
+                        try
+                        {
+                            LiveDownloadOperation operation = lib.getClient(context).download(file);
+                            InputStream input = operation.getStream(); //new FileInputStream(f);
+                            try
+                            {
+                                int i = 0;
+                                while (bMap == null)
+                                {
+                                    i++;
+                                    bMap = BitmapFactory.decodeStream(input);
+                                    if (i > 0) break;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                ex.printStackTrace();
+                                lib.ShowToast(context, context.getString(R.string.Couldnotload) + " " + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage());
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                        return bMap;
+                    }
+                };
+                Task.executeOnExecutor(executor);
+                /*
                 imgListViewLiveDownloadListener LDL;
                 LDL = new imgListViewLiveDownloadListener(pImage, pItem)
                 {
@@ -1246,7 +1258,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 			        				+ " ItemExists " + ItemExists(Image,item));
 			        		operation.cancel();
 			        		return;
-			        		*/
+
                         }
                         try
                         {
@@ -1328,7 +1340,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 							context.startActivity(LoginLiveIntent); //, LoginLiveActivity.requestCode);
 							context.finish();
 			        	}
-			        	*/
+
 
                         //list.remove(this);
                     }
@@ -1345,7 +1357,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 			        				/*+ " can not be displayed!"
 			        				+ " IsScrolling " + mIsScrolling
 			        				+ " IsScaled " + lv.getIsScaled()
-			        				+ " ItemExists " + ItemExists(Image,item));*/
+			        				+ " ItemExists " + ItemExists(Image,item));
                             operation.cancel();
                             //list.remove(this);
                             //File f = (File)operation.getUserState();
@@ -1358,7 +1370,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                 //File tmpFile = File.createTempFile("Live",".tmp");
                 LDL.operation = lib.getClient(context).downloadAsync(file, LDL);
                 //list.add(LDL);
-
+                */
             }
         }
         catch (Exception ex)
@@ -1370,7 +1382,10 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
     private void LoadThumbnailGoogle(final ImgListItem pItem, final ImageView pImage) throws Exception
     {
         final ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).lv;
-
+        for (LoadThumbnailTask T : listThumbTasks)
+        {
+            T.checkExists();
+        }
 
         if (pItem.ThumbnailLoaded)
         {
@@ -1403,7 +1418,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                     LinearLayout.LayoutParams LP = (LinearLayout.LayoutParams) pImage.getLayoutParams();
                     final int width = LP.width;// pImage.getWidth();
                     final int height = LP.height; //pImage.getHeight();
-                    AsyncTask<Void, Void, Bitmap> Task = new AsyncTask<Void, Void, Bitmap>()
+                    LoadThumbnailTask Task = new LoadThumbnailTask(pItem, pImage)
                     {
                         @Override
                         protected Bitmap doInBackground(Void... params)
@@ -1489,7 +1504,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                         }
 
 
-                        @Override
+                        /*@Override
                         protected void onPostExecute(Bitmap bMap)
                         {
 
@@ -1512,7 +1527,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                 lib.ShowToast(context, getS(R.string.Couldnotload) + pItem.FileName);
                                 pItem.ThumbnailLoaded = true;
                             }
-                        }
+                        }*/
                     };
                     Task.executeOnExecutor(executor);
                 }
@@ -1525,10 +1540,79 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
         }
     }
 
+    private final List<LoadThumbnailTask> listThumbTasks = new ArrayList<LoadThumbnailTask>();
+
+    private abstract class LoadThumbnailTask extends AsyncTask<Void, Void, Bitmap>
+    {
+        ImgListItem pItem;
+        ImageView pImage;
+
+        public LoadThumbnailTask(final ImgListItem pItem, final ImageView pImage)
+        {
+            this.pImage = pImage;
+            this.pItem = pItem;
+        }
+
+        public void checkExists()
+        {
+            if (!ItemExists(pImage, pItem)) cancel(true);
+        }
+
+        @Override
+        protected void onPreExecute()
+        {
+            listThumbTasks.add(this);
+        }
+
+        @Override
+        protected void onCancelled()
+        {
+            listThumbTasks.remove(this);
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bMap)
+        {
+            try
+            {
+                if (bMap != null)
+                {
+                    if (ItemExists(pImage, pItem))
+                    {
+                        pImage.setImageBitmap(bMap);
+                        pItem.ThumbnailLoaded = true;
+                    }
+                    else
+                    {
+                        lib.ShowToast(context, getS(R.string.Item) + pItem.FileName + getS(R.string.isnomorevisible));
+                    }
+                    //SetImageViewBitmap(new ItemParamsSet(p.img, bMap));
+                    //p.item.setsize(bMap.getWidth() + "*" + bMap.getHeight());
+                }
+                else
+                {
+                    lib.ShowToast(context, getS(R.string.Couldnotload) + pItem.FileName);
+                    pItem.ThumbnailLoaded = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                lib.ShowException(context, ex);
+            }
+            finally
+            {
+                listThumbTasks.remove(this);
+            }
+        }
+    }
+
     private void LoadThumbnailDropbox(final ImgListItem pItem, final ImageView pImage) throws Exception
     {
         final ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).lv;
-
+        for (LoadThumbnailTask T : listThumbTasks)
+        {
+            T.checkExists();
+        }
 
         if (pItem.ThumbnailLoaded)
         {
@@ -1561,7 +1645,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                     LinearLayout.LayoutParams LP = (LinearLayout.LayoutParams) pImage.getLayoutParams();
                     final int width = LP.width;// pImage.getWidth();
                     final int height = LP.height; //pImage.getHeight();
-                    AsyncTask<Void, Void, Bitmap> Task = new AsyncTask<Void, Void, Bitmap>()
+                    LoadThumbnailTask Task = new LoadThumbnailTask(pItem, pImage)
                     {
                         @Override
                         protected Bitmap doInBackground(Void... params)
@@ -1652,7 +1736,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                         }
 
 
-                        @Override
+                        /*@Override
                         protected void onPostExecute(Bitmap bMap)
                         {
 
@@ -1675,10 +1759,10 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                 lib.ShowToast(context, getS(R.string.Couldnotload) + pItem.FileName);
                                 pItem.ThumbnailLoaded = true;
                             }
-                        }
+                        }*/
                     };
                     Task.executeOnExecutor(executor);
-                    Task.cancel.....
+
                 }
             }
         }
