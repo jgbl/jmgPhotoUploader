@@ -597,7 +597,8 @@ public class lib
                 }
                 boolean firstrun = true;
                 String queryString = "'root' in parents";
-                final String queryStringFirst = "mimeType = 'application/vnd.google-apps.folder' and not " + queryString;
+                final String queryStringFirst = "mimeType = 'application/vnd.google-apps.folder' and '' in parents"; //not " + queryString;
+
                 if (folder.equalsIgnoreCase("Google Drive")) folder = "/";
                 if (folder == null || folder.equalsIgnoreCase("/"))
                 {
@@ -645,9 +646,9 @@ public class lib
                                         .setPageSize(100)
                                         .setFields("files,kind,nextPageToken")
                                         .setQ(finalQueryString);
-                                if (finalfirstrun && i == 0)
+                                if (finalfirstrun && i == 1)
                                 {
-                                    request.setPageSize(1);
+                                    request.setPageSize(10);
                                     request.setQ(queryStringFirst);
                                 }
                                 do
@@ -664,7 +665,7 @@ public class lib
                                     request.setPageToken(result.getNextPageToken());
 
                                 }
-                                while (!(finalfirstrun && i == 0) && request.getPageToken() != null && request.getPageToken().length() > 0);
+                                while (request.getPageToken() != null && request.getPageToken().length() > 0);
                                 if (!finalfirstrun) break;
                             }
                             return L;
