@@ -192,6 +192,7 @@ public class _MainActivity extends Activity
 
 			mediaCursor = getContentResolver().query(MediaStore.Images.Media.INTERNAL_CONTENT_URI,projection,selection,selectionArgs, "");
 			if (mediaCursor != null) lib.GetThumbnails(this, true, mediaCursor, app.BMList);
+			/*
 			try
 			{
 				//content://com.google.android.apps.photos.contentprovider/0/1/content%3A%2F%2Fmedia%2Fexternal%2Fimages%2Fmedia%2F87/ORIGINAL/NONE/1661484
@@ -203,6 +204,7 @@ public class _MainActivity extends Activity
 			{
 				ex.printStackTrace();
 			}
+			*/
 			if (app.ppa == null) {
 				app.BMList.add(new ImgFolder("One Drive",ImgFolder.Type.OneDriveAlbum));
 				app.BMList.add(new ImgFolder("Google Drive",ImgFolder.Type.Google));
@@ -594,7 +596,7 @@ public class _MainActivity extends Activity
 		if (firstStart)
 		{
 			firstStart = false;
-			lib.SelectImage(this);
+			//lib.SelectImage(this);
 		}
 	}
 

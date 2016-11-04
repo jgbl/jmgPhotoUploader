@@ -595,61 +595,60 @@ public class lib
                 {
                     blnFolderItemLockInc = true;
                 }
-                int loops = 0;
-                do
+                boolean firstrun = true;
+                String queryString = "'root' in parents";
+                final String queryStringFirst = "mimeType = 'application/vnd.google-apps.folder' and not " + queryString;
+                if (folder.equalsIgnoreCase("Google Drive")) folder = "/";
+                if (folder == null || folder.equalsIgnoreCase("/"))
                 {
+                    queryString = "'root' in parents";
+                    firstrun = true;
+                }
+                else
+                {
+                    queryString = "'" + folder + "' in parents";
+                    firstrun = false;
+                }
+                if (imgFolder != null && imgFolder.id != null)
+                {
+                    queryString = "'" + imgFolder.id + "' in parents";
+                    firstrun = false;
+                }
+                //Latch = new CountDownLatch(1);
+                final String finalQueryString = queryString;
+                final String finalfolder = folder;
 
-                    loops++;
-                    String queryString = null;
-                    if (folder.equalsIgnoreCase("Google Drive")) folder = "/";
-                    if (folder == null || folder.equalsIgnoreCase("/"))
+
+                final boolean finalfirstrun = firstrun;
+
+                AsyncTask<Void, Void, List<com.google.api.services.drive.model.File>> task = new AsyncTask<Void, Void, List<com.google.api.services.drive.model.File>>()
+                {
+                    @Override
+                    protected void onPreExecute()
                     {
-                        queryString = "'root' in parents";
-                        if (loops <= 1)
-                            queryString = "mimeType = 'application/vnd.google-apps.folder' and not " + queryString;
+                        mProgress = new ProgressDialog(context);
+                        mProgress.setMessage(context.getString(R.string.gettingData));
+                        mProgress.show();
                     }
-                    else
-                    {
-                        queryString = "'" + folder + "' in parents";
-                        loops = 2;
-                    }
-                    if (imgFolder != null && imgFolder.id != null)
-                    {
-                        queryString = "'" + imgFolder.id + "' in parents";
-                        loops = 2;
-                    }
-                    //Latch = new CountDownLatch(1);
-                    final String finalQueryString = queryString;
-                    final String finalfolder = folder;
 
-
-                    final boolean finalfirstrun = loops <= 1;
-
-                    AsyncTask<Void, Void, List<com.google.api.services.drive.model.File>> task = new AsyncTask<Void, Void, List<com.google.api.services.drive.model.File>>()
+                    @Override
+                    protected List<com.google.api.services.drive.model.File> doInBackground(Void... params)
                     {
-                        @Override
-                        protected void onPreExecute()
+                        Drive client = lib.getClientGoogle(context);
+                        FileList result = null;
+                        List<com.google.api.services.drive.model.File> L = null;
+                        try
                         {
-                            mProgress = new ProgressDialog(context);
-                            mProgress.setMessage(context.getString(R.string.gettingData));
-                            mProgress.show();
-                        }
-
-                        @Override
-                        protected List<com.google.api.services.drive.model.File> doInBackground(Void... params)
-                        {
-                            Drive client = lib.getClientGoogle(context);
-                            FileList result = null;
-                            List<com.google.api.services.drive.model.File> L = null;
-                            try
+                            for (int i = 0; i < 2; i++)
                             {
                                 Drive.Files.List request = client.files().list()
                                         .setPageSize(100)
                                         .setFields("files,kind,nextPageToken")
                                         .setQ(finalQueryString);
-                                if (finalfirstrun)
+                                if (finalfirstrun && i == 0)
                                 {
-                                    request.setPageSize(10);
+                                    request.setPageSize(1);
+                                    request.setQ(queryStringFirst);
                                 }
                                 do
                                 {
@@ -665,131 +664,130 @@ public class lib
                                     request.setPageToken(result.getNextPageToken());
 
                                 }
-                                while (request.getPageToken() != null && request.getPageToken().length() > 0);
-                                return L;
+                                while (!(finalfirstrun && i == 0) && request.getPageToken() != null && request.getPageToken().length() > 0);
+                                if (!finalfirstrun) break;
                             }
-                            catch (IOException e)
-                            {
-                                e.printStackTrace();
-                                return L;
-                            }
-
-
+                            return L;
+                        }
+                        catch (IOException e)
+                        {
+                            e.printStackTrace();
+                            return L;
                         }
 
-                        @Override
-                        protected void onPostExecute(List<com.google.api.services.drive.model.File> result)
+
+                    }
+
+                    @Override
+                    protected void onPostExecute(List<com.google.api.services.drive.model.File> result)
+                    {
+                        try
                         {
-                            try
+                            if (result != null)
                             {
-                                if (result != null)
+                                final _MainActivity Main = (_MainActivity) context;
+                                final JMPPPApplication app = (JMPPPApplication) Main.getApplication();
+                                final PhotoFolderAdapter ppa = app.ppa;
+                                List<com.google.api.services.drive.model.File> files = result;
+                                if (files != null)
                                 {
-                                    final _MainActivity Main = (_MainActivity) context;
-                                    final JMPPPApplication app = (JMPPPApplication) Main.getApplication();
-                                    final PhotoFolderAdapter ppa = app.ppa;
-                                    List<com.google.api.services.drive.model.File> files = result;
-                                    if (files != null)
+                                    lib.BMList.clear();
+                                    boolean blnChanged = false;
+                                    int countFolders = 0;
+                                    final int position = ppa.rows.indexOf(imgFolder);
+
+                                    for (int i = 0; i < files.size(); i++)
                                     {
-                                        lib.BMList.clear();
-                                        boolean blnChanged = false;
-                                        int countFolders = 0;
-                                        final int position = ppa.rows.indexOf(imgFolder);
-
-                                        for (int i = 0; i < files.size(); i++)
+                                        final com.google.api.services.drive.model.File GoogleDriveItem = files.get(i);
+                                        if (GoogleDriveItem != null)
                                         {
-                                            final com.google.api.services.drive.model.File GoogleDriveItem = files.get(i);
-                                            if (GoogleDriveItem != null)
+                                            System.out.println(GoogleDriveItem.toString());
+                                            final String itemName = GoogleDriveItem.getName();
+                                            //final String itemType = oneDriveItem.optString("type");
+                                            String itemType = (GoogleDriveItem.getImageMediaMetadata() != null) ? "image" : "file";
+                                            final String kind = GoogleDriveItem.getKind();
+                                            if (GoogleDriveItem.getMimeType().equalsIgnoreCase("application/vnd.google-apps.folder"))
+                                                itemType = "folder";
+                                            final String id = GoogleDriveItem.getId();
+                                            String size = "0x0";
+                                            if (itemType.equalsIgnoreCase("image"))
+
                                             {
-                                                System.out.println(GoogleDriveItem.toString());
-                                                final String itemName = GoogleDriveItem.getName();
-                                                //final String itemType = oneDriveItem.optString("type");
-                                                String itemType = (GoogleDriveItem.getImageMediaMetadata() != null) ? "image" : "file";
-                                                final String kind = GoogleDriveItem.getKind();
-                                                if (GoogleDriveItem.getMimeType().equalsIgnoreCase("application/vnd.google-apps.folder"))
-                                                    itemType = "folder";
-                                                final String id = GoogleDriveItem.getId();
-                                                String size = "0x0";
-                                                if (itemType.equalsIgnoreCase("image"))
-
-                                                {
-                                                    size = GoogleDriveItem.getImageMediaMetadata().getWidth() + "x" + GoogleDriveItem.getImageMediaMetadata().getHeight();
-                                                }
-                                                //lib.ShowMessage(context,itemType);
-                                                if (GoogleDriveItem.getMimeType().contains(("image/")))
-                                                    itemType = "image";
-                                                final String ThumbNailLink = GoogleDriveItem.getThumbnailLink();
-                                                final String WebContentLink = GoogleDriveItem.getWebContentLink();
-                                                final String uri = GoogleDriveItem.getWebViewLink();
-                                                final android.net.Uri auri = (WebContentLink != null) ? android.net.Uri.parse(WebContentLink) : null;
-
-                                                if (itemType.equals("image"))
-                                                {
-
-                                                    ImgListItem Item = (new ImgListItem(context, id, 0, itemName, auri, uri, ImgFolder.Type.Google, size));
-                                                    Item.ThumbNailLink = ThumbNailLink;
-                                                    lib.BMList.add(Item);
-                                                    blnChanged = true;
-                                                    //ppa.notifyDataSetChanged();
-                                                }
-                                                else if (itemType.equals("album") || itemType.equals("folder"))
-                                                {
-                                                    ImgFolder.Type type;
-                                                    if (itemType.equals("album"))
-                                                    {
-                                                        type = ImgFolder.Type.Google;
-                                                    }
-                                                    else
-                                                    {
-                                                        type = ImgFolder.Type.Google;
-                                                    }
-                                                    countFolders++;
-                                                    ppa.rows.add(position + countFolders, new ImgFolder(finalfolder + itemName + "/", type, id));
-                                                    blnChanged = true;
-                                                    //ppa.notifyDataSetChanged();
-                                                }
-
+                                                size = GoogleDriveItem.getImageMediaMetadata().getWidth() + "x" + GoogleDriveItem.getImageMediaMetadata().getHeight();
                                             }
-                                        }
-                                        imgFolder.fetched = true;
-                                        if (imgFolder.Name == "Google Drive")
-                                        {
-                                            imgFolder.Name = "/";
-                                        }
-                                        if (blnChanged)
-                                        {
-                                            for (int i = position + 1; i < ppa.rows.size(); i++)
+                                            //lib.ShowMessage(context,itemType);
+                                            if (GoogleDriveItem.getMimeType().contains(("image/")))
+                                                itemType = "image";
+                                            final String ThumbNailLink = GoogleDriveItem.getThumbnailLink();
+                                            final String WebContentLink = GoogleDriveItem.getWebContentLink();
+                                            final String uri = GoogleDriveItem.getWebViewLink();
+                                            final android.net.Uri auri = (WebContentLink != null) ? android.net.Uri.parse(WebContentLink) : null;
+
+                                            if (itemType.equals("image"))
                                             {
-                                                if (ppa.rows.get(i).expanded)
+
+                                                ImgListItem Item = (new ImgListItem(context, id, 0, itemName, auri, uri, ImgFolder.Type.Google, size));
+                                                Item.ThumbNailLink = ThumbNailLink;
+                                                lib.BMList.add(Item);
+                                                blnChanged = true;
+                                                //ppa.notifyDataSetChanged();
+                                            }
+                                            else if (itemType.equals("album") || itemType.equals("folder"))
+                                            {
+                                                ImgFolder.Type type;
+                                                if (itemType.equals("album"))
                                                 {
-                                                    ppa.lv.expandGroup(i);
+                                                    type = ImgFolder.Type.Google;
                                                 }
                                                 else
                                                 {
-                                                    ppa.lv.collapseGroup(i);
+                                                    type = ImgFolder.Type.Google;
                                                 }
+                                                countFolders++;
+                                                ppa.rows.add(position + countFolders, new ImgFolder(finalfolder + itemName + "/", type, id));
+                                                blnChanged = true;
+                                                //ppa.notifyDataSetChanged();
                                             }
-                                            ppa.notifyDataSetChanged();
+
                                         }
                                     }
+                                    imgFolder.fetched = true;
+                                    if (imgFolder.Name == "Google Drive")
+                                    {
+                                        imgFolder.Name = "/";
+                                    }
+                                    if (blnChanged)
+                                    {
+                                        for (int i = position + 1; i < ppa.rows.size(); i++)
+                                        {
+                                            if (ppa.rows.get(i).expanded)
+                                            {
+                                                ppa.lv.expandGroup(i);
+                                            }
+                                            else
+                                            {
+                                                ppa.lv.collapseGroup(i);
+                                            }
+                                        }
+                                        ppa.notifyDataSetChanged();
+                                    }
                                 }
+                            }
 
-                            }
-                            catch (Exception ex)
-                            {
-                                ShowException(context, ex);
-                            }
-                            finally
-                            {
-                                getFolderItemLock--;
-                                mProgress.hide();
-                                mProgress.dismiss();
-                            }
                         }
-                    };
-                    task.execute();
-
-                } while (loops < 2);
-
+                        catch (Exception ex)
+                        {
+                            ShowException(context, ex);
+                        }
+                        finally
+                        {
+                            getFolderItemLock--;
+                            mProgress.hide();
+                            mProgress.dismiss();
+                        }
+                    }
+                };
+                task.execute();
             }
         }
         catch (Exception ex)
