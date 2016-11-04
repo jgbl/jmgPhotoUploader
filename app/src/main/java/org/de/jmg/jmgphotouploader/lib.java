@@ -597,7 +597,7 @@ public class lib
                 }
                 boolean firstrun = true;
                 String queryString = "'root' in parents";
-                final String queryStringFirst = "mimeType = 'application/vnd.google-apps.folder' and '' in parents"; //not " + queryString;
+                final String queryStringFirst = "mimeType = 'application/vnd.google-apps.folder' and not 'root' in parents"; //not " + queryString;
 
                 if (folder.equalsIgnoreCase("Google Drive")) folder = "/";
                 if (folder == null || folder.equalsIgnoreCase("/"))
@@ -638,6 +638,7 @@ public class lib
                         Drive client = lib.getClientGoogle(context);
                         FileList result = null;
                         List<com.google.api.services.drive.model.File> L = null;
+                        List<com.google.api.services.drive.model.File> res = null;
                         try
                         {
                             for (int i = 0; i < 2; i++)
@@ -648,7 +649,7 @@ public class lib
                                         .setQ(finalQueryString);
                                 if (finalfirstrun && i == 1)
                                 {
-                                    request.setPageSize(10);
+                                    request.setPageSize(1);
                                     request.setQ(queryStringFirst);
                                 }
                                 do
@@ -657,15 +658,30 @@ public class lib
                                     if (L == null)
                                     {
                                         L = result.getFiles();
+                                        if (finalfirstrun && i == 1)
+                                        {
+                                            for (com.google.api.services.drive.model.File f : L)
+                                            {
+                                                f.setDescription("photo");
+                                            }
+                                        }
                                     }
                                     else
                                     {
-                                        L.addAll(result.getFiles());
+                                        res = result.getFiles();
+                                        if (finalfirstrun && i == 1)
+                                        {
+                                            for (com.google.api.services.drive.model.File f : res)
+                                            {
+                                                f.setDescription("photo");
+                                            }
+                                        }
+                                        L.addAll(res);
                                     }
                                     request.setPageToken(result.getNextPageToken());
 
                                 }
-                                while (request.getPageToken() != null && request.getPageToken().length() > 0);
+                                while (!(finalfirstrun && i == 1) && request.getPageToken() != null && request.getPageToken().length() > 0);
                                 if (!finalfirstrun) break;
                             }
                             return L;
@@ -703,7 +719,8 @@ public class lib
                                         if (GoogleDriveItem != null)
                                         {
                                             System.out.println(GoogleDriveItem.toString());
-                                            final String itemName = GoogleDriveItem.getName();
+                                            String itemName = GoogleDriveItem.getName();
+                                            final String description = GoogleDriveItem.getDescription();
                                             //final String itemType = oneDriveItem.optString("type");
                                             String itemType = (GoogleDriveItem.getImageMediaMetadata() != null) ? "image" : "file";
                                             final String kind = GoogleDriveItem.getKind();
@@ -745,6 +762,10 @@ public class lib
                                                     type = ImgFolder.Type.Google;
                                                 }
                                                 countFolders++;
+                                                if (description != null && description.equalsIgnoreCase("photo"))
+                                                {
+                                                    itemName = ">" + itemName;
+                                                }
                                                 ppa.rows.add(position + countFolders, new ImgFolder(finalfolder + itemName + "/", type, id));
                                                 blnChanged = true;
                                                 //ppa.notifyDataSetChanged();
