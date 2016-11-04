@@ -194,7 +194,8 @@ public class _MainActivity extends Activity
 			if (mediaCursor != null) lib.GetThumbnails(this, true, mediaCursor, app.BMList);
 			try
 			{
-				Uri ImageUri = Uri.parse("content://com.google.android.gallery3d.provider/picasa/images/media");
+				//content://com.google.android.apps.photos.contentprovider/0/1/content%3A%2F%2Fmedia%2Fexternal%2Fimages%2Fmedia%2F87/ORIGINAL/NONE/1661484
+				Uri ImageUri = Uri.parse("content://com.google.android.apps.photos.contentprovider/images/media");
 				mediaCursor = getContentResolver().query(ImageUri, projection, selection, selectionArgs, "");
 				if (mediaCursor != null) lib.GetThumbnails(this, true, mediaCursor, app.BMList);
 			}
@@ -593,7 +594,7 @@ public class _MainActivity extends Activity
 		if (firstStart)
 		{
 			firstStart = false;
-			//lib.SelectImage(this);
+			lib.SelectImage(this);
 		}
 	}
 
