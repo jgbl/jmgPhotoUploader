@@ -1,16 +1,85 @@
 package org.de.jmg.jmgphotouploader;
 
-/**
- * Created by hmnatalie on 04.11.16.
- */
-/*
-import com.google.android.gms.*
-import com.google.gdata.client.*;
-import com.google.gdata.client.photos.*;
-import com.google.gdata.data.*;
-import com.google.gdata.data.media.*;
-import com.google.gdata.data.photos.*;
-*/
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import com.google.gdata.client.photos.PicasawebService;
+import com.google.gdata.data.photos.AlbumEntry;
+import com.google.gdata.data.photos.AlbumFeed;
+import com.google.gdata.data.photos.GphotoEntry;
+import com.google.gdata.data.photos.GphotoFeed;
+import com.google.gdata.data.photos.PhotoEntry;
+import com.google.gdata.data.photos.UserFeed;
+import com.google.gdata.util.ServiceException;
+
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Picasa
 {
+    private static final String API_PREFIX
+            = "https://picasaweb.google.com/data/feed/api/user/";
+    PicasawebService picasaService;
+
+    public Picasa(String authToken)
+    {
+        initPicasa(authToken);
+    }
+
+    public <T extends GphotoFeed> T getFeed(String feedHref,
+                                            Class<T> feedClass) throws IOException, ServiceException
+    {
+        lib.setgstatus("Get Feed URL: " + feedHref);
+        return picasaService.getFeed(new URL(feedHref), feedClass);
+    }
+
+    public List<AlbumEntry> getAlbums(String userId) throws IOException,
+            ServiceException
+    {
+
+        String albumUrl = API_PREFIX + userId;
+        UserFeed userFeed = getFeed(albumUrl, UserFeed.class);
+
+        List<GphotoEntry> entries = userFeed.getEntries();
+        List<AlbumEntry> albums = new ArrayList<AlbumEntry>();
+        for (GphotoEntry entry : entries)
+        {
+            AlbumEntry ae = new AlbumEntry(entry);
+            lib.setgstatus(String.format("Album name {}", ae.getName()));
+            albums.add(ae);
+        }
+
+        return albums;
+    }
+
+    public List<PhotoEntry> getPhotos(String userId, AlbumEntry album) throws IOException,
+            ServiceException
+    {
+        AlbumFeed feed = album.getFeed();
+        List<PhotoEntry> photos = new ArrayList<PhotoEntry>();
+        for (GphotoEntry entry : feed.getEntries())
+        {
+            PhotoEntry pe = new PhotoEntry(entry);
+            photos.add(pe);
+        }
+        lib.setgstatus(String.format("Album {} has {} photos", album.getName(), photos.size()));
+        return photos;
+    }
+
+    public void initPicasa(String authToken)
+    {
+        picasaService = new PicasawebService("pictureframe");
+        picasaService.setUserToken(authToken);
+    }
+
+    public Bitmap getBitmap(PhotoEntry photo) throws Exception
+    {
+        URL photoUrl = new URL(photo.getMediaContents().get(0).getUrl());
+        Bitmap bmp = BitmapFactory.decodeStream(photoUrl.openConnection().getInputStream());
+        return bmp;
+    }
 }
+

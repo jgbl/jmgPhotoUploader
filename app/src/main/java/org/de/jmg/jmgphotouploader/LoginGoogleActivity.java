@@ -13,6 +13,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
@@ -23,6 +24,10 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.Api;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.Status;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
@@ -35,10 +40,13 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 
+import java.io.FileDescriptor;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -58,7 +66,7 @@ public class LoginGoogleActivity extends Activity
 
     private static final String BUTTON_TEXT = "Call Drive API";
     private static final String PREF_ACCOUNT_NAME = "accountName";
-    private static final String[] SCOPES = {DriveScopes.DRIVE_READONLY,DriveScopes.DRIVE_METADATA_READONLY};
+    private static final String[] SCOPES = {DriveScopes.DRIVE_READONLY, DriveScopes.DRIVE_METADATA_READONLY, "lh2"};
     private JMPPPApplication mApp;
     private int GroupPosition;
 
@@ -377,7 +385,8 @@ public class LoginGoogleActivity extends Activity
             return mService;
         }
 
-        public MakeRequestTask(GoogleAccountCredential credential) {
+        public MakeRequestTask(GoogleAccountCredential credential)
+        {
             lib.setgstatus("create Start");
             HttpTransport transport = AndroidHttp.newCompatibleTransport();
             JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
@@ -386,8 +395,8 @@ public class LoginGoogleActivity extends Activity
                     .setApplicationName("jmgphotouploader")
                     .build();
 
+            //GoogleApiClient mClient = new GoogleApiClient.Builder(LoginGoogleActivity.this).addApi();
         }
-
         /**
          *  * Background task to call Drive API.
          *  * @param params no parameters needed for this task.
@@ -462,6 +471,16 @@ public class LoginGoogleActivity extends Activity
 
             }
             mApp.setGoogleDriveClient(mService);
+            try
+            {
+                String AccessToken = mCredential.getToken();
+                Picasa p = new Picasa(AccessToken);
+                //p.initPicasa(AccessToken);
+            }
+            catch (Exception ex)
+            {
+                lib.setgstatus(ex.getMessage());
+            }
             Intent i = new Intent();
             i.putExtra("GroupPosition", GroupPosition);
             //i.putExtra("client", client);

@@ -43,6 +43,7 @@ public class JMPPPApplication extends Application {
     private LiveConnectClient mConnectClient;
     private com.google.api.services.drive.Drive mGoogleDriveClient;
     private DbxClientV2 mDropboxClient;
+    private Picasa mPicasaClient;
     private LiveConnectSession mSession;
     public java.util.ArrayList<ImgFolder> BMList = new java.util.ArrayList<ImgFolder>();
     public PhotoFolderAdapter ppa;
@@ -66,6 +67,7 @@ public class JMPPPApplication extends Application {
         mGoogleDriveClient = null;
         mAuthClient = null;
         mConnectClient = null;
+        mPicasaClient = null;
         mSession = null;
         this.ppa = null;
         this.MainContext = null;
@@ -103,6 +105,16 @@ public class JMPPPApplication extends Application {
             ((Activity) MainContext).finish();
         }
         return mGoogleDriveClient;
+    }
+
+    public Picasa getmPicasaClient()
+    {
+        return mPicasaClient;
+    }
+
+    public void setPicasaClient(Picasa picasa)
+    {
+        mPicasaClient = picasa;
     }
 
     public LiveConnectSession getSession() {
