@@ -660,9 +660,24 @@ public class lib
                                         L = result.getFiles();
                                         if (finalfirstrun && i == 1)
                                         {
-                                            for (com.google.api.services.drive.model.File f : L)
+                                            for (int ii = 0; ii < L.size(); ii++)
                                             {
+                                                com.google.api.services.drive.model.File f = L.get(ii);
                                                 f.setDescription("photo");
+                                                if (f.getParents().size() == 0)
+                                                {
+                                                    L.remove(ii);
+                                                    ii--;
+                                                }
+                                                else
+                                                {
+                                                    for (String id : f.getParents())
+                                                    {
+                                                        com.google.api.services.drive.model.File ff = client.files().get(id).execute();
+                                                        lib.setgstatus(ff.getName());
+                                                    }
+
+                                                }
                                             }
                                         }
                                     }
@@ -671,9 +686,24 @@ public class lib
                                         res = result.getFiles();
                                         if (finalfirstrun && i == 1)
                                         {
-                                            for (com.google.api.services.drive.model.File f : res)
+                                            for (int ii = 0; ii < res.size(); ii++)
                                             {
+                                                com.google.api.services.drive.model.File f = res.get(ii);
                                                 f.setDescription("photo");
+                                                if (f.getParents().size() == 0)
+                                                {
+                                                    res.remove(ii);
+                                                    ii--;
+                                                }
+                                                else
+                                                {
+                                                    for (String id : f.getParents())
+                                                    {
+                                                        com.google.api.services.drive.model.File ff = client.files().get(id).execute();
+                                                        lib.setgstatus(ff.getName());
+                                                    }
+
+                                                }
                                             }
                                         }
                                         L.addAll(res);

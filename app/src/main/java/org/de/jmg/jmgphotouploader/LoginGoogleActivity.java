@@ -461,7 +461,7 @@ public class LoginGoogleActivity extends Activity
                 mOutputText.setText(TextUtils.join("\n", output));
 
             }
-            mApp.setGoobleDriveClient(mService);
+            mApp.setGoogleDriveClient(mService);
             Intent i = new Intent();
             i.putExtra("GroupPosition", GroupPosition);
             //i.putExtra("client", client);

@@ -60,6 +60,19 @@ public class JMPPPApplication extends Application {
         return mAuthClient;
     }
 
+    public void clear()
+    {
+        mDropboxClient = null;
+        mGoogleDriveClient = null;
+        mAuthClient = null;
+        mConnectClient = null;
+        mSession = null;
+        this.ppa = null;
+        this.MainContext = null;
+        this.GoogleFolder = null;
+        this.OneDriveFolder = null;
+        this.DropboxFolder = null;
+    }
     public LiveConnectClient getConnectClient() {
         if (mConnectClient != null)
         {
@@ -103,7 +116,9 @@ public class JMPPPApplication extends Application {
     public void setConnectClient(LiveConnectClient connectClient) {
         mConnectClient = connectClient;
     }
-    public void setGoobleDriveClient(Drive connectClient) {
+
+    public void setGoogleDriveClient(Drive connectClient)
+    {
         mGoogleDriveClient = connectClient;
     }
 
