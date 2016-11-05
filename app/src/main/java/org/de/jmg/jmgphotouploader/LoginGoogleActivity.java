@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.Api;
@@ -66,7 +67,7 @@ public class LoginGoogleActivity extends Activity
 
     private static final String BUTTON_TEXT = "Call Drive API";
     private static final String PREF_ACCOUNT_NAME = "accountName";
-    private static final String[] SCOPES = {DriveScopes.DRIVE_READONLY, DriveScopes.DRIVE_METADATA_READONLY, "lh2"};
+    private static final String[] SCOPES = {DriveScopes.DRIVE_READONLY, DriveScopes.DRIVE_METADATA_READONLY, DriveScopes.DRIVE_PHOTOS_READONLY, "https://picasaweb.google.com/data/"};
     private JMPPPApplication mApp;
     private int GroupPosition;
 
@@ -395,7 +396,7 @@ public class LoginGoogleActivity extends Activity
                     .setApplicationName("jmgphotouploader")
                     .build();
 
-            //GoogleApiClient mClient = new GoogleApiClient.Builder(LoginGoogleActivity.this).addApi();
+            //GoogleApiClient mClient = new GoogleApiClient.Builder(LoginGoogleActivity.this).addAp();
         }
         /**
          *  * Background task to call Drive API.
@@ -455,6 +456,7 @@ public class LoginGoogleActivity extends Activity
             mProgress.show();
         }
 
+        public String mAccessToken;
         @Override
         protected void onPostExecute(List<String> output) {
             lib.setgstatus("onPostExecute");
@@ -473,8 +475,29 @@ public class LoginGoogleActivity extends Activity
             mApp.setGoogleDriveClient(mService);
             try
             {
-                String AccessToken = mCredential.getToken();
-                Picasa p = new Picasa(AccessToken);
+                Thread t = new Thread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        try
+                        {
+                            mAccessToken = mCredential.getToken();
+                        }
+                        catch (IOException e)
+                        {
+                            e.printStackTrace();
+                        }
+                        catch (GoogleAuthException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                t.start();
+                t.join(5000);
+                Picasa p = new Picasa(mAccessToken);
+                mApp.setPicasaClient(p);
                 //p.initPicasa(AccessToken);
             }
             catch (Exception ex)
@@ -509,7 +532,7 @@ public class LoginGoogleActivity extends Activity
                             LoginGoogleActivity.REQUEST_AUTHORIZATION);
                 } else {
                     mOutputText.setText("The following error occurred:\n"
-                            + mLastError.getMessage());
+                            + mLastError.getMessage()); // + ((mLastError.getCause()!=null) ? mLastError.getCause().getMessage():"no cause");
                 }
             } else {
                 mOutputText.setText("Request cancelled.");

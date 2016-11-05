@@ -37,7 +37,8 @@ import com.microsoft.live.LiveConnectSession;
 import java.io.File;
 import java.util.LinkedList;
 
-public class JMPPPApplication extends Application {
+public class JMPPPApplication extends android.support.multidex.MultiDexApplication
+{
 
     private LiveAuthClient mAuthClient;
     private LiveConnectClient mConnectClient;

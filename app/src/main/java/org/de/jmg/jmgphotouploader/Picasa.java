@@ -23,10 +23,12 @@ public class Picasa
     private static final String API_PREFIX
             = "https://picasaweb.google.com/data/feed/api/user/";
     PicasawebService picasaService;
+    String userID;
 
-    public Picasa(String authToken)
+    public Picasa(String authToken, String userID)
     {
         initPicasa(authToken);
+        this.userID = userID;
     }
 
     public <T extends GphotoFeed> T getFeed(String feedHref,

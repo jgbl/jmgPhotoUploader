@@ -8,7 +8,11 @@ apply plugin: 'com.android.application'
         applicationId "org.de.jmg.jmgphotouploader"
         minSdkVersion 11
         targetSdkVersion 24
+        multiDexEnabled true
     }
+        dexOptions {
+            javaMaxHeapSize "4g"
+        }
     signingConfigs {
         release {
             keyAlias 'jmgphotouploader'
@@ -42,6 +46,7 @@ apply plugin: 'com.android.application'
     }
 }
 dependencies {
+    compile 'com.android.support:multidex:1.0.1'
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:support-v4:24.2.1'
     //compile 'com.android.support:design:24.2.1'
@@ -54,14 +59,18 @@ dependencies {
     compile 'pub.devrel:easypermissions:0.1.5'
     compile('com.google.api-client:google-api-client-android:1.22.0') {
         exclude group: 'org.apache.httpcomponents'
-        }
+    }
     compile('com.google.apis:google-api-services-drive:v3-rev47-1.22.0') {
         exclude group: 'org.apache.httpcomponents'
-        }
+    }
     //compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.squareup.okhttp:okhttp:2.7.5'
     compile 'com.squareup.okhttp3:okhttp:3.3.1'
-
-    compile 'com.google.gdata:core:1.47.1'
-
+    compile 'org.slf4j:slf4j-android:1.6.1-RC1'
+    //compile 'com.google.gdata:core:1.47.1'
+    compile('com.google.gdata:core:1.47.1')
+            {
+                exclude group: 'org.apache.httpcomponents'
+                exclude group: 'com.google.guava', module: 'guava'
+            }
 }

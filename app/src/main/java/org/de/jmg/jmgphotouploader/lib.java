@@ -597,7 +597,7 @@ public class lib
                 }
                 boolean firstrun = true;
                 String queryString = "'root' in parents";
-                final String queryStringFirst = "mimeType = 'application/vnd.google-apps.folder' and not 'root' in parents"; //not " + queryString;
+                final String queryStringFirst = "mimeType = 'application/vnd.google-apps.folder'"; //not " + queryString;
 
                 if (folder.equalsIgnoreCase("Google Drive")) folder = "/";
                 if (folder == null || folder.equalsIgnoreCase("/"))
@@ -649,8 +649,9 @@ public class lib
                                         .setQ(finalQueryString);
                                 if (finalfirstrun && i == 1)
                                 {
-                                    request.setPageSize(1);
-                                    request.setQ(queryStringFirst);
+                                    request.setPageSize(100);
+                                    request.setQ(null);
+                                    request.setSpaces("photos");
                                 }
                                 do
                                 {
@@ -664,20 +665,8 @@ public class lib
                                             {
                                                 com.google.api.services.drive.model.File f = L.get(ii);
                                                 f.setDescription("photo");
-                                                if (f.getParents().size() == 0)
-                                                {
-                                                    L.remove(ii);
-                                                    ii--;
-                                                }
-                                                else
-                                                {
-                                                    for (String id : f.getParents())
-                                                    {
-                                                        com.google.api.services.drive.model.File ff = client.files().get(id).execute();
-                                                        lib.setgstatus(ff.getName());
-                                                    }
-
-                                                }
+                                                final String parentName = mClientGoogle.files().get(f.getParents().get(0)).execute().getName();
+                                                f.set("ParentName", parentName);
                                             }
                                         }
                                     }
@@ -690,20 +679,8 @@ public class lib
                                             {
                                                 com.google.api.services.drive.model.File f = res.get(ii);
                                                 f.setDescription("photo");
-                                                if (f.getParents().size() == 0)
-                                                {
-                                                    res.remove(ii);
-                                                    ii--;
-                                                }
-                                                else
-                                                {
-                                                    for (String id : f.getParents())
-                                                    {
-                                                        com.google.api.services.drive.model.File ff = client.files().get(id).execute();
-                                                        lib.setgstatus(ff.getName());
-                                                    }
-
-                                                }
+                                                final String parentName = mClientGoogle.files().get(f.getParents().get(0)).execute().getName();
+                                                f.set("ParentName", parentName);
                                             }
                                         }
                                         L.addAll(res);
@@ -711,7 +688,7 @@ public class lib
                                     request.setPageToken(result.getNextPageToken());
 
                                 }
-                                while (!(finalfirstrun && i == 1) && request.getPageToken() != null && request.getPageToken().length() > 0);
+                                while (request.getPageToken() != null && request.getPageToken().length() > 0);
                                 if (!finalfirstrun) break;
                             }
                             return L;
@@ -730,6 +707,7 @@ public class lib
                     {
                         try
                         {
+                            mClientGoogle.files().get(parentID).execute().getName()
                             if (result != null)
                             {
                                 final _MainActivity Main = (_MainActivity) context;
@@ -758,6 +736,7 @@ public class lib
                                                 itemType = "folder";
                                             final String id = GoogleDriveItem.getId();
                                             String size = "0x0";
+                                            final String parentName = (String) GoogleDriveItem.get("ParentName");
                                             if (itemType.equalsIgnoreCase("image"))
 
                                             {
