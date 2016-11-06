@@ -579,7 +579,7 @@ public class lib
     }
 
     public static int getFolderItemLock = 0;
-
+    public static com.google.api.services.drive.model.File PhotoParent = null;
     public static void GetThumbnailsGoogle(final Activity context, String folder, final ImgFolder imgFolder, final int GroupPosition, final ExpandableListView lv) throws LiveOperationException, InterruptedException, IOException
     {
         boolean blnFolderItemLockInc = false;
@@ -650,7 +650,7 @@ public class lib
                                         .setFields("files,kind,nextPageToken")
                                         .setQ(finalQueryString)
                                         .setSpaces("drive");
-                                if (finalfirstrun) // && i == 1)
+                                if (finalfirstrun && i == 1)
                                 {
                                     request.setPageSize(1);
 
@@ -665,23 +665,25 @@ public class lib
                                     result = request.execute();
                                     if (L == null)
                                     {
-                                        L = result.getFiles();
-                                        if (finalfirstrun)
+                                        res = result.getFiles();
+                                        if (finalfirstrun && i == 1)
                                         {
-                                            for (int ii = 0; ii < L.size(); ii++)
+                                            for (int ii = 0; ii < res.size(); ii++)
                                             {
-                                                com.google.api.services.drive.model.File f = L.get(ii);
+                                                com.google.api.services.drive.model.File f = res.get(ii);
                                                 //f.setDescription("photo");
                                                 final com.google.api.services.drive.model.File parent = client.files().get(f.getParents().get(0)).execute();
+                                                PhotoParent = parent;
                                                 resfirst.add(parent);
                                                 break;
                                             }
                                         }
+                                        if (i == 0) L = res;
                                     }
                                     else
                                     {
                                         res = result.getFiles();
-                                        if (finalfirstrun)
+                                        if (finalfirstrun && i == 1)
                                         {
                                             for (int ii = 0; ii < res.size(); ii++)
                                             {
@@ -689,17 +691,24 @@ public class lib
                                                 //f.setDescription("photo");
                                                 final com.google.api.services.drive.model.File parent = client.files().get(f.getParents().get(0)).execute();
                                                 resfirst.add(parent);
+                                                PhotoParent = parent;
                                             }
                                         }
-                                        L.addAll(res);
+                                        if (i == 0) L.addAll(res);
                                     }
                                     request.setPageToken(result.getNextPageToken());
 
                                 }
-                                while (!finalfirstrun && request.getPageToken() != null && request.getPageToken().length() > 0);
+                                while (!(finalfirstrun && i == 1) && request.getPageToken() != null && request.getPageToken().length() > 0);
                                 if (!finalfirstrun) break;
                             }
-                            if (finalfirstrun) L = resfirst;
+                            if (finalfirstrun)
+                            {
+                                for (com.google.api.services.drive.model.File f : resfirst)
+                                {
+                                    L.add(f);
+                                }
+                            }
                             return L;
                         }
                         catch (IOException e)
@@ -770,23 +779,37 @@ public class lib
                                             }
                                             else if (itemType.equals("album") || itemType.equals("folder"))
                                             {
-                                                ImgFolder.Type type;
-                                                if (itemType.equals("album"))
+                                                boolean skip = false;
+                                                if (finalfirstrun && PhotoParent != null)
                                                 {
-                                                    type = ImgFolder.Type.Google;
+                                                    if (PhotoParent.getId().equals(GoogleDriveItem.getId()))
+                                                    {
+                                                        if (GoogleDriveItem != PhotoParent)
+                                                        {
+                                                            skip = true;
+                                                        }
+                                                    }
                                                 }
-                                                else
+                                                if (!skip)
                                                 {
-                                                    type = ImgFolder.Type.Google;
+                                                    ImgFolder.Type type;
+                                                    if (itemType.equals("album"))
+                                                    {
+                                                        type = ImgFolder.Type.Google;
+                                                    }
+                                                    else
+                                                    {
+                                                        type = ImgFolder.Type.Google;
+                                                    }
+                                                    countFolders++;
+                                                    if (description != null && description.equalsIgnoreCase("photo"))
+                                                    {
+                                                        itemName = ">" + itemName;
+                                                    }
+                                                    ppa.rows.add(position + countFolders, new ImgFolder(finalfolder + itemName + "/", type, id));
+                                                    blnChanged = true;
+                                                    //ppa.notifyDataSetChanged();
                                                 }
-                                                countFolders++;
-                                                if (description != null && description.equalsIgnoreCase("photo"))
-                                                {
-                                                    itemName = ">" + itemName;
-                                                }
-                                                ppa.rows.add(position + countFolders, new ImgFolder(finalfolder + itemName + "/", type, id));
-                                                blnChanged = true;
-                                                //ppa.notifyDataSetChanged();
                                             }
 
                                         }
