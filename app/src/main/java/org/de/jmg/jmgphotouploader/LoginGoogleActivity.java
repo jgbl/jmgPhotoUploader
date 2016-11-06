@@ -40,6 +40,7 @@ import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
+import com.google.gdata.data.photos.AlbumEntry;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -380,13 +381,14 @@ public class LoginGoogleActivity extends Activity
      */
     private class MakeRequestTask extends AsyncTask<Void, Void, List<String>> {
         private com.google.api.services.drive.Drive mService = null;
+        private Picasa mPicasa = null;
         private Exception mLastError = null;
 
         public com.google.api.services.drive.Drive getServiceDrive() {
             return mService;
         }
 
-        public MakeRequestTask(GoogleAccountCredential credential)
+        public MakeRequestTask(final GoogleAccountCredential credential)
         {
             lib.setgstatus("create Start");
             HttpTransport transport = AndroidHttp.newCompatibleTransport();
@@ -395,6 +397,37 @@ public class LoginGoogleActivity extends Activity
                     transport, jsonFactory, credential)
                     .setApplicationName("jmgphotouploader")
                     .build();
+            try
+            {
+                Thread t = new Thread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        try
+                        {
+                            mAccessToken = credential.getToken();
+                        }
+                        catch (IOException e)
+                        {
+                            e.printStackTrace();
+                        }
+                        catch (GoogleAuthException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                t.start();
+                t.join(5000);
+                Picasa p = new Picasa(credential.getSelectedAccountName(), mAccessToken);
+                mPicasa = p;
+                //p.initPicasa(AccessToken);
+            }
+            catch (Exception ex)
+            {
+                lib.setgstatus(ex.getMessage());
+            }
 
             //GoogleApiClient mClient = new GoogleApiClient.Builder(LoginGoogleActivity.this).addAp();
         }
@@ -444,7 +477,14 @@ public class LoginGoogleActivity extends Activity
             {
                 lib.setgstatus("getDataFromApi files is null");
             }
-
+            List<AlbumEntry> L = mPicasa.getAlbums();
+            if (L != null)
+            {
+                for (AlbumEntry A : L)
+                {
+                    fileInfo.add(A.getName());
+                }
+            }
             lib.setgstatus("getDataFromApi Finish");
             return fileInfo;
         }
@@ -473,37 +513,7 @@ public class LoginGoogleActivity extends Activity
 
             }
             mApp.setGoogleDriveClient(mService);
-            try
-            {
-                Thread t = new Thread(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        try
-                        {
-                            mAccessToken = mCredential.getToken();
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
-                        }
-                        catch (GoogleAuthException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-                t.start();
-                t.join(5000);
-                Picasa p = new Picasa(mAccessToken);
-                mApp.setPicasaClient(p);
-                //p.initPicasa(AccessToken);
-            }
-            catch (Exception ex)
-            {
-                lib.setgstatus(ex.getMessage());
-            }
+            mApp.setPicasaClient(mPicasa);
             Intent i = new Intent();
             i.putExtra("GroupPosition", GroupPosition);
             //i.putExtra("client", client);

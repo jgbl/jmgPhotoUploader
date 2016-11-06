@@ -707,7 +707,7 @@ public class lib
                     {
                         try
                         {
-                            mClientGoogle.files().get(parentID).execute().getName()
+
                             if (result != null)
                             {
                                 final _MainActivity Main = (_MainActivity) context;

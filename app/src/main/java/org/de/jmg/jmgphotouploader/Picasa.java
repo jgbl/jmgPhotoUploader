@@ -23,12 +23,12 @@ public class Picasa
     private static final String API_PREFIX
             = "https://picasaweb.google.com/data/feed/api/user/";
     PicasawebService picasaService;
-    String userID;
+    String userId;
 
     public Picasa(String authToken, String userID)
     {
         initPicasa(authToken);
-        this.userID = userID;
+        this.userId = userID;
     }
 
     public <T extends GphotoFeed> T getFeed(String feedHref,
@@ -38,7 +38,7 @@ public class Picasa
         return picasaService.getFeed(new URL(feedHref), feedClass);
     }
 
-    public List<AlbumEntry> getAlbums(String userId) throws IOException,
+    public List<AlbumEntry> getAlbums() throws IOException,
             ServiceException
     {
 
@@ -57,7 +57,7 @@ public class Picasa
         return albums;
     }
 
-    public List<PhotoEntry> getPhotos(String userId, AlbumEntry album) throws IOException,
+    public List<PhotoEntry> getPhotos(AlbumEntry album) throws IOException,
             ServiceException
     {
         AlbumFeed feed = album.getFeed();
@@ -74,6 +74,7 @@ public class Picasa
     public void initPicasa(String authToken)
     {
         picasaService = new PicasawebService("pictureframe");
+
         picasaService.setUserToken(authToken);
     }
 
