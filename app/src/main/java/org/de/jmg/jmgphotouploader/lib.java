@@ -579,7 +579,7 @@ public class lib
     }
 
     public static int getFolderItemLock = 0;
-    public static com.google.api.services.drive.model.File PhotoParent = null;
+    public static com.google.api.services.drive.model.File PhotoParent = new com.google.api.services.drive.model.File();
     public static void GetThumbnailsGoogle(final Activity context, String folder, final ImgFolder imgFolder, final int GroupPosition, final ExpandableListView lv) throws LiveOperationException, InterruptedException, IOException
     {
         boolean blnFolderItemLockInc = false;
@@ -587,6 +587,9 @@ public class lib
         {
             if (lib.getClientGoogle(context) != null)
             {
+                PhotoParent.setName(context.getString(R.string.photos));
+                PhotoParent.setId("000");
+                PhotoParent.setMimeType("application/vnd.google-apps.folder");
                 if (getFolderItemLock++ > 1)
                 {
                     getFolderItemLock--;
@@ -613,8 +616,15 @@ public class lib
                 }
                 if (imgFolder != null && imgFolder.id != null)
                 {
-                    queryString = "'" + imgFolder.id + "' in parents";
-                    firstrun = false;
+                    if (imgFolder.id.equalsIgnoreCase("000"))
+                    {
+                        queryString = null;
+                    }
+                    else
+                    {
+                        queryString = "'" + imgFolder.id + "' in parents";
+                        firstrun = false;
+                    }
                 }
                 //Latch = new CountDownLatch(1);
                 final String finalQueryString = queryString;
@@ -649,7 +659,7 @@ public class lib
                                         .setPageSize(100)
                                         .setFields("files,kind,nextPageToken")
                                         .setQ(finalQueryString)
-                                        .setSpaces("drive");
+                                        .setSpaces((finalQueryString != null) ? "drive" : "photos");
                                 if (finalfirstrun && i == 1)
                                 {
                                     request.setPageSize(1);
@@ -672,10 +682,13 @@ public class lib
                                             {
                                                 com.google.api.services.drive.model.File f = res.get(ii);
                                                 //f.setDescription("photo");
-                                                final com.google.api.services.drive.model.File parent = client.files().get(f.getParents().get(0)).execute();
-                                                PhotoParent = parent;
-                                                resfirst.add(parent);
-                                                break;
+                                                if (f.getParents() != null)
+                                                {
+                                                    final com.google.api.services.drive.model.File parent = client.files().get(f.getParents().get(0)).execute();
+                                                    PhotoParent = parent;
+                                                    resfirst.add(parent);
+                                                    break;
+                                                }
                                             }
                                         }
                                         if (i == 0) L = res;
@@ -689,9 +702,13 @@ public class lib
                                             {
                                                 com.google.api.services.drive.model.File f = res.get(ii);
                                                 //f.setDescription("photo");
-                                                final com.google.api.services.drive.model.File parent = client.files().get(f.getParents().get(0)).execute();
-                                                resfirst.add(parent);
-                                                PhotoParent = parent;
+                                                if (f.getParents() != null)
+                                                {
+                                                    final com.google.api.services.drive.model.File parent = client.files().get(f.getParents().get(0)).execute();
+                                                    resfirst.add(parent);
+                                                    PhotoParent = parent;
+                                                    break;
+                                                }
                                             }
                                         }
                                         if (i == 0) L.addAll(res);
@@ -702,16 +719,21 @@ public class lib
                                 while (!(finalfirstrun && i == 1) && request.getPageToken() != null && request.getPageToken().length() > 0);
                                 if (!finalfirstrun) break;
                             }
-                            if (finalfirstrun)
+                            if (resfirst.size() == 0) resfirst.add(PhotoParent);
+                            if (finalfirstrun && L != null)
                             {
                                 for (com.google.api.services.drive.model.File f : resfirst)
                                 {
                                     L.add(f);
                                 }
                             }
+                            else if (finalfirstrun)
+                            {
+                                L = resfirst;
+                            }
                             return L;
                         }
-                        catch (IOException e)
+                        catch (Exception e)
                         {
                             e.printStackTrace();
                             return L;

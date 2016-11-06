@@ -8,7 +8,6 @@
     <string name="action_settings">Einstellungen</string>
     <string name="btnClose">Schließen</string>
     <string name="btn_add">Hinzufügen</string>
-    <string name="onActivityResultcalled">onActivityResult wurde aufgerufen</string>
     <string name="Download">Download</string>
     <string name="Couldnotload">"Konnte nicht laden "</string>
     <string name="DownloadingImage">Lade Bild herunter</string>
@@ -31,7 +30,9 @@
     <string name="PlayServicesRequired">\"Diese Anwendung benötigt die Google Play Services. Bitte installieren Sie die Google Play Services und starten diese Anwendung neu.\"</string>
     <string name="MaxLogin">Die maximale Anzahl von Login Versuchen wurde erreicht!</string>
     <string name="NoNetwork">\"Es besteht keine Netzwerk Verbindung!\"</string>
-    <string name="send_to">send to</string>
+    <string name="send_to">senden an</string>
     <string name="gettingData">hole Daten ....</string>
-    <string name="selectImage">select image</string>
+    <string name="photos">Fotos</string>
+    <string name="selectImage">Bildauswahl</string>
+    <string name="onActivityResultcalled">Ergebnis</string>
 </resources>

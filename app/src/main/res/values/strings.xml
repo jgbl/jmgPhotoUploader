@@ -10,7 +10,7 @@
     <string name="btnClose">Close</string>
     <string name="action_refresh">refresh</string>
     <string name="search">search</string>
-    <string name="onActivityResultcalled">onActivityResult called</string>
+    <string name="onActivityResultcalled">result</string>
     <string name="Couldnotload">"Could not load "</string>
     <string name="Error">"Error: "</string>
     <string name="Notsignedin">Not signed in!</string>
@@ -34,6 +34,7 @@
     <string name="NoNetwork">\"No network connection available.\"</string>
     <string name="send_to">send to</string>
     <string name="gettingData">getting data ....</string>
+    <string name="photos">photos</string>
     <string name="selectImage">select image</string>
 
 </resources>
