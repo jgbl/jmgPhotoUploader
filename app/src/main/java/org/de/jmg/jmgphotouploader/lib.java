@@ -50,6 +50,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -638,6 +639,7 @@ public class lib
                         Drive client = lib.getClientGoogle(context);
                         FileList result = null;
                         List<com.google.api.services.drive.model.File> L = null;
+                        List<com.google.api.services.drive.model.File> resfirst = new ArrayList<com.google.api.services.drive.model.File>();
                         List<com.google.api.services.drive.model.File> res = null;
                         try
                         {
@@ -646,12 +648,17 @@ public class lib
                                 Drive.Files.List request = client.files().list()
                                         .setPageSize(100)
                                         .setFields("files,kind,nextPageToken")
-                                        .setQ(finalQueryString);
-                                if (finalfirstrun && i == 1)
+                                        .setQ(finalQueryString)
+                                        .setSpaces("drive");
+                                if (finalfirstrun) // && i == 1)
                                 {
-                                    request.setPageSize(100);
-                                    request.setQ(null);
-                                    request.setSpaces("photos");
+                                    request.setPageSize(1);
+
+                                    if (i == 1)
+                                    {
+                                        request.setSpaces("photos");
+                                        request.setQ(null);
+                                    }
                                 }
                                 do
                                 {
@@ -659,28 +666,29 @@ public class lib
                                     if (L == null)
                                     {
                                         L = result.getFiles();
-                                        if (finalfirstrun && i == 1)
+                                        if (finalfirstrun)
                                         {
                                             for (int ii = 0; ii < L.size(); ii++)
                                             {
                                                 com.google.api.services.drive.model.File f = L.get(ii);
-                                                f.setDescription("photo");
-                                                final String parentName = client.files().get(f.getParents().get(0)).execute().getName();
-                                                f.set("ParentName", parentName);
+                                                //f.setDescription("photo");
+                                                final com.google.api.services.drive.model.File parent = client.files().get(f.getParents().get(0)).execute();
+                                                resfirst.add(parent);
+                                                break;
                                             }
                                         }
                                     }
                                     else
                                     {
                                         res = result.getFiles();
-                                        if (finalfirstrun && i == 1)
+                                        if (finalfirstrun)
                                         {
                                             for (int ii = 0; ii < res.size(); ii++)
                                             {
                                                 com.google.api.services.drive.model.File f = res.get(ii);
-                                                f.setDescription("photo");
-                                                final String parentName = client.files().get(f.getParents().get(0)).execute().getName();
-                                                f.set("ParentName", parentName);
+                                                //f.setDescription("photo");
+                                                final com.google.api.services.drive.model.File parent = client.files().get(f.getParents().get(0)).execute();
+                                                resfirst.add(parent);
                                             }
                                         }
                                         L.addAll(res);
@@ -688,9 +696,10 @@ public class lib
                                     request.setPageToken(result.getNextPageToken());
 
                                 }
-                                while (request.getPageToken() != null && request.getPageToken().length() > 0);
+                                while (!finalfirstrun && request.getPageToken() != null && request.getPageToken().length() > 0);
                                 if (!finalfirstrun) break;
                             }
+                            if (finalfirstrun) L = resfirst;
                             return L;
                         }
                         catch (IOException e)
