@@ -1,4 +1,4 @@
-package org.de.jmg.jmgphotouploader;
+/*package org.de.jmg.jmgphotouploader;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -86,3 +86,4 @@ public class Picasa
     }
 }
 
+*/

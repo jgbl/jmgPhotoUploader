@@ -44,7 +44,7 @@ public class JMPPPApplication extends android.support.multidex.MultiDexApplicati
     private LiveConnectClient mConnectClient;
     private com.google.api.services.drive.Drive mGoogleDriveClient;
     private DbxClientV2 mDropboxClient;
-    private Picasa mPicasaClient;
+    //private Picasa mPicasaClient;
     private LiveConnectSession mSession;
     public java.util.ArrayList<ImgFolder> BMList = new java.util.ArrayList<ImgFolder>();
     public PhotoFolderAdapter ppa;
@@ -68,7 +68,7 @@ public class JMPPPApplication extends android.support.multidex.MultiDexApplicati
         mGoogleDriveClient = null;
         mAuthClient = null;
         mConnectClient = null;
-        mPicasaClient = null;
+        //mPicasaClient = null;
         mSession = null;
         this.ppa = null;
         this.MainContext = null;
@@ -108,6 +108,7 @@ public class JMPPPApplication extends android.support.multidex.MultiDexApplicati
         return mGoogleDriveClient;
     }
 
+    /*
     public Picasa getmPicasaClient()
     {
         return mPicasaClient;
@@ -117,7 +118,7 @@ public class JMPPPApplication extends android.support.multidex.MultiDexApplicati
     {
         mPicasaClient = picasa;
     }
-
+    */
     public LiveConnectSession getSession() {
         return mSession;
     }

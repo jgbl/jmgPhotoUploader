@@ -665,7 +665,7 @@ public class lib
                                             {
                                                 com.google.api.services.drive.model.File f = L.get(ii);
                                                 f.setDescription("photo");
-                                                final String parentName = mClientGoogle.files().get(f.getParents().get(0)).execute().getName();
+                                                final String parentName = client.files().get(f.getParents().get(0)).execute().getName();
                                                 f.set("ParentName", parentName);
                                             }
                                         }
@@ -679,7 +679,7 @@ public class lib
                                             {
                                                 com.google.api.services.drive.model.File f = res.get(ii);
                                                 f.setDescription("photo");
-                                                final String parentName = mClientGoogle.files().get(f.getParents().get(0)).execute().getName();
+                                                final String parentName = client.files().get(f.getParents().get(0)).execute().getName();
                                                 f.set("ParentName", parentName);
                                             }
                                         }
