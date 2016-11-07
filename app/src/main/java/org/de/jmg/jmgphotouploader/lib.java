@@ -9,6 +9,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
@@ -82,6 +83,72 @@ public class lib
     {
         return _status;
     }
+
+    public static String[] getStringArrayFromPrefs(SharedPreferences prefs,
+                                                   String name)
+    {
+        int count = prefs.getInt(name, -1);
+        if (count > -1)
+        {
+            String[] res = new String[count + 1];
+            for (int i = 0; i <= count; i++)
+            {
+                res[i] = prefs.getString(name + i, "");
+            }
+
+            return res;
+        }
+        else
+        {
+            return null;
+        }
+
+    }
+
+    public static void deleteStringArrayFromPrefs(SharedPreferences prefs,
+                                                  String name)
+    {
+        int count = prefs.getInt(name, -1);
+        if (count > -1)
+        {
+            SharedPreferences.Editor edit = prefs.edit();
+            for (int i = 0; i <= count; i++)
+            {
+                edit.remove(name + i);
+            }
+
+            edit.remove(name);
+            edit.commit();
+        }
+
+
+    }
+
+
+    public static void putStringArrayToPrefs(SharedPreferences prefs, String array[],
+                                             String name)
+    {
+        SharedPreferences.Editor edit = prefs.edit();
+        if (array == null)
+        {
+            edit.putInt(name, -1);
+            //edit.putInt(name + 0, 1);
+        }
+        else
+        {
+            int count = array.length - 1;
+            edit.putInt(name, count);
+            for (int i = 0; i <= count; i++)
+            {
+                edit.putString(name + i, array[i]);
+            }
+        }
+
+
+        edit.commit();
+
+    }
+
 
     public static void setgstatus(String value)
     {

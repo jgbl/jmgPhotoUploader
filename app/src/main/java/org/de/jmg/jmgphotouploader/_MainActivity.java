@@ -2,6 +2,7 @@ package org.de.jmg.jmgphotouploader;
 
 
 import android.Manifest;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -33,6 +34,7 @@ import com.microsoft.live.LiveOperationException;
 import com.microsoft.live.LiveStatus;
 
 import java.io.File;
+import java.util.prefs.Preferences;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 
@@ -57,7 +59,31 @@ public class _MainActivity extends Activity
 		super.onCreate(bundle);
 		try
 		{
-			app = (JMPPPApplication) getApplication();
+            try
+            {
+                String[] tmpFiles = lib.getStringArrayFromPrefs(getPreferences(MODE_PRIVATE), "tempFiles");
+                if (tmpFiles != null)
+                {
+                    for (String f : tmpFiles)
+                    {
+                        try
+                        {
+                            File F = new File(f);
+                            F.delete();
+                        }
+                        catch (Exception ex)
+                        {
+                            ex.printStackTrace();
+                        }
+                    }
+                    lib.deleteStringArrayFromPrefs(getPreferences(MODE_PRIVATE), "tempFiles");
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.printStackTrace();
+            }
+            app = (JMPPPApplication) getApplication();
 			app.MainContext = this.Context;
 			initDB(app);
 			//requestWindowFeature(Window.FEATURE_PROGRESS);
@@ -257,7 +283,23 @@ public class _MainActivity extends Activity
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		super.onSaveInstanceState(savedInstanceState);
-	}
+        try
+        {
+            if (app.tempFiles.size() > 0)
+            {
+                String[] tmpFiles = new String[app.tempFiles.size()];
+                for (int i = 0; i < app.tempFiles.size(); i++)
+                {
+                    tmpFiles[i] = app.tempFiles.get(i).getPath();
+                }
+                lib.putStringArrayToPrefs(getPreferences(MODE_PRIVATE), tmpFiles, "tempFiles");
+            }
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+    }
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -309,17 +351,7 @@ public class _MainActivity extends Activity
 		try
 		{
 			if (app.dbpp != null && app.dbpp.DataBase.isOpen())app.dbpp.close();
-			for(File f: app.tempFiles)
-			{
-				try
-				{
-					f.delete();
-				}
-				catch(Exception ex)
-				{
 
-				}
-			}
 			app.tempFiles.clear();
 			app.BMList.clear();
 			app.clear();
