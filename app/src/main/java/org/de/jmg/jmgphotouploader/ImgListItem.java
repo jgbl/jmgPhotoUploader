@@ -9,6 +9,7 @@ import android.provider.MediaStore.Images.Thumbnails;
 public class ImgListItem extends Object
 {
 
+
 	public ImgListItem(Context context, String id, int ImageID, String FileName, android.net.Uri Uri, String folder, ImgFolder.Type type, String Size)
 	{
 		this.id = id;
@@ -32,7 +33,7 @@ public class ImgListItem extends Object
 	public android.net.Uri Uri;
 	public ImgFolder.Type type;
 	public String ThumbNailLink;
-
+	public String path;
 	public boolean ThumbnailLoaded;
 	private String _size;
 

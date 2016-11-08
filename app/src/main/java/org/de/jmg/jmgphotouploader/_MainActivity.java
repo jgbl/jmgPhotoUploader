@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 //import android.runtime.*;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -34,6 +35,7 @@ import com.microsoft.live.LiveOperationException;
 import com.microsoft.live.LiveStatus;
 
 import java.io.File;
+import java.util.concurrent.CountDownLatch;
 import java.util.prefs.Preferences;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
@@ -78,6 +80,11 @@ public class _MainActivity extends Activity
                     }
                     lib.deleteStringArrayFromPrefs(getPreferences(MODE_PRIVATE), "tempFiles");
                 }
+
+                SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+                String lastProvider = prefs.getString("lastProvider", "");
+                String lastPath = prefs.getString("lastPath", "");
+                String lastFileName = prefs.getString("lastFileName", "");
             }
             catch (Exception ex)
             {
@@ -233,9 +240,12 @@ public class _MainActivity extends Activity
 			*/
 			if (app.ppa == null) {
 				app.BMList.add(new ImgFolder("One Drive",ImgFolder.Type.OneDriveAlbum));
-				app.BMList.add(new ImgFolder("Google Drive",ImgFolder.Type.Google));
-				app.BMList.add(new ImgFolder("Dropbox",ImgFolder.Type.Dropbox));
-			}
+                app.OneDriveFolder = app.BMList.get(app.BMList.size() - 1);
+                app.BMList.add(new ImgFolder("Google Drive",ImgFolder.Type.Google));
+                app.GoogleFolder = app.BMList.get(app.BMList.size() - 1);
+                app.BMList.add(new ImgFolder("Dropbox",ImgFolder.Type.Dropbox));
+                app.DropboxFolder = app.BMList.get(app.BMList.size() - 1);
+            }
 		}
 		setContentView(R.layout.activity_main);
 
@@ -250,10 +260,70 @@ public class _MainActivity extends Activity
 
 		//lv.setOnChildClickListener(lv_ChildClick);
 		lv.setOnScrollListener(app.ppa.onScrollListener);
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        final String lastProvider = prefs.getString("lastProvider", null);
+        final String lastPath = prefs.getString("lastPath", "");
+        final String lastFileName = prefs.getString("lastFileName", "");
+        //lv.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        if (lastProvider != null)
+        {
+            app.latchExpand = new CountDownLatch(1);
+            if (lastProvider.equalsIgnoreCase(ImgFolder.Type.OneDriveAlbum.toString()) || lastProvider.equalsIgnoreCase(ImgFolder.Type.OneDriveFolder.toString()))
+            {
+                lv.expandGroup(app.ppa.rows.indexOf(app.OneDriveFolder));
+            }
+            else if (lastProvider.equalsIgnoreCase(ImgFolder.Type.Google.toString()))
+            {
+                lv.expandGroup(app.ppa.rows.indexOf(app.GoogleFolder));
+            }
+            else if (lastProvider.equalsIgnoreCase(ImgFolder.Type.Dropbox.toString()))
+            {
+                lv.expandGroup(app.ppa.rows.indexOf(app.DropboxFolder));
+            }
+            else
+            {
+                app.latchExpand.countDown();
+            }
+            if (app.latchExpand.getCount() > 0)
+            {
+                lv.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener()
+                {
+                    @Override
+                    public void onGroupExpand(int groupPosition)
+                    {
+                        //lv.setOnGroupExpandListener(null);
+                        if (app.ppa.rows.get(groupPosition).expanded)
+                        {
+                            findPath(lastPath);
+                        }
+                    }
+                });
+            }
+            if (app.latchExpand != null)
+            {
+                app.latchExpand = null;
+            }
 
-		//lv.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        }
+    }
 
-	}
+    private void findPath(String lastPath)
+    {
+        boolean found = false;
+        int i = 0;
+        for (ImgFolder F : app.ppa.rows)
+        {
+            if (lastPath.startsWith(F.Name) && F.fetched == false)
+            {
+                lv.expandGroup(i);
+
+                found = true;
+                break;
+            }
+            i++;
+        }
+        if (!found) lv.setOnGroupExpandListener(null);
+    }
 
 	@Override
 	public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
@@ -293,6 +363,14 @@ public class _MainActivity extends Activity
                     tmpFiles[i] = app.tempFiles.get(i).getPath();
                 }
                 lib.putStringArrayToPrefs(getPreferences(MODE_PRIVATE), tmpFiles, "tempFiles");
+            }
+            if (app.lastItem != null)
+            {
+                SharedPreferences.Editor edit = getPreferences(MODE_PRIVATE).edit();
+                edit.putString("lastProvider", app.lastItem.type.toString());
+                edit.putString("lastPath", app.lastItem.path);
+                edit.putString("lastFileName", app.lastItem.FileName);
+                edit.commit();
             }
         }
         catch (Exception ex)

@@ -411,6 +411,10 @@ public class lib
                 @Override
                 public void onComplete(LiveOperation operation)
                 {
+                    final _MainActivity Main = (_MainActivity) context;
+                    final JMPPPApplication app = (JMPPPApplication) Main.getApplication();
+                    final PhotoFolderAdapter ppa = app.ppa;
+
                     try
                     {
                         LiveOp = operation;
@@ -423,9 +427,6 @@ public class lib
                                 if (data != null)
                                 {
 
-                                    final _MainActivity Main = (_MainActivity) context;
-                                    final JMPPPApplication app = (JMPPPApplication) Main.getApplication();
-                                    final PhotoFolderAdapter ppa = app.ppa;
 
                                     lib.BMList.clear();
                                     int countFolders = 0;
@@ -507,6 +508,7 @@ public class lib
                         getFolderItemLock--;
                         mProgress.hide();
                         mProgress.dismiss();
+                        if (app.latchExpand != null) app.latchExpand.countDown();
                     }
                 }
             });
@@ -812,14 +814,15 @@ public class lib
                     @Override
                     protected void onPostExecute(List<com.google.api.services.drive.model.File> result)
                     {
+                        final _MainActivity Main = (_MainActivity) context;
+                        final JMPPPApplication app = (JMPPPApplication) Main.getApplication();
+                        final PhotoFolderAdapter ppa = app.ppa;
+
                         try
                         {
 
                             if (result != null)
                             {
-                                final _MainActivity Main = (_MainActivity) context;
-                                final JMPPPApplication app = (JMPPPApplication) Main.getApplication();
-                                final PhotoFolderAdapter ppa = app.ppa;
                                 List<com.google.api.services.drive.model.File> files = result;
                                 if (files != null)
                                 {
@@ -936,6 +939,7 @@ public class lib
                             getFolderItemLock--;
                             mProgress.hide();
                             mProgress.dismiss();
+                            if (app.latchExpand != null) app.latchExpand.countDown();
                         }
                     }
                 };
@@ -1028,13 +1032,14 @@ public class lib
                     @Override
                     protected void onPostExecute(List<Metadata> result)
                     {
+                        final _MainActivity Main = (_MainActivity) context;
+                        final JMPPPApplication app = (JMPPPApplication) Main.getApplication();
+                        final PhotoFolderAdapter ppa = app.ppa;
+
                         try
                         {
                             if (result != null)
                             {
-                                final _MainActivity Main = (_MainActivity) context;
-                                final JMPPPApplication app = (JMPPPApplication) Main.getApplication();
-                                final PhotoFolderAdapter ppa = app.ppa;
                                 List<Metadata> files = result;
                                 if (files != null)
                                 {
@@ -1155,6 +1160,7 @@ public class lib
                             getFolderItemLock--;
                             mProgress.hide();
                             mProgress.dismiss();
+                            if (app.latchExpand != null) app.latchExpand.countDown();
                         }
                     }
                 };

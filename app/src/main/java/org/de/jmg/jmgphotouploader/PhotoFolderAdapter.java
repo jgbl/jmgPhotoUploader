@@ -64,6 +64,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -825,6 +826,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
         GetFolderItems(Folder, groupPosition);
         if (Folder.items.size() <= childPosition) return view;
         final ImgListItem item = Folder.items.get(childPosition);
+        item.path = Folder.Name;
         // If no recycled view, inflate a new view as a simple expandable list item 2:
         boolean isNewView = false;
         try
@@ -1144,6 +1146,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 			((LinearLayout.LayoutParams)Text2.LayoutParameters).Weight= 0.2f;
 			*/
             lib.setgstatus("GetChildview Finished");
+            myApp.setLastItem(item);
             return view;
         }
         catch (RuntimeException ex)
@@ -1800,6 +1803,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 
     private void GetFolderItems(ImgFolder Folder, int GroupPosition)
     {
+        JMPPPApplication app = (JMPPPApplication) context.getApplication();
 
         if ((Folder.type == ImgFolder.Type.OneDriveAlbum
                 || Folder.type == ImgFolder.Type.OneDriveFolder
@@ -1828,6 +1832,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                             {
                                 lib.BMList = new java.util.ArrayList<ImgListItem>();
                                 Folder.items = lib.BMList;
+                                //app.latchExpand = new CountDownLatch(1);
                                 lib.GetThumbnailsGoogle(context, Folder.Name, Folder, GroupPosition, ((_MainActivity) context).lv);
                                 //Folder.fetched = true;
                             }
@@ -1866,6 +1871,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                             {
                                 lib.BMList = new java.util.ArrayList<ImgListItem>();
                                 Folder.items = lib.BMList;
+                                //app.latchExpand = new CountDownLatch(1);
                                 lib.GetThumbnailsDropbox(context, Folder.Name, Folder, GroupPosition, ((_MainActivity) context).lv);
                                 //Folder.fetched = true;
                             }
@@ -1897,6 +1903,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                             {
                                 lib.BMList = new java.util.ArrayList<ImgListItem>();
                                 Folder.items = lib.BMList;
+                                //app.latchExpand = new CountDownLatch(1);
                                 lib.GetThumbnailsOneDrive(context, Folder.Name, Folder, GroupPosition, ((_MainActivity) context).lv);
                                 //Folder.fetched = true;
                             }

@@ -36,6 +36,7 @@ import com.microsoft.live.LiveConnectSession;
 
 import java.io.File;
 import java.util.LinkedList;
+import java.util.concurrent.CountDownLatch;
 
 public class JMPPPApplication extends Application // android.support.multidex.MultiDexApplication
 {
@@ -57,6 +58,8 @@ public class JMPPPApplication extends Application // android.support.multidex.Mu
     public LinkedList<File> tempFiles = new LinkedList<>();
     public boolean LoginDropboxClosed;
     public ImgFolder DropboxFolder;
+    public ImgListItem lastItem;
+    public CountDownLatch latchExpand;
 
     public LiveAuthClient getAuthClient() {
         return mAuthClient;
@@ -146,5 +149,10 @@ public class JMPPPApplication extends Application // android.support.multidex.Mu
     public DbxClientV2 getDropboxClient()
     {
         return  mDropboxClient;
+    }
+
+    public void setLastItem(ImgListItem item)
+    {
+        lastItem = item;
     }
 }
