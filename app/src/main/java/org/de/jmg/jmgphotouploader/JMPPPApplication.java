@@ -65,6 +65,7 @@ public class JMPPPApplication extends Application // android.support.multidex.Mu
     public String lastFileName;
     public boolean lastFolderfound;
     public boolean lastFilefound;
+    public int lastFilePosition = -1;
 
     public LiveAuthClient getAuthClient() {
         return mAuthClient;

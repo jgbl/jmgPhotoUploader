@@ -219,6 +219,7 @@ public class lib
     public static void GetThumbnails(Activity context, boolean Internal, android.database.Cursor mediaCursor, java.util.ArrayList<ImgFolder> BMList)
     {
         boolean blnFolderItemLockInc = false;
+        final JMPPPApplication app = (JMPPPApplication) context.getApplication();
         try
         {
             if (getFolderItemLock++ > 1)
@@ -272,7 +273,15 @@ public class lib
                                 Folder = new ImgFolder(Bucket, ImgFolder.Type.Local);
                                 BMList.add(Folder);
                             }
-                            Folder.items.add(new ImgListItem(context, "", imageId, (new java.io.File(folder)).getName(), Uri.parse("file://" + folder), folder, ImgFolder.Type.Local, null));
+                            ImgListItem item = new ImgListItem(context, "", imageId, (new java.io.File(folder)).getName(), Uri.parse("file://" + folder), folder, ImgFolder.Type.Local, null);
+                            Folder.items.add(item);
+                            if (app.lastFilefound == false && app.lastProvider != null && app.lastProvider.equals(Folder.type.toString()))
+                            {
+                                if (Folder.Name.equals(app.lastPath) && item.FileName.equals(app.lastFileName))
+                                {
+                                    app.lastFilePosition = Folder.items.size() - 1;
+                                }
+                            }
                             //}
                         }
                     }
@@ -415,6 +424,7 @@ public class lib
                     final JMPPPApplication app = (JMPPPApplication) Main.getApplication();
                     final PhotoFolderAdapter ppa = app.ppa;
                     int lastFolderID = -1;
+                    int lastFileID = -1;
                     try
                     {
                         LiveOp = operation;
@@ -454,6 +464,26 @@ public class lib
                                                 ImgListItem Item = (new ImgListItem(context, id, 0, itemName, auri, uri, ImgFolder.Type.OneDriveAlbum, width + "x" + height));
                                                 lib.BMList.add(Item);
                                                 blnChanged = true;
+                                                if (!app.lastFilefound && app.lastProvider != null)
+                                                {
+                                                    if (imgFolder.type.toString().equals(app.lastProvider)
+                                                            || (imgFolder.type.toString().contains("OneDrive") && app.lastProvider.contains("OneDrive")))
+                                                    {
+                                                        if (app.lastPath != null)
+                                                        {
+                                                            if (app.lastPath.equals(imgFolder.Name) && imgFolder.expanded == true)
+                                                            {
+                                                                if (itemName.equals(app.lastFileName))
+                                                                {
+                                                                    lastFileID = lib.BMList.size() - 1;
+                                                                    app.lastFilefound = true;
+                                                                }
+                                                            }
+                                                        }
+
+                                                    }
+                                                }
+
                                                 //ppa.notifyDataSetChanged();
                                             }
                                             else if (itemType.equals("album") || itemType.equals("folder"))
@@ -518,6 +548,10 @@ public class lib
                                             mProgress.hide();
                                             mProgress.dismiss();
                                             ppa.lv.expandGroup(lastFolderID);
+                                        }
+                                        if (lastFileID > -1)
+                                        {
+                                            ppa.lv.setSelectedChild(GroupPosition, lastFileID, true);
                                         }
                                     }
                                 }
@@ -732,6 +766,7 @@ public class lib
 
                 AsyncTask<Void, Void, List<com.google.api.services.drive.model.File>> task = new AsyncTask<Void, Void, List<com.google.api.services.drive.model.File>>()
                 {
+
                     @Override
                     protected void onPreExecute()
                     {
@@ -846,6 +881,8 @@ public class lib
                         final JMPPPApplication app = (JMPPPApplication) Main.getApplication();
                         final PhotoFolderAdapter ppa = app.ppa;
                         int lastFolderID = -1;
+                        int lastFileID = -1;
+
                         try
                         {
 
@@ -895,6 +932,26 @@ public class lib
                                                 Item.ThumbNailLink = ThumbNailLink;
                                                 lib.BMList.add(Item);
                                                 blnChanged = true;
+                                                if (!app.lastFilefound && app.lastProvider != null)
+                                                {
+                                                    if (imgFolder.type.toString().equals(app.lastProvider)
+                                                            || (imgFolder.type.toString().contains("OneDrive") && app.lastProvider.contains("OneDrive")))
+                                                    {
+                                                        if (app.lastPath != null)
+                                                        {
+                                                            if (app.lastPath.equals(imgFolder.Name) && imgFolder.expanded == true)
+                                                            {
+                                                                if (itemName.equals(app.lastFileName))
+                                                                {
+                                                                    lastFileID = lib.BMList.size() - 1;
+                                                                    app.lastFilefound = true;
+                                                                }
+                                                            }
+                                                        }
+
+                                                    }
+                                                }
+
                                                 //ppa.notifyDataSetChanged();
                                             }
                                             else if (itemType.equals("album") || itemType.equals("folder"))
@@ -978,6 +1035,10 @@ public class lib
                                             mProgress.hide();
                                             mProgress.dismiss();
                                             ppa.lv.expandGroup(lastFolderID);
+                                        }
+                                        if (lastFileID > -1)
+                                        {
+                                            ppa.lv.setSelectedChild(GroupPosition, lastFileID, true);
                                         }
                                     }
                                 }
@@ -1093,6 +1154,7 @@ public class lib
                         final JMPPPApplication app = (JMPPPApplication) Main.getApplication();
                         final PhotoFolderAdapter ppa = app.ppa;
                         int lastFolderID = -1;
+                        int lastFileID = -1;
 
                         try
                         {
@@ -1165,6 +1227,26 @@ public class lib
                                                 Item.ThumbNailLink = ThumbNailLink;
                                                 lib.BMList.add(Item);
                                                 blnChanged = true;
+                                                if (!app.lastFilefound && app.lastProvider != null)
+                                                {
+                                                    if (imgFolder.type.toString().equals(app.lastProvider)
+                                                            || (imgFolder.type.toString().contains("OneDrive") && app.lastProvider.contains("OneDrive")))
+                                                    {
+                                                        if (app.lastPath != null)
+                                                        {
+                                                            if (app.lastPath.equals(imgFolder.Name) && imgFolder.expanded == true)
+                                                            {
+                                                                if (itemName.equals(app.lastFileName))
+                                                                {
+                                                                    lastFileID = lib.BMList.size() - 1;
+                                                                    app.lastFilefound = true;
+                                                                }
+                                                            }
+                                                        }
+
+                                                    }
+                                                }
+
                                                 //ppa.notifyDataSetChanged();
                                             }
                                             else if (itemType.equals("album") || itemType.equals("folder"))
@@ -1230,6 +1312,10 @@ public class lib
                                             mProgress.hide();
                                             mProgress.dismiss();
                                             ppa.lv.expandGroup(lastFolderID);
+                                        }
+                                        if (lastFileID > -1)
+                                        {
+                                            ppa.lv.setSelectedChild(GroupPosition, lastFileID, true);
                                         }
                                     }
                                 }

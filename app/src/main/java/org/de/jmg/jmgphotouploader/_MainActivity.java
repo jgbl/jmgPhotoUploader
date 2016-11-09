@@ -82,10 +82,7 @@ public class _MainActivity extends Activity
                     lib.deleteStringArrayFromPrefs(getPreferences(MODE_PRIVATE), "tempFiles");
                 }
 
-                SharedPreferences prefs = getPreferences(MODE_PRIVATE);
-                String lastProvider = prefs.getString("lastProvider", "");
-                String lastPath = prefs.getString("lastPath", "");
-                String lastFileName = prefs.getString("lastFileName", "");
+
             }
             catch (Exception ex)
             {
@@ -216,6 +213,18 @@ public class _MainActivity extends Activity
 	{
 		System.out.println(lib.getExternalPicturesDir());
 
+		SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+		final String lastProvider = prefs.getString("lastProvider", null);
+		app.lastProvider = lastProvider;
+		final String lastPath = prefs.getString("lastPath", "");
+		app.lastPath = lastPath;
+		final String lastFileName = prefs.getString("lastFileName", "");
+		app.lastFileName = lastFileName;
+		//lv.setOverScrollMode(View.OVER_SCROLL_NEVER);
+		app.lastFolderfound = false;
+		app.lastFilefound = false;
+
+
 		String selection = "";
 		String[] selectionArgs = new String[]{};
 		String[] projection = new String[] {MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.Media.BUCKET_ID};
@@ -261,26 +270,8 @@ public class _MainActivity extends Activity
 
 		//lv.setOnChildClickListener(lv_ChildClick);
 		lv.setOnScrollListener(app.ppa.onScrollListener);
-        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
-        final String lastProvider = prefs.getString("lastProvider", null);
-		app.lastProvider = lastProvider;
-		final String lastPath = prefs.getString("lastPath", "");
-		app.lastPath = lastPath;
-		final String lastFileName = prefs.getString("lastFileName", "");
-		app.lastFileName = lastFileName;
-		//lv.setOverScrollMode(View.OVER_SCROLL_NEVER);
-        app.lastFolderfound = false;
-        app.lastFilefound = false;
         if (lastProvider != null)
         {
-			app.ppa.registerDataSetObserver(new DataSetObserver()
-			{
-				@Override
-				public void onChanged()
-				{
-					super.onChanged();
-				}
-			});
 			app.latchExpand = new CountDownLatch(1);
             if (lastProvider.equalsIgnoreCase(ImgFolder.Type.OneDriveAlbum.toString()) || lastProvider.equalsIgnoreCase(ImgFolder.Type.OneDriveFolder.toString()))
             {
@@ -310,8 +301,8 @@ public class _MainActivity extends Activity
 
 	public void findPath()
 	{
-        if (!app.lastFolderfound && app.lastPath != null)
-        {
+		if (app.lastProvider != null && !app.lastFolderfound && app.lastPath != null)
+		{
 			boolean found = false;
 			int i = 0;
 			for (ImgFolder F : app.ppa.rows)
@@ -320,8 +311,19 @@ public class _MainActivity extends Activity
 					if (app.lastPath.startsWith(F.Name) && F.expanded == false)
 					{
 						lv.expandGroup(i);
-                        if (app.lastPath.equals(F.Name)) app.lastFolderfound = true;
-                        found = true;
+						if (app.lastPath.equals(F.Name))
+						{
+							app.lastFolderfound = true;
+							if (app.lastFilefound == false)
+							{
+								if (app.lastFilePosition > -1)
+								{
+									app.ppa.lv.setSelectedChild(i, app.lastFilePosition, true);
+									app.lastFilefound = true;
+								}
+							}
+						}
+						found = true;
 						break;
 					}
 				i++;

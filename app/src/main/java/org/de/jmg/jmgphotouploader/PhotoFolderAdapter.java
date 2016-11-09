@@ -1147,6 +1147,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 			*/
             lib.setgstatus("GetChildview Finished");
             myApp.setLastItem(item);
+
             return view;
         }
         catch (RuntimeException ex)
@@ -1946,6 +1947,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                 }
             }
         }
+
     }
 
 
