@@ -512,7 +512,13 @@ public class lib
                                             }
                                         }
                                         ppa.notifyDataSetChanged();
-                                        if (lastFolderID > -1) ppa.lv.expandGroup(lastFolderID);
+                                        if (lastFolderID > -1)
+                                        {
+                                            getFolderItemLock--;
+                                            mProgress.hide();
+                                            mProgress.dismiss();
+                                            ppa.lv.expandGroup(lastFolderID);
+                                        }
                                     }
                                 }
                             }
@@ -524,9 +530,12 @@ public class lib
                     }
                     finally
                     {
-                        getFolderItemLock--;
-                        mProgress.hide();
-                        mProgress.dismiss();
+                        if (lastFolderID == -1)
+                        {
+                            getFolderItemLock--;
+                            mProgress.hide();
+                            mProgress.dismiss();
+                        }
                         if (app.latchExpand != null) app.latchExpand.countDown();
                     }
                 }
@@ -963,7 +972,13 @@ public class lib
                                             }
                                         }
                                         ppa.notifyDataSetChanged();
-                                        if (lastFolderID > -1) ppa.lv.expandGroup(lastFolderID);
+                                        if (lastFolderID > -1)
+                                        {
+                                            getFolderItemLock--;
+                                            mProgress.hide();
+                                            mProgress.dismiss();
+                                            ppa.lv.expandGroup(lastFolderID);
+                                        }
                                     }
                                 }
                             }
@@ -975,9 +990,12 @@ public class lib
                         }
                         finally
                         {
-                            getFolderItemLock--;
-                            mProgress.hide();
-                            mProgress.dismiss();
+                            if (lastFolderID == -1)
+                            {
+                                getFolderItemLock--;
+                                mProgress.hide();
+                                mProgress.dismiss();
+                            }
                             if (app.latchExpand != null) app.latchExpand.countDown();
                         }
                     }
@@ -1206,7 +1224,13 @@ public class lib
                                             }
                                         }
                                         ppa.notifyDataSetChanged();
-                                        if (lastFolderID > -1) ppa.lv.expandGroup(lastFolderID);
+                                        if (lastFolderID > -1)
+                                        {
+                                            getFolderItemLock--;
+                                            mProgress.hide();
+                                            mProgress.dismiss();
+                                            ppa.lv.expandGroup(lastFolderID);
+                                        }
                                     }
                                 }
                             }
@@ -1217,9 +1241,12 @@ public class lib
                         }
                         finally
                         {
-                            getFolderItemLock--;
-                            mProgress.hide();
-                            mProgress.dismiss();
+                            if (lastFolderID == -1)
+                            {
+                                getFolderItemLock--;
+                                mProgress.hide();
+                                mProgress.dismiss();
+                            }
                             if (app.latchExpand != null) app.latchExpand.countDown();
                         }
                     }

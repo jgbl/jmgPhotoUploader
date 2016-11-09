@@ -83,6 +83,12 @@ public class JMPPPApplication extends Application // android.support.multidex.Mu
         this.GoogleFolder = null;
         this.OneDriveFolder = null;
         this.DropboxFolder = null;
+        this.lastPath = null;
+        this.lastProvider = null;
+        this.lastFilefound = false;
+        this.lastFileName = null;
+        this.lastFolderfound = false;
+        this.lastItem = null;
     }
     public LiveConnectClient getConnectClient() {
         if (mConnectClient != null)

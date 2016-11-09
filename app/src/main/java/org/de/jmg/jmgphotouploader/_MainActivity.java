@@ -4,6 +4,7 @@ package org.de.jmg.jmgphotouploader;
 import android.Manifest;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -272,7 +273,15 @@ public class _MainActivity extends Activity
         app.lastFilefound = false;
         if (lastProvider != null)
         {
-            app.latchExpand = new CountDownLatch(1);
+			app.ppa.registerDataSetObserver(new DataSetObserver()
+			{
+				@Override
+				public void onChanged()
+				{
+					super.onChanged();
+				}
+			});
+			app.latchExpand = new CountDownLatch(1);
             if (lastProvider.equalsIgnoreCase(ImgFolder.Type.OneDriveAlbum.toString()) || lastProvider.equalsIgnoreCase(ImgFolder.Type.OneDriveFolder.toString()))
             {
                 lv.expandGroup(app.ppa.rows.indexOf(app.OneDriveFolder));
@@ -377,7 +386,7 @@ public class _MainActivity extends Activity
 
 	@Override
 	public void onStop() {
-		savePrefs();
+
 		super.onStop();
 	}
 
@@ -455,6 +464,7 @@ public class _MainActivity extends Activity
 		LiveAuthClient client = app.getAuthClient();
 		if (client != null && app.listener != null) client.logout(app.listener);
 		*/
+		savePrefs();
 		super.onBackPressed();
 		
 	}
