@@ -308,7 +308,7 @@ public class _MainActivity extends Activity
 					if (app.lastPath.startsWith(F.Name) && F.expanded == false)
 					{
 						lv.expandGroup(i);
-
+						if (app.lastPath.equals(F.Name)) app.lastPath = null;
 						found = true;
 						break;
 					}

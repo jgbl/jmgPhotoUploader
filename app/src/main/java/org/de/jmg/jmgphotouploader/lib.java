@@ -1090,7 +1090,7 @@ public class lib
                                             String WebContentLink = null;
                                             try
                                             {
-                                                if (itemType == "image")
+                                                if (itemType.equals("image"))
                                                     WebContentLink = getClientDropbox(context).sharing().getFileMetadata(id).getPreviewUrl();
                                             }
                                             catch (DbxException e)
@@ -1121,7 +1121,9 @@ public class lib
                                                     type = ImgFolder.Type.Dropbox;
                                                 }
                                                 countFolders++;
+                                                ImgFolder F =
                                                 ppa.rows.add(position + countFolders, new ImgFolder(finalfolder + itemName + "/", type, id));
+                                                if (F.type.toString().equals(app.lastProvider) || (F.type.toString().contains("OneDrive") && app.lastProvider.contains("OneDrive")))
                                                 blnChanged = true;
                                                 //ppa.notifyDataSetChanged();
                                             }
