@@ -348,31 +348,8 @@ public class _MainActivity extends Activity
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		super.onSaveInstanceState(savedInstanceState);
-        try
-        {
-            if (app.tempFiles.size() > 0)
-            {
-                String[] tmpFiles = new String[app.tempFiles.size()];
-                for (int i = 0; i < app.tempFiles.size(); i++)
-                {
-                    tmpFiles[i] = app.tempFiles.get(i).getPath();
-                }
-                lib.putStringArrayToPrefs(getPreferences(MODE_PRIVATE), tmpFiles, "tempFiles");
-            }
-            if (app.lastItem != null)
-            {
-                SharedPreferences.Editor edit = getPreferences(MODE_PRIVATE).edit();
-                edit.putString("lastProvider", app.lastItem.type.toString());
-                edit.putString("lastPath", app.lastItem.path);
-                edit.putString("lastFileName", app.lastItem.FileName);
-                edit.commit();
-            }
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
-    }
+		savePrefs();
+	}
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -400,22 +377,8 @@ public class _MainActivity extends Activity
 
 	@Override
 	public void onStop() {
-        /*
-        if (app.dbpp != null && !app.dbpp.isClosed)app.dbpp.close();
-        for(File f: app.tempFiles)
-        {
-            try
-            {
-                f.delete();
-            }
-            catch(Exception ex)
-            {
-
-            }
-        }
-        app.tempFiles.clear();
-        */
-        super.onStop();
+		savePrefs();
+		super.onStop();
 	}
 
 	@Override
@@ -456,7 +419,34 @@ public class _MainActivity extends Activity
 		*/
 		
 	}
-	
+
+	private void savePrefs()
+	{
+		try
+		{
+			if (app.tempFiles.size() > 0)
+			{
+				String[] tmpFiles = new String[app.tempFiles.size()];
+				for (int i = 0; i < app.tempFiles.size(); i++)
+				{
+					tmpFiles[i] = app.tempFiles.get(i).getPath();
+				}
+				lib.putStringArrayToPrefs(getPreferences(MODE_PRIVATE), tmpFiles, "tempFiles");
+			}
+			if (app.lastItem != null)
+			{
+				SharedPreferences.Editor edit = getPreferences(MODE_PRIVATE).edit();
+				edit.putString("lastProvider", app.lastItem.type.toString());
+				edit.putString("lastPath", app.lastItem.path);
+				edit.putString("lastFileName", app.lastItem.FileName);
+				edit.commit();
+			}
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
+	}
 	@Override
 	public void onBackPressed()
 	{
