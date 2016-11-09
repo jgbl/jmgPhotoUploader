@@ -262,9 +262,12 @@ public class _MainActivity extends Activity
 		lv.setOnScrollListener(app.ppa.onScrollListener);
         SharedPreferences prefs = getPreferences(MODE_PRIVATE);
         final String lastProvider = prefs.getString("lastProvider", null);
-        final String lastPath = prefs.getString("lastPath", "");
-        final String lastFileName = prefs.getString("lastFileName", "");
-        //lv.setOverScrollMode(View.OVER_SCROLL_NEVER);
+		app.lastProvider = lastProvider;
+		final String lastPath = prefs.getString("lastPath", "");
+		app.lastPath = lastPath;
+		final String lastFileName = prefs.getString("lastFileName", "");
+		app.lastFileName = lastFileName;
+		//lv.setOverScrollMode(View.OVER_SCROLL_NEVER);
         if (lastProvider != null)
         {
             app.latchExpand = new CountDownLatch(1);
@@ -283,22 +286,8 @@ public class _MainActivity extends Activity
             else
             {
                 app.latchExpand.countDown();
-            }
-            if (app.latchExpand.getCount() > 0)
-            {
-                lv.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener()
-                {
-                    @Override
-                    public void onGroupExpand(int groupPosition)
-                    {
-                        //lv.setOnGroupExpandListener(null);
-                        if (app.ppa.rows.get(groupPosition).expanded)
-                        {
-                            findPath(lastPath);
-                        }
-                    }
-                });
-            }
+				findPath();
+			}
             if (app.latchExpand != null)
             {
                 app.latchExpand = null;
@@ -307,23 +296,26 @@ public class _MainActivity extends Activity
         }
     }
 
-    private void findPath(String lastPath)
-    {
-        boolean found = false;
-        int i = 0;
-        for (ImgFolder F : app.ppa.rows)
-        {
-            if (lastPath.startsWith(F.Name) && F.fetched == false)
-            {
-                lv.expandGroup(i);
+	public void findPath()
+	{
+		if (app.lastPath != null)
+		{
+			boolean found = false;
+			int i = 0;
+			for (ImgFolder F : app.ppa.rows)
+			{
+				if (F.type.toString().equals(app.lastProvider) || (F.type.toString().contains("OneDrive") && app.lastProvider.contains("OneDrive")))
+					if (app.lastPath.startsWith(F.Name) && F.expanded == false)
+					{
+						lv.expandGroup(i);
 
-                found = true;
-                break;
-            }
-            i++;
-        }
-        if (!found) lv.setOnGroupExpandListener(null);
-    }
+						found = true;
+						break;
+					}
+				i++;
+			}
+		}
+	}
 
 	@Override
 	public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {

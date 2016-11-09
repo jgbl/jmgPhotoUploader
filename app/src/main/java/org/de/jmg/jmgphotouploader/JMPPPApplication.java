@@ -60,6 +60,9 @@ public class JMPPPApplication extends Application // android.support.multidex.Mu
     public ImgFolder DropboxFolder;
     public ImgListItem lastItem;
     public CountDownLatch latchExpand;
+    public String lastProvider;
+    public String lastPath;
+    public String lastFileName;
 
     public LiveAuthClient getAuthClient() {
         return mAuthClient;
