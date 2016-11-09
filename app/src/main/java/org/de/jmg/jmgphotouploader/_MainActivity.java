@@ -268,6 +268,8 @@ public class _MainActivity extends Activity
 		final String lastFileName = prefs.getString("lastFileName", "");
 		app.lastFileName = lastFileName;
 		//lv.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        app.lastFolderfound = false;
+        app.lastFilefound = false;
         if (lastProvider != null)
         {
             app.latchExpand = new CountDownLatch(1);
@@ -292,14 +294,15 @@ public class _MainActivity extends Activity
             {
                 app.latchExpand = null;
             }
+            if (app.lastPath.equals("/")) app.lastFolderfound = true;
 
         }
     }
 
 	public void findPath()
 	{
-		if (app.lastPath != null)
-		{
+        if (!app.lastFolderfound && app.lastPath != null)
+        {
 			boolean found = false;
 			int i = 0;
 			for (ImgFolder F : app.ppa.rows)
@@ -308,8 +311,8 @@ public class _MainActivity extends Activity
 					if (app.lastPath.startsWith(F.Name) && F.expanded == false)
 					{
 						lv.expandGroup(i);
-						if (app.lastPath.equals(F.Name)) app.lastPath = null;
-						found = true;
+                        if (app.lastPath.equals(F.Name)) app.lastFolderfound = true;
+                        found = true;
 						break;
 					}
 				i++;

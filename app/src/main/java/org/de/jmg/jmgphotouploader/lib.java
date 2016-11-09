@@ -414,7 +414,7 @@ public class lib
                     final _MainActivity Main = (_MainActivity) context;
                     final JMPPPApplication app = (JMPPPApplication) Main.getApplication();
                     final PhotoFolderAdapter ppa = app.ppa;
-
+                    int lastFolderID = -1;
                     try
                     {
                         LiveOp = operation;
@@ -468,9 +468,27 @@ public class lib
                                                     type = ImgFolder.Type.OneDriveFolder;
                                                 }
                                                 countFolders++;
-                                                ppa.rows.add(position + countFolders, new ImgFolder(finalfolder + itemName + "/", type, id));
-                                                //ppa.notifyDataSetChanged();
+                                                ImgFolder F = new ImgFolder(finalfolder + itemName + "/", type, id);
+                                                ppa.rows.add(position + countFolders, F);
                                                 blnChanged = true;
+                                                if (!app.lastFolderfound && app.lastProvider != null)
+                                                {
+                                                    if (F.type.toString().equals(app.lastProvider)
+                                                            || (F.type.toString().contains("OneDrive") && app.lastProvider.contains("OneDrive")))
+                                                    {
+                                                        if (app.lastPath != null)
+                                                        {
+                                                            if (app.lastPath.startsWith(F.Name) && F.expanded == false)
+                                                            {
+                                                                //F.expanded = true;
+                                                                lastFolderID = position + countFolders;
+                                                                if (app.lastPath.equals(F.Name))
+                                                                    app.lastFolderfound = true;
+                                                            }
+                                                        }
+
+                                                    }
+                                                }
                                             }
 
                                         }
@@ -494,6 +512,7 @@ public class lib
                                             }
                                         }
                                         ppa.notifyDataSetChanged();
+                                        if (lastFolderID > -1) ppa.lv.expandGroup(lastFolderID);
                                     }
                                 }
                             }
@@ -817,7 +836,7 @@ public class lib
                         final _MainActivity Main = (_MainActivity) context;
                         final JMPPPApplication app = (JMPPPApplication) Main.getApplication();
                         final PhotoFolderAdapter ppa = app.ppa;
-
+                        int lastFolderID = -1;
                         try
                         {
 
@@ -898,8 +917,27 @@ public class lib
                                                     {
                                                         itemName = ">" + itemName;
                                                     }
-                                                    ppa.rows.add(position + countFolders, new ImgFolder(finalfolder + itemName + "/", type, id));
+
+                                                    ImgFolder F = new ImgFolder(finalfolder + itemName + "/", type, id);
+                                                    ppa.rows.add(position + countFolders, F);
                                                     blnChanged = true;
+                                                    if (!app.lastFolderfound && app.lastProvider != null)
+                                                    {
+                                                        if (F.type.toString().equals(app.lastProvider)
+                                                                || (F.type.toString().contains("OneDrive") && app.lastProvider.contains("OneDrive")))
+                                                        {
+                                                            if (app.lastPath != null)
+                                                            {
+                                                                if (app.lastPath.startsWith(F.Name) && F.expanded == false)
+                                                                {
+                                                                    lastFolderID = position + countFolders;
+                                                                    if (app.lastPath.equals(F.Name))
+                                                                        app.lastFolderfound = true;
+                                                                }
+                                                            }
+
+                                                        }
+                                                    }
                                                     //ppa.notifyDataSetChanged();
                                                 }
                                             }
@@ -925,6 +963,7 @@ public class lib
                                             }
                                         }
                                         ppa.notifyDataSetChanged();
+                                        if (lastFolderID > -1) ppa.lv.expandGroup(lastFolderID);
                                     }
                                 }
                             }
@@ -1035,6 +1074,7 @@ public class lib
                         final _MainActivity Main = (_MainActivity) context;
                         final JMPPPApplication app = (JMPPPApplication) Main.getApplication();
                         final PhotoFolderAdapter ppa = app.ppa;
+                        int lastFolderID = -1;
 
                         try
                         {
@@ -1121,10 +1161,27 @@ public class lib
                                                     type = ImgFolder.Type.Dropbox;
                                                 }
                                                 countFolders++;
-                                                ImgFolder F =
-                                                ppa.rows.add(position + countFolders, new ImgFolder(finalfolder + itemName + "/", type, id));
-                                                if (F.type.toString().equals(app.lastProvider) || (F.type.toString().contains("OneDrive") && app.lastProvider.contains("OneDrive")))
+                                                ImgFolder F = new ImgFolder(finalfolder + itemName + "/", type, id);
+                                                ppa.rows.add(position + countFolders, F);
                                                 blnChanged = true;
+                                                if (!app.lastFolderfound && app.lastProvider != null)
+                                                {
+                                                    if (F.type.toString().equals(app.lastProvider)
+                                                            || (F.type.toString().contains("OneDrive") && app.lastProvider.contains("OneDrive")))
+                                                    {
+                                                        if (app.lastPath != null)
+                                                        {
+                                                            if (app.lastPath.startsWith(F.Name) && F.expanded == false)
+                                                            {
+                                                                lastFolderID = position + countFolders;
+                                                                if (app.lastPath.equals(F.Name))
+                                                                    app.lastFolderfound = true;
+                                                            }
+                                                        }
+
+                                                    }
+                                                }
+
                                                 //ppa.notifyDataSetChanged();
                                             }
 
@@ -1149,6 +1206,7 @@ public class lib
                                             }
                                         }
                                         ppa.notifyDataSetChanged();
+                                        if (lastFolderID > -1) ppa.lv.expandGroup(lastFolderID);
                                     }
                                 }
                             }
