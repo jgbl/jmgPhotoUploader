@@ -2112,11 +2112,15 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
     {
         public ImgListItem item;
         public int ServiceID;
+        public int groupPosition;
+        public int childPosition;
 
-        public cbItemHolder(ImgListItem item, int ServiceID)
+        public cbItemHolder(ImgListItem item, int ServiceID, int groupPosition, int childPosition)
         {
             this.item = item;
             this.ServiceID = ServiceID;
+            this.groupPosition = groupPosition;
+            this.childPosition = childPosition;
         }
     }
 
