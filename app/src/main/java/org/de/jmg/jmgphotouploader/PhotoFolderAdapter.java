@@ -1146,7 +1146,16 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 			((LinearLayout.LayoutParams)Text2.LayoutParameters).Weight= 0.2f;
 			*/
             lib.setgstatus("GetChildview Finished");
-            myApp.setLastItem(item);
+            int position = lv.getFirstVisiblePosition();
+            Object o = lv.getItemAtPosition(position);
+            if (o instanceof ImgListItem)
+            {
+                myApp.setLastItem(o);
+            }
+            else
+            {
+                myApp.setLastItem(item);
+            }
 
             return view;
         }
