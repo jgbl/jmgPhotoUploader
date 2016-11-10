@@ -87,12 +87,14 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
     public static int requestCode = 9997;
     public java.util.List<ImgFolder> rows;
     public ExpandableListView lv = null;
+    public JMPPPApplication myApp = null;
 
     //private SynchronizationContext SyncContext;
     public PhotoFolderAdapter(Activity context, java.util.ArrayList<ImgFolder> List)
     {
         setThreadPolicy();
         this.context = context;
+        myApp = (JMPPPApplication) context.getApplication();
         this.rows = List;
         lv = ((_MainActivity) context).lv;
         lv.setOnScrollListener(onScrollListener);
@@ -167,6 +169,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                     Folder.fetched = false;
                     Folder.items.clear();
                     PhotoFolderAdapter.this.notifyDataSetChanged();
+                    if (myApp.lastGroupPosition == i) myApp.lastGroupPosition = -1;
                     //lib.ShowToast(PhotoFolderAdapter.this.context, "collapse group " + i + " " + rows.get(i).Name);
                 }
 
@@ -181,6 +184,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
             {
                 ImgFolder Folder = rows.get(groupPosition);
                 Folder.expanded = true;
+                myApp.lastGroupPosition = groupPosition;
                 //lib.ShowToast(PhotoFolderAdapter.this.context, "Expanding group " + groupPosition + " " + rows.get(groupPosition).Name);
             }
         });
@@ -2132,13 +2136,14 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
             ImgListItem item = holder.item;
             final JMPPPApplication myApp = (JMPPPApplication) context.getApplication();
             myApp.setLastItem(item);
+            myApp.lastGroupPosition = item.
             android.database.Cursor CursorItem;
             do
             {
                 lib.setgstatus("cb_checkedChanged Query Files");
                 //CursorItem = lib.dbpp.DataBase.query("Files", null, "URI=?", new String[]{item.Uri.getPath()}, null, null, null);
                 boolean isOneDrive = false;
-                Click boolean isGoogle = false;
+                boolean isGoogle = false;
                 boolean isDropbox = false;
                 if (item.type == Type.OneDriveAlbum)
                 {
