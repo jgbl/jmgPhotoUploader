@@ -372,6 +372,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                 final ImgListItem ImgListItem = holder.item;
                 final JMPPPApplication myApp = (JMPPPApplication) context.getApplication();
                 myApp.setLastItem(ImgListItem);
+                myApp.lastGroupPosition = holder.groupPosition;
                 final Uri uri = ImgListItem.Uri;
                 if (ImgListItem.getDownImg() == null && ImgListItem.getDownUri() == null)
                 {
@@ -787,6 +788,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                 ImgListItem ImgListItem = holder.item;
                 final JMPPPApplication myApp = (JMPPPApplication) context.getApplication();
                 myApp.setLastItem(ImgListItem);
+                myApp.lastGroupPosition = holder.groupPosition;
                 boolean isOneDrive = ImgListItem.type == ImgFolder.Type.OneDriveAlbum
                         || ImgListItem.type == ImgFolder.Type.OneDriveFolder;
                 if (isOneDrive)
@@ -878,7 +880,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
             {
                 Image.setImageBitmap(null);
                 item.ThumbnailLoaded = false;
-                view.setTag(new ViewHolder(item));
+                view.setTag(new ViewHolder(item, groupPosition, childPosition));
             }
 
             lib.setgstatus("GetChildview Thread");
@@ -1136,7 +1138,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                                     }
                                 }
                                 lib.setgstatus("GetChildview Set cb.Tag");
-                                cb.setTag(new cbItemHolder(item, Cursor.getInt(Cursor.getColumnIndex("_id"))));
+                                cb.setTag(new cbItemHolder(item, Cursor.getInt(Cursor.getColumnIndex("_id")), groupPosition, childPosition));
                             }
                             finally
                             {
@@ -2140,7 +2142,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
             ImgListItem item = holder.item;
             final JMPPPApplication myApp = (JMPPPApplication) context.getApplication();
             myApp.setLastItem(item);
-            myApp.lastGroupPosition = item.
+            myApp.lastGroupPosition = holder.groupPosition;
             android.database.Cursor CursorItem;
             do
             {
@@ -2378,6 +2380,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 
                         final JMPPPApplication myApp = (JMPPPApplication) context.getApplication();
                         myApp.setLastItem(ImgListItem);
+                        myApp.lastGroupPosition = holder.groupPosition;
                         final Uri uri = ImgListItem.Uri;
                         if (ImgListItem.getDownImg() == null && ImgListItem.getDownUri() == null)
                         {

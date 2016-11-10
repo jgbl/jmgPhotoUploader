@@ -663,7 +663,7 @@ public class _MainActivity extends Activity
 			{
 				ViewHolder holder = (ViewHolder)(v.getTag());
 				ImgListItem ImgListItem = holder.item;
-				app.lastItem = ImgListItem;
+                app.setLastItem(ImgListItem);
                 app.lastGroupPosition = groupPosition;
                 boolean isOneDrive = ImgListItem.type == ImgFolder.Type.OneDriveAlbum
 						|| ImgListItem.type == ImgFolder.Type.OneDriveFolder;
