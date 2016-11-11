@@ -1847,14 +1847,15 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 
     private boolean getFolderItemsLock = false;
 
-    private void GetFolderItems(ImgFolder Folder, int GroupPosition)
+    private void GetFolderItems(final ImgFolder Folder, int GroupPosition)
     {
         JMPPPApplication app = (JMPPPApplication) context.getApplication();
 
         if ((Folder.type == ImgFolder.Type.OneDriveAlbum
                 || Folder.type == ImgFolder.Type.OneDriveFolder
                 || Folder.type == ImgFolder.Type.Google
-                || Folder.type == ImgFolder.Type.Dropbox)
+                || Folder.type == ImgFolder.Type.Dropbox
+                || Folder.type == Type.Local)
                 && (Folder.Name != "/") && (Folder.items.size() == 0))
         {
             if (lib.getFolderItemLock > 0) return;
@@ -1929,7 +1930,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                     }
                     Folder.items = lib.BMList;
                 }
-                else
+                else if (Folder.type.toString().contains("OneDrive"))
                 {
 
                     if (lib.getClient(context) == null)
@@ -1989,6 +1990,32 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 		         }
 		         */
                     Folder.items = lib.BMList;
+                }
+
+                else if (Folder.fetched == false)
+                {
+                    myApp.BMList = new java.util.ArrayList<ImgFolder>();
+                    Thread T = new Thread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            ((_MainActivity) context).getLocalFolders();
+                            Folder.fetched = true;
+                            Folder.items = myApp.BMList;
+                        }
+                    });
+                    T.start();
+                    try
+                    {
+                        T.join(5000);
+                        lib.setgstatus("items: " + Folder.items.size());
+                    }
+                    catch (InterruptedException e)
+                    {
+                        e.printStackTrace();
+                    }
+
                 }
             }
         }

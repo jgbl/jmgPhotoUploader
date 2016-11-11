@@ -51,13 +51,14 @@ public class JMPPPApplication extends Application // android.support.multidex.Mu
     public PhotoFolderAdapter ppa;
     public dbpp dbpp;
     public Context MainContext;
-    public boolean LoginClosed = false;
+    public ImgFolder LocalFolder;
     public ImgFolder OneDriveFolder;
     public ImgFolder GoogleFolder;
-    public boolean LoginGoogleClosed = false;
-    public LinkedList<File> tempFiles = new LinkedList<>();
-    public boolean LoginDropboxClosed;
     public ImgFolder DropboxFolder;
+    public boolean LoginGoogleClosed = false;
+    public boolean LoginDropboxClosed;
+    public boolean LoginClosed = false;
+    public LinkedList<File> tempFiles = new LinkedList<>();
     public ImgListItem lastItem;
     public CountDownLatch latchExpand;
     public String lastProvider;

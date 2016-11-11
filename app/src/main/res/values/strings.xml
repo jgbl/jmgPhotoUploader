@@ -40,5 +40,6 @@
     <string name="RequestCancelled">Request cancelled</string>
     <string name="AccountNotFound">Account not found!</string>
     <string name="Message">Message</string>
+    <string name="Local">local</string>
 
 </resources>

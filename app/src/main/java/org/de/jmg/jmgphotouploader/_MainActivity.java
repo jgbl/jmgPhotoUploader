@@ -40,6 +40,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.prefs.Preferences;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static org.de.jmg.jmgphotouploader.lib.getFolderItemLock;
 
 //C# TO JAVA CONVERTER TODO TASK: Java annotations will not correspond to .NET attributes:
 //ORIGINAL LINE: [Activity(Label = "JMGPhotoPrinter", MainLauncher = true, Icon = "@drawable/edit")] public class MainActivity : Activity
@@ -209,6 +210,35 @@ public class _MainActivity extends Activity
 
 	}
 
+	void getLocalFolders()
+	{
+		boolean blnFolderItemLockInc = false;
+		try
+		{
+			if (getFolderItemLock++ > 1)
+			{
+				getFolderItemLock--;
+				return;
+			}
+			else
+			{
+				blnFolderItemLockInc = true;
+			}
+			String selection = "";
+			String[] selectionArgs = new String[]{};
+			String[] projection = new String[]{MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.Media.BUCKET_ID};
+			Cursor mediaCursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, "");
+			if (mediaCursor != null) lib.GetThumbnails(this, false, mediaCursor, app.BMList);
+
+			mediaCursor = getContentResolver().query(MediaStore.Images.Media.INTERNAL_CONTENT_URI, projection, selection, selectionArgs, "");
+			if (mediaCursor != null) lib.GetThumbnails(this, true, mediaCursor, app.BMList);
+
+		}
+		finally
+		{
+			getFolderItemLock--;
+		}
+	}
 	private void loadmedia() throws Exception
 	{
 		System.out.println(lib.getExternalPicturesDir());
@@ -225,16 +255,10 @@ public class _MainActivity extends Activity
 		app.lastFilefound = false;
 
 
-		String selection = "";
-		String[] selectionArgs = new String[]{};
-		String[] projection = new String[] {MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.Media.BUCKET_ID};
 		if (app.ppa == null)
 		{
-			Cursor mediaCursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, selection,selectionArgs, "");
-			if (mediaCursor != null) lib.GetThumbnails(this, false, mediaCursor, app.BMList);
-
-			mediaCursor = getContentResolver().query(MediaStore.Images.Media.INTERNAL_CONTENT_URI,projection,selection,selectionArgs, "");
-			if (mediaCursor != null) lib.GetThumbnails(this, true, mediaCursor, app.BMList);
+			app.LocalFolder = new ImgFolder(this.getString(R.string.Local), ImgFolder.Type.Local);
+			app.BMList.add(app.LocalFolder);
 			/*
 			try
 			{

@@ -39,4 +39,5 @@
     <string name="RequestCancelled">Die Anfrage wurde abgebrochen</string>
     <string name="AccountNotFound">Der Login Name wurde nicht gefunden!</string>
     <string name="Message">Nachricht</string>
+    <string name="Local">local</string>
 </resources>
