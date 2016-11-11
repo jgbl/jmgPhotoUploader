@@ -35,4 +35,8 @@
     <string name="photos">Fotos</string>
     <string name="selectImage">Bildauswahl</string>
     <string name="onActivityResultcalled">Ergebnis</string>
+    <string name="OK">OK</string>
+    <string name="RequestCancelled">Die Anfrage wurde abgebrochen</string>
+    <string name="AccountNotFound">Der Login Name wurde nicht gefunden!</string>
+    <string name="Message">Nachricht</string>
 </resources>

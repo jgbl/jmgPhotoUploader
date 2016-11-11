@@ -36,5 +36,9 @@
     <string name="gettingData">getting data ....</string>
     <string name="photos">photos</string>
     <string name="selectImage">select image</string>
+    <string name="OK">OK</string>
+    <string name="RequestCancelled">Request cancelled</string>
+    <string name="AccountNotFound">Account not found!</string>
+    <string name="Message">Message</string>
 
 </resources>

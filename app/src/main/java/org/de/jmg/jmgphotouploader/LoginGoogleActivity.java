@@ -3,9 +3,11 @@ package org.de.jmg.jmgphotouploader;
 import android.Manifest;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -169,10 +171,12 @@ public class LoginGoogleActivity extends Activity
                 }
                 else
                 {
-                    mOutputText.setText(getString(R.string.MaxLogin));
+                    ShowMessageCancel(getString(R.string.MaxLogin));
                 }
-            } else if (!isDeviceOnline()) {
-                mOutputText.setText(getString(R.string.NoNetwork));
+            }
+            else if (!isDeviceOnline())
+            {
+                ShowMessageCancel(getString(R.string.NoNetwork));
             } else {
                 new MakeRequestTask(mCredential).execute();
             }
@@ -237,7 +241,7 @@ public class LoginGoogleActivity extends Activity
         switch (requestCode) {
             case REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode != RESULT_OK) {
-                    mOutputText.setText(
+                    ShowMessageCancel(
                             getString(R.string.PlayServicesRequired));
                 } else {
                     getResultsFromApi();
@@ -544,12 +548,11 @@ public class LoginGoogleActivity extends Activity
                             ((UserRecoverableAuthIOException) mLastError).getIntent(),
                             LoginGoogleActivity.REQUEST_AUTHORIZATION);
                 } else {
-                    mOutputText.setText("The following error occurred:\n"
+                    ShowMessageCancel(LoginGoogleActivity.this.getString(R.string.Error) + "\n"
                             + mLastError.getMessage()); // + ((mLastError.getCause()!=null) ? mLastError.getCause().getMessage():"no cause");
                 }
             } else {
-                mOutputText.setText("Request cancelled.");
-                lib.setgstatus("Request cancelled");
+                ShowMessageCancel(LoginGoogleActivity.this.getString(R.string.RequestCancelled));
             }
             Intent i = new Intent();
             i.putExtra("GroupPosition", GroupPosition);
@@ -557,6 +560,15 @@ public class LoginGoogleActivity extends Activity
             if (blnClose) CloseActivity();
         }
     }
+
+    public void setCancelledAndClose()
+    {
+        Intent i = new Intent();
+        i.putExtra("GroupPosition", GroupPosition);
+        LoginGoogleActivity.this.setResult(Activity.RESULT_CANCELED, i);
+        CloseActivity();
+    }
+
     public void CloseActivity()
     {
         lib.setgstatus("CloseActivity");
@@ -565,4 +577,19 @@ public class LoginGoogleActivity extends Activity
         finish();
     }
 
+    public void ShowMessageCancel(String msg)
+    {
+        AlertDialog.Builder A = new AlertDialog.Builder(this);
+        A.setPositiveButton(this.getString(R.string.OK), new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+                LoginGoogleActivity.this.setCancelledAndClose();
+            }
+        });
+        A.setMessage(msg);
+        A.setTitle(this.getString(R.string.Message));
+        A.show();
+    }
 }

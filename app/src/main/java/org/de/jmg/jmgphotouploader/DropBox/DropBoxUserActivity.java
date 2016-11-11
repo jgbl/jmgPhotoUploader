@@ -1,6 +1,8 @@
 package org.de.jmg.jmgphotouploader.DropBox;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -103,7 +105,7 @@ public class DropBoxUserActivity extends DropboxActivity {
                 }
                 else
                 {
-                    DropBoxUserActivity.this.setResult(Activity.RESULT_CANCELED, i);
+                    ShowMessageCancel(DropBoxUserActivity.this.getString(R.string.AccountNotFound));
                 }
 
             }
@@ -111,12 +113,28 @@ public class DropBoxUserActivity extends DropboxActivity {
             @Override
             public void onError(Exception e) {
                 Log.e(getClass().getName(), "Failed to get account details.", e);
-                Intent i = new Intent();
-                i.putExtra("GroupPosition", GroupPosition);
-                DropBoxUserActivity.this.setResult(Activity.RESULT_CANCELED, i);
-                ((TextView) findViewById(R.id.email_text)).setText(e.getMessage());
+                ShowMessageCancel(e.getMessage());
             }
         }).execute();
+    }
+
+    public void ShowMessageCancel(String msg)
+    {
+        AlertDialog.Builder A = new AlertDialog.Builder(this);
+        A.setPositiveButton(this.getString(R.string.OK), new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+                Intent ii = new Intent();
+                ii.putExtra("GroupPosition", GroupPosition);
+                DropBoxUserActivity.this.setResult(Activity.RESULT_CANCELED, ii);
+                DropBoxUserActivity.this.finish();
+            }
+        });
+        A.setMessage(msg);
+        A.setTitle(this.getString(R.string.Message));
+        A.show();
     }
 
 }

@@ -1759,7 +1759,7 @@ public class lib
         AlertDialog.Builder A = new AlertDialog.Builder(context);
         A.setPositiveButton("OK", listener);
         A.setMessage(msg);
-        A.setTitle("Message");
+        A.setTitle(context.getString(R.string.Message));
         A.show();
     }
 
