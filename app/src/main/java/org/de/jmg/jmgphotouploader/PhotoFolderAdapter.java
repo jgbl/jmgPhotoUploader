@@ -2017,7 +2017,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                     T.start();
                     try
                     {
-                        T.join(5000);
+                        T.join(25000);
                         lib.setgstatus("items: " + myApp.BMList.size());
                         int countFolders = 0;
                         boolean blnChanged = false;
