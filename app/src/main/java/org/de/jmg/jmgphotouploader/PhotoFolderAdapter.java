@@ -33,6 +33,7 @@ import android.widget.TextView;
 
 import com.dropbox.core.DbxDownloader;
 import com.dropbox.core.DbxException;
+import com.dropbox.core.DbxWebAuth;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ThumbnailFormat;
@@ -403,55 +404,60 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                         mProgress.setMax(100);
                         mProgress.setIndeterminate(true);
                         mProgress.show();
-
-                        lib.getClient(context).downloadAsync(file, new LiveDownloadOperationListener()
+                        try
                         {
-
-                            @Override
-                            public void onDownloadProgress(int arg0, int arg1,
-                                                           LiveDownloadOperation arg2)
+                            lib.getClient(context).downloadAsync(file, new LiveDownloadOperationListener()
                             {
-                                // TODO Auto-generated method stub
-                                int percentCompleted = (int) ((arg1 / arg0) * 100);
-                                mProgress.setProgress(percentCompleted);
-                            }
 
-                            @Override
-                            public void onDownloadFailed(LiveOperationException arg0,
-                                                         LiveDownloadOperation arg1)
-                            {
-                                // TODO Auto-generated method stub
-                                mProgress.dismiss();
-                                lib.ShowToast(context, arg0.getMessage());
-                            }
-
-                            @Override
-                            public void onDownloadCompleted(LiveDownloadOperation arg0)
-                            {
-                                lib.ShowToast(context, getS(R.string.File) + " " + file + " " + getS(R.string.downloaded));
-                                InputStream s = null;
-                                Bitmap mBitmap = null;
-                                try
+                                @Override
+                                public void onDownloadProgress(int arg0, int arg1,
+                                                               LiveDownloadOperation arg2)
                                 {
-                                    s = arg0.getStream();
-                                    mBitmap = BitmapFactory.decodeStream(s);
-                                    if (mBitmap != null)
+                                    // TODO Auto-generated method stub
+                                    int percentCompleted = (int) ((arg1 / arg0) * 100);
+                                    mProgress.setProgress(percentCompleted);
+                                }
+
+                                @Override
+                                public void onDownloadFailed(LiveOperationException arg0,
+                                                             LiveDownloadOperation arg1)
+                                {
+                                    // TODO Auto-generated method stub
+                                    mProgress.dismiss();
+                                    lib.ShowToast(context, arg0.getMessage());
+                                }
+
+                                @Override
+                                public void onDownloadCompleted(LiveDownloadOperation arg0)
+                                {
+                                    lib.ShowToast(context, getS(R.string.File) + " " + file + " " + getS(R.string.downloaded));
+                                    InputStream s = null;
+                                    Bitmap mBitmap = null;
+                                    try
                                     {
-                                        ImgListItem.setDownImg((mBitmap));
-                                        ImgListItem.setDownUri(ShareBitmapShare(mBitmap, ImgListItem.FileName));
+                                        s = arg0.getStream();
+                                        mBitmap = BitmapFactory.decodeStream(s);
+                                        if (mBitmap != null)
+                                        {
+                                            ImgListItem.setDownImg((mBitmap));
+                                            ImgListItem.setDownUri(ShareBitmapShare(mBitmap, ImgListItem.FileName));
+                                        }
+                                        s.close();
                                     }
-                                    s.close();
-                                }
-                                catch (Exception e)
-                                {
-                                    e.printStackTrace();
-                                    lib.ShowToast(context, e.getMessage());
-                                }
-                                mProgress.dismiss();
+                                    catch (Exception e)
+                                    {
+                                        e.printStackTrace();
+                                        lib.ShowToast(context, e.getMessage());
+                                    }
+                                    mProgress.dismiss();
 
-                            }
-                        });
-
+                                }
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            lib.ShowException(context, ex);
+                        }
 
                     }
                     else if (ImgListItem.type == Type.Google)
@@ -2495,55 +2501,60 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                 mProgress.setMax(100);
                                 mProgress.setIndeterminate(true);
                                 mProgress.show();
-
-                                lib.getClient(context).downloadAsync(file, new LiveDownloadOperationListener()
+                                try
                                 {
-
-                                    @Override
-                                    public void onDownloadProgress(int arg0, int arg1,
-                                                                   LiveDownloadOperation arg2)
+                                    lib.getClient(context).downloadAsync(file, new LiveDownloadOperationListener()
                                     {
-                                        // TODO Auto-generated method stub
-                                        int percentCompleted = (int) ((arg1 / arg0) * 100);
-                                        mProgress.setProgress(percentCompleted);
-                                    }
 
-                                    @Override
-                                    public void onDownloadFailed(LiveOperationException arg0,
-                                                                 LiveDownloadOperation arg1)
-                                    {
-                                        // TODO Auto-generated method stub
-                                        mProgress.dismiss();
-                                        lib.ShowToast(context, arg0.getMessage());
-                                    }
-
-                                    @Override
-                                    public void onDownloadCompleted(LiveDownloadOperation arg0)
-                                    {
-                                        lib.ShowToast(context, getS(R.string.File) + " " + file + " " + getS(R.string.downloaded));
-                                        InputStream s = null;
-                                        Bitmap mBitmap = null;
-                                        try
+                                        @Override
+                                        public void onDownloadProgress(int arg0, int arg1,
+                                                                       LiveDownloadOperation arg2)
                                         {
-                                            s = arg0.getStream();
-                                            mBitmap = BitmapFactory.decodeStream(s);
-                                            if (mBitmap != null)
+                                            // TODO Auto-generated method stub
+                                            int percentCompleted = (int) ((arg1 / arg0) * 100);
+                                            mProgress.setProgress(percentCompleted);
+                                        }
+
+                                        @Override
+                                        public void onDownloadFailed(LiveOperationException arg0,
+                                                                     LiveDownloadOperation arg1)
+                                        {
+                                            // TODO Auto-generated method stub
+                                            mProgress.dismiss();
+                                            lib.ShowToast(context, arg0.getMessage());
+                                        }
+
+                                        @Override
+                                        public void onDownloadCompleted(LiveDownloadOperation arg0)
+                                        {
+                                            lib.ShowToast(context, getS(R.string.File) + " " + file + " " + getS(R.string.downloaded));
+                                            InputStream s = null;
+                                            Bitmap mBitmap = null;
+                                            try
                                             {
-                                                ImgListItem.setDownImg((mBitmap));
-                                                ImgListItem.setDownUri(ShareBitmap(mBitmap, ServiceCursor, id, ImgListItem.FileName));
+                                                s = arg0.getStream();
+                                                mBitmap = BitmapFactory.decodeStream(s);
+                                                if (mBitmap != null)
+                                                {
+                                                    ImgListItem.setDownImg((mBitmap));
+                                                    ImgListItem.setDownUri(ShareBitmap(mBitmap, ServiceCursor, id, ImgListItem.FileName));
+                                                }
+                                                s.close();
                                             }
-                                            s.close();
-                                        }
-                                        catch (Exception e)
-                                        {
-                                            e.printStackTrace();
-                                            lib.ShowToast(context, e.getMessage());
-                                        }
-                                        mProgress.dismiss();
+                                            catch (Exception e)
+                                            {
+                                                e.printStackTrace();
+                                                lib.ShowToast(context, e.getMessage());
+                                            }
+                                            mProgress.dismiss();
 
-                                    }
-                                });
-
+                                        }
+                                    });
+                                }
+                                catch (Exception ex)
+                                {
+                                    lib.ShowException(context, ex);
+                                }
 
                             }
                             else if (ImgListItem.type == Type.Google)
