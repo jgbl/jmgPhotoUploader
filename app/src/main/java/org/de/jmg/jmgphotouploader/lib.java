@@ -220,6 +220,7 @@ public class lib
     {
         boolean blnFolderItemLockInc = false;
         final JMPPPApplication app = (JMPPPApplication) context.getApplication();
+        int lastFileID = -1;
         try
         {
             if (getFolderItemLock++ > 1)
@@ -265,7 +266,7 @@ public class lib
                             String folder = mediaCursor.getString(ColumnIndexData);
                             //img.Dispose();
                             //System.Diagnostics.Debug.Print (lib.getRealPathFromURI (context, Uri));
-                            String Bucket = mediaCursor.getString(ColumnIndexBucket);
+                            String Bucket = "/" + mediaCursor.getString(ColumnIndexBucket);
 
                             ImgFolder Folder = FindFolder(BMList, Bucket);
                             if (Folder == null)
@@ -280,6 +281,7 @@ public class lib
                                 if (Folder.Name.equals(app.lastPath) && item.FileName.equals(app.lastFileName))
                                 {
                                     app.lastFilePosition = Folder.items.size() - 1;
+                                    lastFileID = app.lastFilePosition;
                                 }
                             }
                             //}
@@ -331,6 +333,7 @@ public class lib
         {
             getFolderItemLock--;
         }
+
     }
 
     private static LiveConnectClient mClient;

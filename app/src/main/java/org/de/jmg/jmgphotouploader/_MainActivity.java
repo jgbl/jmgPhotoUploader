@@ -312,6 +312,7 @@ public class _MainActivity extends Activity
             else
             {
                 app.latchExpand.countDown();
+				lv.expandGroup(app.ppa.rows.indexOf(app.LocalFolder));
 				findPath();
 			}
             if (app.latchExpand != null)

@@ -124,6 +124,10 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                             Folder.Name = "Dropbox";
                             Folder.fetched = false;
                             break;
+                        case Local:
+                            Folder.Name = PhotoFolderAdapter.this.context.getString(R.string.Local);
+                            Folder.fetched = false;
+                            break;
                     }
                 }
                 int ii;
@@ -298,6 +302,11 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
         else
         {
             textView.setTextColor(Color.WHITE);
+            if (isExpanded == false && imgFolder.items != null && imgFolder.items.size() == 0 && imgFolder.Name == "/" && imgFolder.fetched == false)
+            {
+                imgFolder.fetched = false;
+                imgFolder.Name = context.getString(R.string.Local);
+            }
         }
         textView.setText(imgFolder.Name);
 
@@ -2000,18 +2009,75 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                         @Override
                         public void run()
                         {
-                            ((_MainActivity) context).getLocalFolders();
                             Folder.fetched = true;
-                            Folder.items = myApp.BMList;
+                            Folder.expanded = true;
+                            ((_MainActivity) context).getLocalFolders();
                         }
                     });
                     T.start();
                     try
                     {
                         T.join(5000);
-                        lib.setgstatus("items: " + Folder.items.size());
+                        lib.setgstatus("items: " + myApp.BMList.size());
+                        int countFolders = 0;
+                        boolean blnChanged = false;
+                        int lastFolderID = -1;
+
+                        for (ImgFolder F : myApp.BMList)
+                        {
+                            countFolders++;
+                            rows.add(countFolders, F);
+                            blnChanged = true;
+                            if (!myApp.lastFolderfound && myApp.lastProvider != null)
+                            {
+                                if (F.type.toString().equals(myApp.lastProvider)
+                                        || (F.type.toString().contains("OneDrive") && myApp.lastProvider.contains("OneDrive")))
+                                {
+                                    if (myApp.lastPath != null)
+                                    {
+                                        if (myApp.lastPath.startsWith(F.Name) && F.expanded == false)
+                                        {
+                                            //F.expanded = true;
+                                            lastFolderID = countFolders;
+                                            if (myApp.lastPath.equals(F.Name))
+                                                myApp.lastFolderfound = true;
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+                        if (blnChanged)
+                        {
+                            for (int i = 1; i < rows.size(); i++)
+                            {
+                                if (rows.get(i).expanded)
+                                {
+                                    lv.expandGroup(i);
+                                }
+                                else
+                                {
+                                    lv.collapseGroup(i);
+                                }
+                            }
+                            notifyDataSetChanged();
+                            if (lastFolderID > -1)
+                            {
+                                //getFolderItemLock--;
+                                //mProgress.hide();
+                                //mProgress.dismiss();
+                                lv.expandGroup(lastFolderID);
+                            }
+                            if (myApp.lastFilePosition > -1)
+                            {
+                                lv.setSelectedChild(GroupPosition, myApp.lastFilePosition, true);
+                            }
+
+                            Folder.Name = "/";
+                        }
+
                     }
-                    catch (InterruptedException e)
+                    catch (Exception e)
                     {
                         e.printStackTrace();
                     }
