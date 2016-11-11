@@ -34,6 +34,7 @@ import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.MediaInfo;
 import com.dropbox.core.v2.files.Metadata;
+import com.google.api.client.repackaged.com.google.common.base.Throwables;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
 import com.microsoft.live.LiveAuthListener;
@@ -1732,7 +1733,7 @@ public class lib
 
     }
 
-    public static synchronized void ShowException(Context context, Exception ex)
+    public static synchronized void ShowException(Context context, Throwable ex)
     {
         //System.Threading.SynchronizationContext.Current.Post(new System.Threading.SendOrPostCallback(DelShowException),new ExStateInfo(context, ex));
         String msg;

@@ -54,7 +54,8 @@ public class ImgListItem extends Object
 	{
 		_DownImg = value;
 	}
-	public final Bitmap getImg() throws Exception
+
+	public final Bitmap getImg() throws Throwable
 	{
 		if (_Img == null)
 		{
@@ -120,7 +121,7 @@ public class ImgListItem extends Object
 				_size = lib.getSizeFromURI(context, Uri); //img.Width + "*" + img.Height;
 			}
 			}
-			catch (RuntimeException ex)
+			catch (Throwable ex)
 			{
 				lib.ShowException(context, ex);
 			}
