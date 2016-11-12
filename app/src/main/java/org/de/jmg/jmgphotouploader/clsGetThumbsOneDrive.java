@@ -23,7 +23,9 @@ public class clsGetThumbsOneDrive implements Runnable {
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			lib.ShowException(context, e);
-		} catch (Exception e) {
+		}
+		catch (Throwable e)
+		{
 			lib.ShowException(context, e);
 		}
 	}
@@ -123,7 +125,7 @@ public class clsGetThumbsOneDrive implements Runnable {
 					}
 				} );
 			}
-			catch(Exception e)
+			catch (Throwable e)
 			{
 				lib.ShowException(context, e);
 			}

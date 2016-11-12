@@ -28,7 +28,7 @@ public abstract class imgListViewLiveDownloadListener implements LiveDownloadOpe
             {
                 this.operation.getStream().close();
             }
-            catch(Exception ex)
+            catch (Throwable ex)
             {
 
             }

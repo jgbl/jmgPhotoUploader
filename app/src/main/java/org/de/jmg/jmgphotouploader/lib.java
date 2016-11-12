@@ -168,7 +168,7 @@ public class lib
             cursor.moveToFirst();
             return cursor.getString(column_index);
         }
-        catch (Exception ex)
+        catch (Throwable ex)
         {
             return contentURI.getPath();
         }
@@ -562,7 +562,7 @@ public class lib
                             }
                         }
                     }
-                    catch (Exception ex)
+                    catch (Throwable ex)
                     {
                         ShowException(context, ex);
                     }
@@ -579,7 +579,7 @@ public class lib
                 }
             });
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
             mProgress.hide();
             mProgress.dismiss();
@@ -702,7 +702,7 @@ public class lib
                     }
                 });
             }
-            catch (Exception e)
+            catch (Throwable e)
             {
                 lib.ShowException(context, e);
             }
@@ -869,7 +869,7 @@ public class lib
                             }
                             return L;
                         }
-                        catch (Exception e)
+                        catch (Throwable e)
                         {
                             e.printStackTrace();
                             return L;
@@ -1049,7 +1049,7 @@ public class lib
                             }
 
                         }
-                        catch (Exception ex)
+                        catch (Throwable ex)
                         {
                             ShowException(context, ex);
                         }
@@ -1068,7 +1068,7 @@ public class lib
                 task.execute();
             }
         }
-        catch (Exception ex)
+        catch (Throwable ex)
         {
             if (blnFolderItemLockInc) getFolderItemLock--;
             lib.ShowException(context, ex);
@@ -1142,7 +1142,7 @@ public class lib
 
                             return L;
                         }
-                        catch (Exception e)
+                        catch (Throwable e)
                         {
                             e.printStackTrace();
                             return L;
@@ -1325,7 +1325,7 @@ public class lib
                                 }
                             }
                         }
-                        catch (Exception ex)
+                        catch (Throwable ex)
                         {
                             ShowException(context, ex);
                         }
@@ -1345,7 +1345,7 @@ public class lib
 
             }
         }
-        catch (Exception ex)
+        catch (Throwable ex)
         {
             if (blnFolderItemLockInc) getFolderItemLock--;
             lib.ShowException(context, ex);
@@ -1370,7 +1370,7 @@ public class lib
             i.setDataAndType(uri, "image/*");
             context.startActivity(i);
         }
-        catch (Exception ex)
+        catch (Throwable ex)
         {
             lib.ShowException(context, ex);
         }
@@ -1384,7 +1384,7 @@ public class lib
             i.setData(uri);
             context.startActivity(i);
         }
-        catch (Exception ex)
+        catch (Throwable ex)
         {
             lib.ShowException(context, ex);
         }
@@ -1779,7 +1779,7 @@ public class lib
             A.setTitle("Question");
             A.show();
         }
-        catch (Exception ex)
+        catch (Throwable ex)
         {
             ShowException(context, ex);
         }

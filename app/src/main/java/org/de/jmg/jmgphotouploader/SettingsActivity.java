@@ -56,7 +56,8 @@ public class SettingsActivity extends Activity {
 						try{
 							lib.dbpp.DataBase.execSQL ("ALTER TABLE Services ADD COLUMN 'package' VARCHAR");
 						}
-						catch(Exception ex){
+						catch (Throwable ex)
+						{
 							System.out.print(ex.getMessage());
 						}
 						lib.dbpp.DataBase.execSQL("INSERT INTO Services ('Name','URL','package') VALUES('Pinterest','pinterest.com','com.pinterest')");
@@ -160,7 +161,7 @@ public class SettingsActivity extends Activity {
 			}
 
 		}
-		catch (Exception ex)
+		catch (Throwable ex)
 		{
 			lib.ShowException(this, ex);
 		}
@@ -219,7 +220,7 @@ public class SettingsActivity extends Activity {
 			//sv.computeScroll();
 			sv.requestLayout();
 		}
-		catch (Exception ex)
+		catch (Throwable ex)
 		{
 			lib.ShowException(this, ex);
 		}
@@ -337,7 +338,7 @@ public class SettingsActivity extends Activity {
 				}
 			}
 		}
-		catch (Exception ex)
+		catch (Throwable ex)
 		{
 			System.out.println(ex.getMessage());
 		}

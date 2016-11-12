@@ -181,7 +181,7 @@ public class LoginGoogleActivity extends Activity
                 new MakeRequestTask(mCredential).execute();
             }
         }
-        catch(Exception ex)
+        catch (Throwable ex)
         {
             lib.ShowException(this,ex);
         }
@@ -385,7 +385,7 @@ public class LoginGoogleActivity extends Activity
     private class MakeRequestTask extends AsyncTask<Void, Void, List<String>> {
         private com.google.api.services.drive.Drive mService = null;
         //private Picasa mPicasa = null;
-        private Exception mLastError = null;
+        private Throwable mLastError = null;
 
         public com.google.api.services.drive.Drive getServiceDrive() {
             return mService;
@@ -428,7 +428,7 @@ public class LoginGoogleActivity extends Activity
                 mPicasa = p;
                 //p.initPicasa(AccessToken);
             }
-            catch (Exception ex)
+            catch (Throwable ex)
             {
                 lib.setgstatus(ex.getMessage());
             }
@@ -445,7 +445,9 @@ public class LoginGoogleActivity extends Activity
         protected List<String> doInBackground(Void... params) {
             try {
                 return getDataFromApi();
-            } catch (Exception e) {
+            }
+            catch (Throwable e)
+            {
                 lib.setgstatus("getDataFromApi Error " + e.getMessage());
                 mLastError = e;
                 cancel(true);

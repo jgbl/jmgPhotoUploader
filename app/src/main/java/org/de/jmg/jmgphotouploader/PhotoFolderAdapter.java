@@ -454,7 +454,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                                 }
                             });
                         }
-                        catch (Exception ex)
+                        catch (Throwable ex)
                         {
                             lib.ShowException(context, ex);
                         }
@@ -598,7 +598,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                                                             */
                                                 }
                                             }
-                                            catch (Exception e)
+                                            catch (Throwable e)
                                             {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -614,7 +614,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                                 Task.executeOnExecutor(executor);
                             }
                         }
-                        catch (Exception ex)
+                        catch (Throwable ex)
                         {
                             //resultTextView.setText("Error downloading picture: " + ex.getMessage());
                             lib.ShowToast(context, context.getString(R.string.Couldnotload) + " " + ImgListItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
@@ -734,7 +734,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                                                             */
                                                 }
                                             }
-                                            catch (Exception e)
+                                            catch (Throwable e)
                                             {
                                                 // TODO Auto-generated catch block
                                                 e.printStackTrace();
@@ -750,7 +750,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                                 Task.executeOnExecutor(executor);
                             }
                         }
-                        catch (Exception ex)
+                        catch (Throwable ex)
                         {
                             //resultTextView.setText("Error downloading picture: " + ex.getMessage());
                             lib.ShowToast(context, context.getString(R.string.Couldnotload) + " " + ImgListItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
@@ -1015,7 +1015,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                         {
                             lib.dbpp.DataBase.execSQL("ALTER TABLE Services ADD COLUMN 'package' VARCHAR");
                         }
-                        catch (Exception ex)
+                        catch (Throwable ex)
                         {
                             System.out.print(ex.getMessage());
                         }
@@ -1132,7 +1132,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 
                                         }
                                     }
-                                    catch (Exception e)
+                                    catch (Throwable e)
                                     {
                                     }
                                 }
@@ -1233,7 +1233,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 				mProgress.show();
 				*/
             }
-            catch (Exception ex)
+            catch (Throwable ex)
             {
                 lib.ShowException(context, ex);
             }
@@ -1277,7 +1277,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                 lib.ShowToast(context, context.getString(R.string.Couldnotload) + " " + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage());
                             }
                         }
-                        catch (Exception e)
+                        catch (Throwable e)
                         {
                             e.printStackTrace();
                         }
@@ -1322,7 +1322,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                     if (i > 0) break;
                                 }
                             }
-                            catch (Exception ex)
+                            catch (Throwable ex)
                             {
                                 ex.printStackTrace();
                                 lib.ShowToast(context, context.getString(R.string.Couldnotload) + " " + item.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage());
@@ -1359,7 +1359,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                 }
                             }
                         }
-                        catch (Exception ex)
+                        catch (Throwable ex)
                         {
                             //resultTextView.setText("Error downloading picture: " + ex.getMessage());
                             lib.ShowToast(context, context.getString(R.string.Couldnotload) + item.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
@@ -1420,7 +1420,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                 */
             }
         }
-        catch (Exception ex)
+        catch (Throwable ex)
         {
             lib.ShowException(context, ex);
         }
@@ -1538,7 +1538,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                     }
                                 }
                             }
-                            catch (Exception ex)
+                            catch (Throwable ex)
                             {
                                 //resultTextView.setText("Error downloading picture: " + ex.getMessage());
                                 lib.ShowToast(context, context.getString(R.string.Couldnotload) + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
@@ -1580,7 +1580,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                 }
             }
         }
-        catch (Exception ex)
+        catch (Throwable ex)
         {
             //resultTextView.setText("Error downloading picture: " + ex.getMessage());
             lib.ShowToast(context, context.getString(R.string.Couldnotload) + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
@@ -1642,7 +1642,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                     pItem.ThumbnailLoaded = true;
                 }
             }
-            catch (Exception ex)
+            catch (Throwable ex)
             {
                 lib.ShowException(context, ex);
             }
@@ -1728,7 +1728,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                     {
                                         input = new BufferedInputStream(downloader.getInputStream());
                                     }
-                                    catch (Exception eex)
+                                    catch (Throwable eex)
                                     {
                                         return null;
                                     }
@@ -1770,7 +1770,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                     }
                                 }
                             }
-                            catch (Exception ex)
+                            catch (Throwable ex)
                             {
                                 //resultTextView.setText("Error downloading picture: " + ex.getMessage());
                                 lib.ShowToast(context, context.getString(R.string.Couldnotload) + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
@@ -1813,7 +1813,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                 }
             }
         }
-        catch (Exception ex)
+        catch (Throwable ex)
         {
             //resultTextView.setText("Error downloading picture: " + ex.getMessage());
             lib.ShowToast(context, context.getString(R.string.Couldnotload) + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
@@ -1918,7 +1918,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                 //Folder.fetched = true;
                             }
                         }
-                        catch (Exception e)
+                        catch (Throwable e)
                         {
                             e.printStackTrace();
                         }
@@ -2063,7 +2063,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                         }
 
                     }
-                    catch (Exception e)
+                    catch (Throwable e)
                     {
                         e.printStackTrace();
                     }
@@ -2387,7 +2387,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                     {
                                         LoadThumbnailOneDrive(item, Image);
                                     }
-                                    catch (Exception e)
+                                    catch (Throwable e)
                                     {
                                         lib.ShowException(context, e);
                                     }
@@ -2398,7 +2398,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                     {
                                         LoadThumbnailGoogle(item, Image);
                                     }
-                                    catch (Exception e)
+                                    catch (Throwable e)
                                     {
                                         lib.ShowException(context, e);
                                     }
@@ -2409,7 +2409,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                     {
                                         LoadThumbnailDropbox(item, Image);
                                     }
-                                    catch (Exception e)
+                                    catch (Throwable e)
                                     {
                                         lib.ShowException(context, e);
                                     }
@@ -2530,7 +2530,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                         }
                                     });
                                 }
-                                catch (Exception ex)
+                                catch (Throwable ex)
                                 {
                                     lib.ShowException(context, ex);
                                 }
@@ -2674,7 +2674,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                                             */
                                                         }
                                                     }
-                                                    catch (Exception e)
+                                                    catch (Throwable e)
                                                     {
                                                         // TODO Auto-generated catch block
                                                         e.printStackTrace();
@@ -2690,7 +2690,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                         Task.executeOnExecutor(executor);
                                     }
                                 }
-                                catch (Exception ex)
+                                catch (Throwable ex)
                                 {
                                     //resultTextView.setText("Error downloading picture: " + ex.getMessage());
                                     lib.ShowToast(context, context.getString(R.string.Couldnotload) + " " + ImgListItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
@@ -2810,7 +2810,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                                             */
                                                         }
                                                     }
-                                                    catch (Exception e)
+                                                    catch (Throwable e)
                                                     {
                                                         // TODO Auto-generated catch block
                                                         e.printStackTrace();
@@ -2826,7 +2826,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                         Task.executeOnExecutor(executor);
                                     }
                                 }
-                                catch (Exception ex)
+                                catch (Throwable ex)
                                 {
                                     //resultTextView.setText("Error downloading picture: " + ex.getMessage());
                                     lib.ShowToast(context, context.getString(R.string.Couldnotload) + " " + ImgListItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
@@ -2852,7 +2852,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                 }
                 return true;
             }
-            catch (Exception ex)
+            catch (Throwable ex)
             {
                 lib.ShowToast(context, ex.getMessage());
                 return false;

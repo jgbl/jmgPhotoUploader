@@ -75,8 +75,8 @@ public class _MainActivity extends Activity
                             File F = new File(f);
                             F.delete();
                         }
-                        catch (Exception ex)
-                        {
+						catch (Throwable ex)
+						{
                             ex.printStackTrace();
                         }
                     }
@@ -85,8 +85,8 @@ public class _MainActivity extends Activity
 
 
             }
-            catch (Exception ex)
-            {
+			catch (Throwable ex)
+			{
                 ex.printStackTrace();
             }
             app = (JMPPPApplication) getApplication();
@@ -110,7 +110,7 @@ public class _MainActivity extends Activity
 
 
 		}
-		catch (Exception ex)
+		catch (Throwable ex)
 		{
 			lib.ShowToast(this, ex.getMessage());
 		}
@@ -203,7 +203,7 @@ public class _MainActivity extends Activity
 				lib.dbpp.DataBase.execSQL(sql);
 			}
 		}
-		catch (Exception ex)
+		catch (Throwable ex)
 		{
 			System.out.println(ex.getMessage());
 		}
@@ -267,7 +267,7 @@ public class _MainActivity extends Activity
 				mediaCursor = getContentResolver().query(ImageUri, projection, selection, selectionArgs, "");
 				if (mediaCursor != null) lib.GetThumbnails(this, true, mediaCursor, app.BMList);
 			}
-			catch (Exception ex)
+			catch (Throwable ex)
 			{
 				ex.printStackTrace();
 			}
@@ -364,7 +364,9 @@ public class _MainActivity extends Activity
 				// Permission granted.
 				try {
 					loadmedia();
-				} catch (Exception e) {
+				}
+				catch (Throwable e)
+				{
 					e.printStackTrace();
 				}
 			} else {
@@ -395,13 +397,13 @@ public class _MainActivity extends Activity
 	public void onPause() {
         //if (app.dbpp != null && app.dbpp.DataBase.isOpen())app.dbpp.close();
         /*
-        for(File f: app.tempFiles)
+		for(File f: app.tempFiles)
         {
             try
             {
                 f.delete();
             }
-            catch(Exception ex)
+            catch(Throwable ex)
             {
 
             }
@@ -429,7 +431,7 @@ public class _MainActivity extends Activity
 			app.clear();
 			app = null;
 		}
-		catch(Exception ex)
+		catch (Throwable ex)
 		{
 			ex.printStackTrace();
 		}
@@ -478,7 +480,7 @@ public class _MainActivity extends Activity
 				edit.commit();
 			}
 		}
-		catch (Exception ex)
+		catch (Throwable ex)
 		{
 			ex.printStackTrace();
 		}
@@ -616,7 +618,7 @@ public class _MainActivity extends Activity
 			
 			}
 		}
-		catch (Exception ex)
+		catch (Throwable ex)
 		{
 			System.out.println(ex.getMessage());
 		}
@@ -672,7 +674,7 @@ public class _MainActivity extends Activity
 			this.startActivityForResult(SettingsIntent, SettingsActivity.requestCode); //, LoginLiveActivity.requestCode);
 			//this.finish();
 		}
-		catch (Exception ex)
+		catch (Throwable ex)
 		{
 			lib.ShowException(this, ex);
 		}
@@ -771,7 +773,9 @@ public class _MainActivity extends Activity
 				try {
 					lib.GetThumbnailsGoogle(this, "/", app.GoogleFolder, GroupPosition, _MainActivity.this.lv);
 					//if (app.GoogleFolder != null) app.GoogleFolder.fetched = true;
-				} catch (Exception e) {
+				}
+				catch (Throwable e)
+				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -787,7 +791,9 @@ public class _MainActivity extends Activity
 				try {
 					lib.GetThumbnailsDropbox(this, "/", app.DropboxFolder, GroupPosition, _MainActivity.this.lv);
 					//if (app.DropboxFolder != null) app.DropboxFolder.fetched = true;
-				} catch (Exception e) {
+				}
+				catch (Throwable e)
+				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

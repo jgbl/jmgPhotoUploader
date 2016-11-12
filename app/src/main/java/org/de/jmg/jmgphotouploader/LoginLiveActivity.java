@@ -115,7 +115,9 @@ public class LoginLiveActivity extends Activity implements LiveAuthListener
     				// TODO Auto-generated method stub
                     try {
                         LoginLive();
-                    } catch (Exception e) {
+                    }
+                    catch (Throwable e)
+                    {
                         e.printStackTrace();
                     }
                 }
@@ -169,7 +171,9 @@ public class LoginLiveActivity extends Activity implements LiveAuthListener
     	super.onStart();
         try {
             if (! _LoginStarted) LoginLive();
-        } catch (Exception e) {
+        }
+        catch (Throwable e)
+        {
             e.printStackTrace();
         }
     }
