@@ -22,7 +22,7 @@ public class ImgListItem extends Object
 		this.type = type;
 	}
 	private Bitmap _Img;
-	private Bitmap _DownImg;
+	//private Bitmap _DownImg;
 	private android.net.Uri _DownUri = null;
 	public Context context;
 	public String id;
@@ -46,15 +46,6 @@ public class ImgListItem extends Object
 	{
 		_DownUri = uri;
 	}
-	public final Bitmap getDownImg()
-	{
-		return _DownImg;
-	}
-	public void setDownImg(Bitmap value)
-	{
-		_DownImg = value;
-	}
-
 	public final Bitmap getImg() throws Throwable
 	{
 		if (_Img == null)

@@ -385,7 +385,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                 myApp.setLastItem(ImgListItem);
                 myApp.lastGroupPosition = holder.groupPosition;
                 final Uri uri = ImgListItem.Uri;
-                if (ImgListItem.getDownImg() == null && ImgListItem.getDownUri() == null)
+                if (ImgListItem.getDownUri() == null)
                 {
                     if (ImgListItem.type == Type.OneDriveAlbum)
                     {
@@ -440,7 +440,6 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                                         mBitmap = BitmapFactory.decodeStream(s);
                                         if (mBitmap != null)
                                         {
-                                            ImgListItem.setDownImg((mBitmap));
                                             ImgListItem.setDownUri(ShareBitmapShare(mBitmap, ImgListItem.FileName));
                                         }
                                         s.close();
@@ -590,7 +589,6 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                                             {
                                                 if (bMap != null)
                                                 {
-                                                    ImgListItem.setDownImg(bMap);
                                                     ImgListItem.setDownUri(ShareBitmapShare(bMap, ImgListItem.FileName));
                                                             /*
                                                             String path = Images.Media.insertImage(context.getContentResolver(),
@@ -727,7 +725,6 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                                             {
                                                 if (bMap != null)
                                                 {
-                                                    ImgListItem.setDownImg(bMap);
                                                     ImgListItem.setDownUri(ShareBitmapShare(bMap, ImgListItem.FileName));
                                                             /*
                                                             String path = Images.Media.insertImage(context.getContentResolver(),
@@ -770,21 +767,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                     {
                         lib.ShareImage(context, ImgListItem.getDownUri());
                     }
-                    else if (ImgListItem.getDownImg() != null)
-                    {
-                        try
-                        {
-                            ImgListItem.setDownUri(ShareBitmapShare(ImgListItem.getDownImg(), ImgListItem.FileName));
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
-                        }
-                                /*String path = Images.Media.insertImage(context.getContentResolver(),
-                                        ImgListItem.getImg(), "Image Description", null);
-                                Uri newUri = Uri.parse(path);
-                                ShareUri(ServiceCursor, id, newUri);*/
-                    }
+
                 }
             }
             return true;
@@ -2478,7 +2461,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                         myApp.setLastItem(ImgListItem);
                         myApp.lastGroupPosition = holder.groupPosition;
                         final Uri uri = ImgListItem.Uri;
-                        if (ImgListItem.getDownImg() == null && ImgListItem.getDownUri() == null)
+                        if (ImgListItem.getDownUri() == null)
                         {
                             if (ImgListItem.type == Type.OneDriveAlbum)
                             {
@@ -2533,7 +2516,6 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                                 mBitmap = BitmapFactory.decodeStream(s);
                                                 if (mBitmap != null)
                                                 {
-                                                    ImgListItem.setDownImg((mBitmap));
                                                     ImgListItem.setDownUri(ShareBitmap(mBitmap, ServiceCursor, id, ImgListItem.FileName));
                                                 }
                                                 s.close();
@@ -2683,7 +2665,6 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                                     {
                                                         if (bMap != null)
                                                         {
-                                                            ImgListItem.setDownImg(bMap);
                                                             ImgListItem.setDownUri(ShareBitmap(bMap, ServiceCursor, id, ImgListItem.FileName));
                                                             /*
                                                             String path = Images.Media.insertImage(context.getContentResolver(),
@@ -2820,7 +2801,6 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                                     {
                                                         if (bMap != null)
                                                         {
-                                                            ImgListItem.setDownImg(bMap);
                                                             ImgListItem.setDownUri(ShareBitmap(bMap, ServiceCursor, id, ImgListItem.FileName));
                                                             /*
                                                             String path = Images.Media.insertImage(context.getContentResolver(),
@@ -2862,14 +2842,6 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                             if (ImgListItem.getDownUri() != null)
                             {
                                 ShareUri(ServiceCursor, id, ImgListItem.getDownUri());
-                            }
-                            else if (ImgListItem.getDownImg() != null)
-                            {
-                                ImgListItem.setDownUri(ShareBitmap(ImgListItem.getDownImg(), ServiceCursor, id, ImgListItem.FileName));
-                                /*String path = Images.Media.insertImage(context.getContentResolver(),
-                                        ImgListItem.getImg(), "Image Description", null);
-                                Uri newUri = Uri.parse(path);
-                                ShareUri(ServiceCursor, id, newUri);*/
                             }
                         }
                     }
