@@ -401,8 +401,8 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                         final ProgressDialog mProgress = new ProgressDialog(context);
                         mProgress.setTitle(getS(R.string.Download));
                         mProgress.setMessage(getS(R.string.DownloadingImage));
-                        mProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                        mProgress.setMax(100);
+                        //mProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                        //mProgress.setMax(100);
                         mProgress.setIndeterminate(true);
                         mProgress.show();
                         try
@@ -2477,8 +2477,8 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                 final ProgressDialog mProgress = new ProgressDialog(context);
                                 mProgress.setTitle(getS(R.string.Download));
                                 mProgress.setMessage(getS(R.string.DownloadingImage));
-                                mProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                                mProgress.setMax(100);
+                                //mProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                                //mProgress.setMax(100);
                                 mProgress.setIndeterminate(true);
                                 mProgress.show();
                                 try
