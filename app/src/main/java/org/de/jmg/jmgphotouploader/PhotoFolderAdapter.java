@@ -401,13 +401,14 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                         final ProgressDialog mProgress = new ProgressDialog(context);
                         mProgress.setTitle(getS(R.string.Download));
                         mProgress.setMessage(getS(R.string.DownloadingImage));
-                        //mProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                        //mProgress.setMax(100);
-                        mProgress.setIndeterminate(true);
+                        mProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                        mProgress.setMax(100);
+                        mProgress.setIndeterminate(false);
                         mProgress.show();
                         try
                         {
-                            lib.getClient(context).downloadAsync(file, new LiveDownloadOperationListener()
+                            final File path = getTempFile(ImgListItem.FileName);
+                            lib.getClient(context).downloadAsync(file, path, new LiveDownloadOperationListener()
                             {
 
                                 @Override
@@ -415,7 +416,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                                                                LiveDownloadOperation arg2)
                                 {
                                     // TODO Auto-generated method stub
-                                    int percentCompleted = (int) ((arg1 / arg0) * 100);
+                                    int percentCompleted = 100 - (int) (((float) arg1 / (float) arg0) * 100);
                                     mProgress.setProgress(percentCompleted);
                                 }
 
@@ -432,17 +433,19 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                                 public void onDownloadCompleted(LiveDownloadOperation arg0)
                                 {
                                     lib.ShowToast(context, getS(R.string.File) + " " + file + " " + getS(R.string.downloaded));
-                                    InputStream s = null;
-                                    Bitmap mBitmap = null;
+                                    //InputStream s = null;
+                                    //Bitmap mBitmap = null;
                                     try
                                     {
-                                        s = arg0.getStream();
-                                        mBitmap = BitmapFactory.decodeStream(s);
-                                        if (mBitmap != null)
+                                        //s = arg0.getStream();
+                                        //mBitmap = BitmapFactory.decodeStream(s);
+                                        if (arg0.getPath() != null)
                                         {
-                                            ImgListItem.setDownUri(ShareBitmapShare(mBitmap, ImgListItem.FileName));
+                                            Uri uri = Uri.fromFile(path);
+                                            ImgListItem.setDownUri(uri); //(ShareBitmapShare(mBitmap, ImgListItem.FileName));
+                                            lib.ShareImage(context, uri);
                                         }
-                                        s.close();
+                                        //s.close();
                                     }
                                     catch (Throwable e)
                                     {
@@ -2477,13 +2480,14 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                 final ProgressDialog mProgress = new ProgressDialog(context);
                                 mProgress.setTitle(getS(R.string.Download));
                                 mProgress.setMessage(getS(R.string.DownloadingImage));
-                                //mProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                                //mProgress.setMax(100);
-                                mProgress.setIndeterminate(true);
+                                mProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                                mProgress.setMax(100);
+                                mProgress.setIndeterminate(false);
                                 mProgress.show();
                                 try
                                 {
-                                    lib.getClient(context).downloadAsync(file, new LiveDownloadOperationListener()
+                                    final File path = getTempFile(ImgListItem.FileName);
+                                    lib.getClient(context).downloadAsync(file, path, new LiveDownloadOperationListener()
                                     {
 
                                         @Override
@@ -2491,7 +2495,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                                                        LiveDownloadOperation arg2)
                                         {
                                             // TODO Auto-generated method stub
-                                            int percentCompleted = (int) ((arg1 / arg0) * 100);
+                                            int percentCompleted = 100 - (int) (((float) arg1 / (float) arg0) * 100);
                                             mProgress.setProgress(percentCompleted);
                                         }
 
@@ -2508,6 +2512,22 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                         public void onDownloadCompleted(LiveDownloadOperation arg0)
                                         {
                                             lib.ShowToast(context, getS(R.string.File) + " " + file + " " + getS(R.string.downloaded));
+                                            //InputStream s = null;
+                                            //Bitmap mBitmap = null;
+                                            try
+                                            {
+                                                //s = arg0.getStream();
+                                                //mBitmap = BitmapFactory.decodeStream(s);
+                                                if (arg0.getPath() != null)
+                                                {
+                                                    Uri uri = Uri.fromFile(path);
+                                                    ImgListItem.setDownUri(uri); //(ShareBitmapShare(mBitmap, ImgListItem.FileName));
+                                                    ShareUri(ServiceCursor, id, uri);
+                                                }
+                                                //s.close();
+                                            }
+                                            /*
+                                            lib.ShowToast(context, getS(R.string.File) + " " + file + " " + getS(R.string.downloaded));
                                             InputStream s = null;
                                             Bitmap mBitmap = null;
                                             try
@@ -2520,6 +2540,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                                 }
                                                 s.close();
                                             }
+                                            */
                                             catch (Throwable e)
                                             {
                                                 e.printStackTrace();
@@ -2884,9 +2905,8 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
         return newUri;
     }
 
-    private Uri ShareBitmapShare(Bitmap mBitmap, String name) throws IOException
+    private File getTempFile(String name) throws IOException
     {
-
         File cacheDir = context.getExternalCacheDir();
         if (cacheDir == null) cacheDir = context.getCacheDir();
         if (name == null) name = "SharePic";
@@ -2895,6 +2915,12 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
         File sfile = File.createTempFile(name, ".jpg", cacheDir);
         JMPPPApplication myApp = (JMPPPApplication) context.getApplication();
         myApp.tempFiles.add(sfile);
+        return sfile;
+
+    }
+    private Uri ShareBitmapShare(Bitmap mBitmap, String name) throws IOException
+    {
+        File sfile = getTempFile(name);
         FileOutputStream filecon = new FileOutputStream(sfile);
         mBitmap.compress(Bitmap.CompressFormat.JPEG, 90, filecon);
         if (filecon != null) filecon.close();
