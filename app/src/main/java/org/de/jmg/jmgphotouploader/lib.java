@@ -571,8 +571,15 @@ public class lib
                         if (lastFolderID == -1)
                         {
                             getFolderItemLock--;
-                            mProgress.hide();
-                            mProgress.dismiss();
+                            try
+                            {
+                                mProgress.hide();
+                                mProgress.dismiss();
+                            }
+                            catch (Throwable ex)
+                            {
+                                ex.printStackTrace();
+                            }
                         }
                         if (app.latchExpand != null) app.latchExpand.countDown();
                     }
