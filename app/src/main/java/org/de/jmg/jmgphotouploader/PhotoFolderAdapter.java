@@ -447,7 +447,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                                     catch (Throwable e)
                                     {
                                         e.printStackTrace();
-                                        lib.ShowToast(context, e.getMessage());
+                                        lib.ShowException(context, e);
                                     }
                                     mProgress.dismiss();
 
