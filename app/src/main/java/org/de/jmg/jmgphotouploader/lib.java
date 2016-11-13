@@ -277,7 +277,9 @@ public class lib
                             }
                             ImgListItem item = new ImgListItem(context, "", imageId, (new java.io.File(folder)).getName(), Uri.parse("file://" + folder), folder, ImgFolder.Type.Local, null);
                             Folder.items.add(item);
-                            if (app.lastFilefound == false && app.lastProvider != null && app.lastProvider.equals(Folder.type.toString()))
+                            if (app.lastFilefound == false && app.lastProvider != null
+                                    && app.lastProvider.equals(ImgFolder.Type.Local.toString())
+                                    && Folder.type.equals(ImgFolder.Type.Local))
                             {
                                 if (Folder.Name.equals(app.lastPath) && item.FileName.equals(app.lastFileName))
                                 {
@@ -470,8 +472,7 @@ public class lib
                                                 blnChanged = true;
                                                 if (!app.lastFilefound && app.lastProvider != null)
                                                 {
-                                                    if (imgFolder.type.toString().equals(app.lastProvider)
-                                                            || (imgFolder.type.toString().contains("OneDrive") && app.lastProvider.contains("OneDrive")))
+                                                    if ((imgFolder.type.toString().contains("OneDrive") && app.lastProvider.contains("OneDrive")))
                                                     {
                                                         if (app.lastPath != null)
                                                         {
@@ -507,8 +508,7 @@ public class lib
                                                 blnChanged = true;
                                                 if (!app.lastFolderfound && app.lastProvider != null)
                                                 {
-                                                    if (F.type.toString().equals(app.lastProvider)
-                                                            || (F.type.toString().contains("OneDrive") && app.lastProvider.contains("OneDrive")))
+                                                    if ((F.type.toString().contains("OneDrive") && app.lastProvider.contains("OneDrive")))
                                                     {
                                                         if (app.lastPath != null)
                                                         {
@@ -521,6 +521,10 @@ public class lib
                                                             }
                                                         }
 
+                                                    }
+                                                    else
+                                                    {
+                                                        app.lastProvider = null;
                                                     }
                                                 }
                                             }
@@ -945,8 +949,8 @@ public class lib
                                                 blnChanged = true;
                                                 if (!app.lastFilefound && app.lastProvider != null)
                                                 {
-                                                    if (imgFolder.type.toString().equals(app.lastProvider)
-                                                            || (imgFolder.type.toString().contains("OneDrive") && app.lastProvider.contains("OneDrive")))
+                                                    if (imgFolder.type.equals(ImgFolder.Type.Google)
+                                                            && app.lastProvider.equals(ImgFolder.Type.Google.toString()))
                                                     {
                                                         if (app.lastPath != null)
                                                         {
@@ -1000,8 +1004,8 @@ public class lib
                                                     blnChanged = true;
                                                     if (!app.lastFolderfound && app.lastProvider != null)
                                                     {
-                                                        if (F.type.toString().equals(app.lastProvider)
-                                                                || (F.type.toString().contains("OneDrive") && app.lastProvider.contains("OneDrive")))
+                                                        if (F.type.equals(ImgFolder.Type.Google)
+                                                                && app.lastProvider.equals(ImgFolder.Type.Google.toString()))
                                                         {
                                                             if (app.lastPath != null)
                                                             {
@@ -1240,8 +1244,8 @@ public class lib
                                                 blnChanged = true;
                                                 if (!app.lastFilefound && app.lastProvider != null)
                                                 {
-                                                    if (imgFolder.type.toString().equals(app.lastProvider)
-                                                            || (imgFolder.type.toString().contains("OneDrive") && app.lastProvider.contains("OneDrive")))
+                                                    if (imgFolder.type.equals(ImgFolder.Type.Dropbox)
+                                                            && app.lastProvider.equals(ImgFolder.Type.Dropbox.toString()))
                                                     {
                                                         if (app.lastPath != null)
                                                         {
@@ -1277,8 +1281,8 @@ public class lib
                                                 blnChanged = true;
                                                 if (!app.lastFolderfound && app.lastProvider != null)
                                                 {
-                                                    if (F.type.toString().equals(app.lastProvider)
-                                                            || (F.type.toString().contains("OneDrive") && app.lastProvider.contains("OneDrive")))
+                                                    if (imgFolder.type.equals(ImgFolder.Type.Dropbox)
+                                                            && app.lastProvider.equals(ImgFolder.Type.Dropbox.toString()))
                                                     {
                                                         if (app.lastPath != null)
                                                         {

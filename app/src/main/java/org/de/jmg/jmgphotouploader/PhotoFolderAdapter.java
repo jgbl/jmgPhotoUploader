@@ -208,6 +208,14 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
             public boolean onGroupClick(ExpandableListView parent,
                                         View v, int groupPosition, long id)
             {
+                myApp.lastFolderfound = true;
+                myApp.lastFilefound = true;
+                myApp.lastProvider = null;
+                myApp.lastPath = null;
+                myApp.lastFileName = null;
+                myApp.lastFilePosition = -1;
+                myApp.lastGroupPosition = -1;
+                
                 return !parent.isGroupExpanded(groupPosition) && lib.getFolderItemLock > 0;
             }
         });
@@ -1848,8 +1856,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                             blnChanged = true;
                             if (!myApp.lastFolderfound && myApp.lastProvider != null)
                             {
-                                if (F.type.toString().equals(myApp.lastProvider)
-                                        || (F.type.toString().contains("OneDrive") && myApp.lastProvider.contains("OneDrive")))
+                                if (F.type.equals(Type.Local) && F.type.toString().equals(myApp.lastProvider))
                                 {
                                     if (myApp.lastPath != null)
                                     {

@@ -313,7 +313,7 @@ public class _MainActivity extends Activity
             {
                 app.latchExpand.countDown();
 				lv.expandGroup(app.ppa.rows.indexOf(app.LocalFolder));
-				findPath();
+				//findPath();
 			}
             if (app.latchExpand != null)
             {
@@ -324,7 +324,7 @@ public class _MainActivity extends Activity
         }
     }
 
-	public void findPath()
+	public void xfindPath()
 	{
 		if (app.lastProvider != null && !app.lastFolderfound && app.lastPath != null)
 		{
