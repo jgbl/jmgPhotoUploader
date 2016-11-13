@@ -221,7 +221,7 @@ public class lib
     {
         boolean blnFolderItemLockInc = false;
         final JMPPPApplication app = (JMPPPApplication) context.getApplication();
-        int lastFileID = -1;
+        //int lastFileID = -1;
         try
         {
             if (getFolderItemLock++ > 1)
@@ -284,7 +284,7 @@ public class lib
                                 if (Folder.Name.equals(app.lastPath) && item.FileName.equals(app.lastFileName))
                                 {
                                     app.lastFilePosition = Folder.items.size() - 1;
-                                    lastFileID = app.lastFilePosition;
+                                    //lastFileID = app.lastFilePosition;
                                 }
                             }
                             //}

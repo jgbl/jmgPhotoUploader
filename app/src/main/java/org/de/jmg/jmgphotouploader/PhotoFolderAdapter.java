@@ -1684,7 +1684,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 
     private void GetFolderItems(final ImgFolder Folder, int GroupPosition)
     {
-        JMPPPApplication app = (JMPPPApplication) context.getApplication();
+        // JMPPPApplication app = (JMPPPApplication) context.getApplication();
 
         if ((Folder.type == ImgFolder.Type.OneDriveAlbum
                 || Folder.type == ImgFolder.Type.OneDriveFolder
@@ -1816,10 +1816,14 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 				}
 				*/
 				/*
-		         try {
+                 try {
 					//lib.GetThumbnailsOneDrive(context, lib.BMList);
 					Latch.await(30, TimeUnit.SECONDS);
-		         } catch (InterruptedException e) {
+		         } catchif (myApp.lastFilePosition > -1)
+                            {
+                                lv.setSelectedChild(GroupPosition, myApp.lastFilePosition, true);
+                            }
+ (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 		         }
@@ -1892,11 +1896,15 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                 //mProgress.hide();
                                 //mProgress.dismiss();
                                 lv.expandGroup(lastFolderID);
+                                GroupPosition = lastFolderID;
                             }
+
                             if (myApp.lastFilePosition > -1)
                             {
                                 lv.setSelectedChild(GroupPosition, myApp.lastFilePosition, true);
+                                myApp.lastFilePosition = -1;
                             }
+
 
                             Folder.Name = "/";
                         }
