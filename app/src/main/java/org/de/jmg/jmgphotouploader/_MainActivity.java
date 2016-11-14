@@ -225,12 +225,13 @@ public class _MainActivity extends Activity
 				blnFolderItemLockInc = true;
 			}
 			String selection = "";
+			String sort = MediaStore.Images.Media.BUCKET_DISPLAY_NAME + "," + MediaStore.MediaColumns.DATA + " ASC";
 			String[] selectionArgs = new String[]{};
 			String[] projection = new String[]{MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.Media.BUCKET_ID};
-			Cursor mediaCursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, "");
+			Cursor mediaCursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, sort);
 			if (mediaCursor != null) lib.GetThumbnails(this, false, mediaCursor, app.BMList);
 
-			mediaCursor = getContentResolver().query(MediaStore.Images.Media.INTERNAL_CONTENT_URI, projection, selection, selectionArgs, "");
+			mediaCursor = getContentResolver().query(MediaStore.Images.Media.INTERNAL_CONTENT_URI, projection, selection, selectionArgs, sort);
 			if (mediaCursor != null) lib.GetThumbnails(this, true, mediaCursor, app.BMList);
 
 		}

@@ -53,6 +53,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -1240,7 +1241,21 @@ public class lib
 
                                                 ImgListItem Item = (new ImgListItem(context, id, 0, itemName, auri, uri, ImgFolder.Type.Dropbox, size));
                                                 Item.ThumbNailLink = ThumbNailLink;
-                                                lib.BMList.add(Item);
+                                                boolean blnCompare = false;
+                                                if (lib.BMList.size() > 0)
+                                                {
+                                                    ImgListItem lastItem = lib.BMList.get(lib.BMList.size() - 1);
+                                                    if (lastItem.type.equals(ImgFolder.Type.Dropbox))
+                                                    {
+                                                        int compare = Item.FileName.compareTo(lastItem.FileName);
+                                                        if (compare < 0)
+                                                        {
+                                                            blnCompare = true;
+                                                            lib.BMList.add(lib.BMList.size() - 1, Item);
+                                                        }
+                                                    }
+                                                }
+                                                if (!blnCompare) lib.BMList.add(Item);
                                                 blnChanged = true;
                                                 if (!app.lastFilefound && app.lastProvider != null)
                                                 {
@@ -1277,7 +1292,22 @@ public class lib
                                                 }
                                                 countFolders++;
                                                 ImgFolder F = new ImgFolder(finalfolder + itemName + "/", type, id);
-                                                ppa.rows.add(position + countFolders, F);
+                                                boolean blnCompare = false;
+                                                if (ppa.rows.size() > 0)
+                                                {
+                                                    ImgFolder lastItem = ppa.rows.get(position + countFolders - 1);
+                                                    if (lastItem.type.equals(ImgFolder.Type.Dropbox) && !lastItem.Name.equals("/") & !lastItem.Name.equals("Dropbox"))
+                                                    {
+                                                        int compare = F.Name.compareTo(lastItem.Name);
+                                                        if (compare < 0)
+                                                        {
+                                                            blnCompare = true;
+                                                            ppa.rows.add(position + countFolders - 1, F);
+                                                        }
+                                                    }
+                                                }
+                                                if (!blnCompare)
+                                                    ppa.rows.add(position + countFolders, F);
                                                 blnChanged = true;
                                                 if (!app.lastFolderfound && app.lastProvider != null)
                                                 {

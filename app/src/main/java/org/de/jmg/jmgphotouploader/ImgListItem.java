@@ -28,7 +28,7 @@ public class ImgListItem extends Object
 	public String id;
 	public int ImageID;
 	public String FileName;
-	public String Name;
+	//public String Name;
 	public String folder;
 	public android.net.Uri Uri;
 	public ImgFolder.Type type;
