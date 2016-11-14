@@ -215,7 +215,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                 myApp.lastFileName = null;
                 myApp.lastFilePosition = -1;
                 myApp.lastGroupPosition = -1;
-                
+
                 return !parent.isGroupExpanded(groupPosition) && lib.getFolderItemLock > 0;
             }
         });

@@ -399,8 +399,9 @@ public class lib
                 blnFolderItemLockInc = true;
             }
             if (folder.equalsIgnoreCase("One Drive")) folder = "/";
-            String queryString = "me/skydrive/files" + folder;//?filter=folders,albums";
-            if (imgFolder != null && imgFolder.id != null) queryString = imgFolder.id + "/files";
+            String queryString = "me/skydrive/files" + folder + "?sort_by=name";
+            if (imgFolder != null && imgFolder.id != null)
+                queryString = imgFolder.id + "/files" + "?sort_by=name";
             //Latch = new CountDownLatch(1);
             final String finalfolder = folder;
 
@@ -808,6 +809,8 @@ public class lib
                                         .setFields("files,kind,nextPageToken")
                                         .setQ(finalQueryString)
                                         .setSpaces((finalQueryString != null) ? "drive" : "photos");
+                                if (!request.getSpaces().contains("photos"))
+                                    request.setOrderBy("folder,name");
                                 if (finalfirstrun && i == 1)
                                 {
                                     request.setPageSize(1);
@@ -815,6 +818,7 @@ public class lib
                                     if (i == 1)
                                     {
                                         request.setSpaces("photos");
+                                        request.setOrderBy(null);
                                         request.setQ(null);
                                     }
                                 }
@@ -1242,6 +1246,8 @@ public class lib
                                                 ImgListItem Item = (new ImgListItem(context, id, 0, itemName, auri, uri, ImgFolder.Type.Dropbox, size));
                                                 Item.ThumbNailLink = ThumbNailLink;
                                                 boolean blnCompare = false;
+                                                int pos = lib.BMList.size() - 1;
+                                                ;
                                                 if (lib.BMList.size() > 0)
                                                 {
                                                     ImgListItem lastItem = lib.BMList.get(lib.BMList.size() - 1);
@@ -1250,12 +1256,37 @@ public class lib
                                                         int compare = Item.FileName.compareTo(lastItem.FileName);
                                                         if (compare < 0)
                                                         {
-                                                            blnCompare = true;
-                                                            lib.BMList.add(lib.BMList.size() - 1, Item);
+                                                            for (int ii = lib.BMList.size() - 1; ii >= 0; ii--)
+                                                            {
+                                                                lastItem = lib.BMList.get(ii);
+                                                                compare = Item.FileName.compareTo(lastItem.FileName);
+                                                                if (compare >= 0)
+                                                                {
+                                                                    lib.BMList.add(ii + 1, Item);
+                                                                    pos = ii + 1;
+                                                                    if (pos <= lastFileID)
+                                                                        lastFileID++;
+                                                                    blnCompare = true;
+                                                                    break;
+                                                                }
+                                                                else if (ii == 0)
+                                                                {
+                                                                    lib.BMList.add(ii, Item);
+                                                                    pos = ii;
+                                                                    lastFileID++;
+                                                                    blnCompare = true;
+                                                                    break;
+                                                                }
+                                                            }
+
                                                         }
                                                     }
                                                 }
-                                                if (!blnCompare) lib.BMList.add(Item);
+                                                if (!blnCompare)
+                                                {
+                                                    lib.BMList.add(Item);
+                                                    pos = lib.BMList.size() - 1;
+                                                }
                                                 blnChanged = true;
                                                 if (!app.lastFilefound && app.lastProvider != null)
                                                 {
@@ -1268,7 +1299,7 @@ public class lib
                                                             {
                                                                 if (itemName.equals(app.lastFileName))
                                                                 {
-                                                                    lastFileID = lib.BMList.size() - 1;
+                                                                    lastFileID = pos;
                                                                     app.lastFilefound = true;
                                                                 }
                                                             }
@@ -1293,6 +1324,7 @@ public class lib
                                                 countFolders++;
                                                 ImgFolder F = new ImgFolder(finalfolder + itemName + "/", type, id);
                                                 boolean blnCompare = false;
+                                                int pos = position + countFolders;
                                                 if (ppa.rows.size() > 0)
                                                 {
                                                     ImgFolder lastItem = ppa.rows.get(position + countFolders - 1);
@@ -1301,13 +1333,38 @@ public class lib
                                                         int compare = F.Name.compareTo(lastItem.Name);
                                                         if (compare < 0)
                                                         {
-                                                            blnCompare = true;
-                                                            ppa.rows.add(position + countFolders - 1, F);
+                                                            for (int ii = countFolders - 1; ii > 0; ii--)
+                                                            {
+                                                                lastItem = ppa.rows.get(position + ii);
+                                                                compare = F.Name.compareTo(lastItem.Name);
+                                                                if (compare >= 0)
+                                                                {
+                                                                    ppa.rows.add(position + ii + 1, F);
+                                                                    pos = position + ii + 1;
+                                                                    if (pos <= lastFolderID)
+                                                                        lastFolderID++;
+                                                                    blnCompare = true;
+                                                                    break;
+                                                                }
+                                                                else if (ii == 1)
+                                                                {
+                                                                    ppa.rows.add(position + ii, F);
+                                                                    pos = position + ii;
+                                                                    if (pos <= lastFolderID)
+                                                                        lastFolderID++;
+                                                                    blnCompare = true;
+                                                                    break;
+                                                                }
+                                                            }
+
                                                         }
                                                     }
                                                 }
                                                 if (!blnCompare)
+                                                {
                                                     ppa.rows.add(position + countFolders, F);
+                                                    pos = position + countFolders;
+                                                }
                                                 blnChanged = true;
                                                 if (!app.lastFolderfound && app.lastProvider != null)
                                                 {
@@ -1318,7 +1375,7 @@ public class lib
                                                         {
                                                             if (app.lastPath.startsWith(F.Name) && F.expanded == false)
                                                             {
-                                                                lastFolderID = position + countFolders;
+                                                                lastFolderID = pos;
                                                                 if (app.lastPath.equals(F.Name))
                                                                     app.lastFolderfound = true;
                                                             }
