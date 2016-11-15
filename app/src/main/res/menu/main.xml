@@ -4,14 +4,19 @@
     tools:context="org.de.jmg.jmgphotouploader._MainActivity" >
     <!-- Search, should appear as action button -->
     <item android:id="@+id/action_refresh"
-          android:icon="@drawable/search"
+          android:icon="@android:drawable/ic_menu_revert"
           android:title="@string/action_refresh"
-          android:showAsAction="ifRoom" />
+          app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_sortorder"
+        android:icon="@android:drawable/ic_menu_sort_alphabetically"
+        android:title="@string/action_sortorder"
+        app:showAsAction="ifRoom"/>
     <!-- Settings, should always be in the overflow -->
     <item android:id="@+id/action_settings"
           android:title="@string/action_settings"
-          android:showAsAction="never" />
+          app:showAsAction="never"/>
     <item android:id="@+id/action_resetdatabase"
           android:title="@string/action_resetdatabase"
-          android:showAsAction="never" />
+          app:showAsAction="never"/>
 </menu>

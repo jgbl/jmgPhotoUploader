@@ -1042,7 +1042,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 
     }
 
-    private void LoadThumbnailOneDrive(ImgListItem pItem, ImageView pImage) throws Exception
+    private void LoadThumbnailOneDrive(ImgListItem pItem, ImageView pImage) throws Throwable
     {
         final ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).lv;
         for (LoadThumbnailTask T : listThumbTasks)
@@ -1266,7 +1266,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
         }
     }
 
-    private void LoadThumbnailGoogle(final ImgListItem pItem, final ImageView pImage) throws Exception
+    private void LoadThumbnailGoogle(final ImgListItem pItem, final ImageView pImage) throws Throwable
     {
         final ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).lv;
         for (LoadThumbnailTask T : listThumbTasks)
@@ -1493,7 +1493,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
         }
     }
 
-    private void LoadThumbnailDropbox(final ImgListItem pItem, final ImageView pImage) throws Exception
+    private void LoadThumbnailDropbox(final ImgListItem pItem, final ImageView pImage) throws Throwable
     {
         final ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).lv;
         for (LoadThumbnailTask T : listThumbTasks)

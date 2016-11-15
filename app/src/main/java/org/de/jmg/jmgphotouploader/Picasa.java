@@ -78,7 +78,7 @@ public class Picasa
         picasaService.setUserToken(authToken);
     }
 
-    public Bitmap getBitmap(PhotoEntry photo) throws Exception
+    public Bitmap getBitmap(PhotoEntry photo) throws Throwable
     {
         URL photoUrl = new URL(photo.getMediaContents().get(0).getUrl());
         Bitmap bmp = BitmapFactory.decodeStream(photoUrl.openConnection().getInputStream());

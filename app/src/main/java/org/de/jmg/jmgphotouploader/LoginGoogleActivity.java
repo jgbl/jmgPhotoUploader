@@ -462,7 +462,8 @@ public class LoginGoogleActivity extends Activity
          *  * @throws IOException
          *  
          */
-        private List<String> getDataFromApi() throws Exception {
+        private List<String> getDataFromApi() throws Throwable
+        {
             // Get a list of up to 10 files.
             lib.setgstatus("getDataFromApi Start");
             List<String> fileInfo = new ArrayList<String>();

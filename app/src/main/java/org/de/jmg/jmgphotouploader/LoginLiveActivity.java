@@ -133,7 +133,8 @@ public class LoginLiveActivity extends Activity implements LiveAuthListener
 
         }
     }
-    private void LoginLive() throws Exception
+
+    private void LoginLive() throws Throwable
     {
 		final Iterable<String> scopes = Arrays.asList("wl.signin", "wl.basic", "wl.skydrive", "wl.offline_access" );
         //LoginLiveActivity.this.auth = new LiveAuthClient(LoginLiveActivity.this.getApplicationContext(), "0000000048135143");

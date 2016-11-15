@@ -728,6 +728,7 @@ public class lib
 
     public static int getFolderItemLock = 0;
     public static com.google.api.services.drive.model.File PhotoParent = new com.google.api.services.drive.model.File();
+    private static String GooglePhotoFolderID = "000";
     public static void GetThumbnailsGoogle(final Activity context, String folder, final ImgFolder imgFolder, final int GroupPosition, final ExpandableListView lv) throws LiveOperationException, InterruptedException, IOException
     {
         boolean blnFolderItemLockInc = false;
@@ -748,6 +749,7 @@ public class lib
                     blnFolderItemLockInc = true;
                 }
                 boolean firstrun = true;
+                boolean isPhotoFolder = false;
                 String queryString = "'root' in parents";
                 final String queryStringFirst = "mimeType = 'application/vnd.google-apps.folder'"; //not " + queryString;
 
@@ -767,11 +769,13 @@ public class lib
                     if (imgFolder.id.equalsIgnoreCase("000"))
                     {
                         queryString = null;
+                        isPhotoFolder = true;
                     }
                     else
                     {
                         queryString = "'" + imgFolder.id + "' in parents";
                         firstrun = false;
+                        if (imgFolder.id == GooglePhotoFolderID) isPhotoFolder = true;
                     }
                 }
                 //Latch = new CountDownLatch(1);
@@ -780,6 +784,7 @@ public class lib
 
 
                 final boolean finalfirstrun = firstrun;
+                final boolean finalisPhotoFolder = isPhotoFolder;
 
                 AsyncTask<Void, Void, List<com.google.api.services.drive.model.File>> task = new AsyncTask<Void, Void, List<com.google.api.services.drive.model.File>>()
                 {
@@ -809,8 +814,6 @@ public class lib
                                         .setFields("files,kind,nextPageToken")
                                         .setQ(finalQueryString)
                                         .setSpaces((finalQueryString != null) ? "drive" : "photos");
-                                if (!request.getSpaces().contains("photos"))
-                                    request.setOrderBy("folder,name");
                                 if (finalfirstrun && i == 1)
                                 {
                                     request.setPageSize(1);
@@ -818,10 +821,11 @@ public class lib
                                     if (i == 1)
                                     {
                                         request.setSpaces("photos");
-                                        request.setOrderBy(null);
                                         request.setQ(null);
                                     }
                                 }
+                                if (!request.getSpaces().contains("photos") && !finalisPhotoFolder)
+                                    request.setOrderBy("folder,name");
                                 do
                                 {
                                     result = request.execute();
@@ -838,6 +842,7 @@ public class lib
                                                 {
                                                     final com.google.api.services.drive.model.File parent = client.files().get(f.getParents().get(0)).execute();
                                                     PhotoParent = parent;
+                                                    GooglePhotoFolderID = PhotoParent.getId();
                                                     resfirst.add(parent);
                                                     break;
                                                 }
@@ -859,6 +864,7 @@ public class lib
                                                     final com.google.api.services.drive.model.File parent = client.files().get(f.getParents().get(0)).execute();
                                                     resfirst.add(parent);
                                                     PhotoParent = parent;
+                                                    GooglePhotoFolderID = PhotoParent.getId();
                                                     break;
                                                 }
                                             }
@@ -874,10 +880,7 @@ public class lib
                             if (resfirst.size() == 0) resfirst.add(PhotoParent);
                             if (finalfirstrun && L != null)
                             {
-                                for (com.google.api.services.drive.model.File f : resfirst)
-                                {
-                                    L.add(f);
-                                }
+                                L.addAll(resfirst);
                             }
                             else if (finalfirstrun)
                             {

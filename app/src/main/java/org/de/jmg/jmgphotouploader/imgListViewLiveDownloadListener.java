@@ -19,7 +19,8 @@ public abstract class imgListViewLiveDownloadListener implements LiveDownloadOpe
         this.Image = Image;
         this.item = item;
     }
-    public void cancel() throws Exception
+
+    public void cancel() throws Throwable
     {
         if (this.operation != null)
         {

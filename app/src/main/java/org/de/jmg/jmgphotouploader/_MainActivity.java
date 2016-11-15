@@ -105,6 +105,18 @@ public class _MainActivity extends Activity
 			}
 			else
 			{
+				setContentView(R.layout.activity_main);
+
+				lv = new ZoomExpandableListview(this); //FindViewById<ExpandableListView> (Resource.Id.lvItems);
+				this.addContentView(lv, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
+
+				lv.setChoiceMode(ExpandableListView.CHOICE_MODE_MULTIPLE);
+				lv.setClickable(true);
+				lv.setFocusable(true);
+				lv.setFocusableInTouchMode(true);
+
+				//lv.setOnChildClickListener(lv_ChildClick);
+
 				loadmedia();
 			}
 
@@ -225,7 +237,8 @@ public class _MainActivity extends Activity
 				blnFolderItemLockInc = true;
 			}
 			String selection = "";
-			String sort = MediaStore.Images.Media.BUCKET_DISPLAY_NAME + "," + MediaStore.MediaColumns.DATA + " ASC";
+			String sort = MediaStore.Images.Media.BUCKET_DISPLAY_NAME + "," + MediaStore.MediaColumns.DATA;
+			if (app.blnSortOrderDesc) sort += " DESC";
 			String[] selectionArgs = new String[]{};
 			String[] projection = new String[]{MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.Media.BUCKET_ID};
 			Cursor mediaCursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, sort);
@@ -240,7 +253,8 @@ public class _MainActivity extends Activity
 			getFolderItemLock--;
 		}
 	}
-	private void loadmedia() throws Exception
+
+	private void loadmedia() throws Throwable
 	{
 		System.out.println(lib.getExternalPicturesDir());
 
@@ -254,7 +268,7 @@ public class _MainActivity extends Activity
 		//lv.setOverScrollMode(View.OVER_SCROLL_NEVER);
 		app.lastFolderfound = false;
 		app.lastFilefound = false;
-
+		app.blnSortOrderDesc = prefs.getBoolean("SortOrderDesc", false);
 
 		if (app.ppa == null)
 		{
@@ -282,21 +296,9 @@ public class _MainActivity extends Activity
                 app.DropboxFolder = app.BMList.get(app.BMList.size() - 1);
             }
 		}
-		setContentView(R.layout.activity_main);
-
-		lv = new ZoomExpandableListview(this); //FindViewById<ExpandableListView> (Resource.Id.lvItems);
-		this.addContentView(lv, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,ViewGroup.LayoutParams.FILL_PARENT));
-
-		lv.setChoiceMode(ExpandableListView.CHOICE_MODE_MULTIPLE);
-		lv.setClickable(true);
-		lv.setFocusable(true);
-		lv.setFocusableInTouchMode(true);
 		SetPPA();
-
-		//lv.setOnChildClickListener(lv_ChildClick);
-		lv.setOnScrollListener(app.ppa.onScrollListener);
-        if (lastProvider != null)
-        {
+		if (lastProvider != null)
+		{
 			app.latchExpand = new CountDownLatch(1);
             if (lastProvider.equalsIgnoreCase(ImgFolder.Type.OneDriveAlbum.toString()) || lastProvider.equalsIgnoreCase(ImgFolder.Type.OneDriveFolder.toString()))
             {
@@ -383,6 +385,7 @@ public class _MainActivity extends Activity
 		app.ppa.rows = app.BMList;
 		app.ppa.ServiceCursor = null;
 		lv.setAdapter(app.ppa);
+		lv.setOnScrollListener(app.ppa.onScrollListener);
 	}
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -522,9 +525,22 @@ public class _MainActivity extends Activity
 	            resetdatabase();
 	            return true;
 	        case R.id.action_refresh:
-	        	refreshPhotos();
-	        default:
-	            return super.onOptionsItemSelected(item);
+				try
+				{
+					app.ppa = null;
+					loadmedia();
+					return true;
+				}
+				catch (Throwable e)
+				{
+					e.printStackTrace();
+				}
+			case R.id.action_sortorder:
+				app.blnSortOrderDesc = app.blnSortOrderDesc ^ true;
+				getPreferences(MODE_PRIVATE).edit().putBoolean("SortOrderDesc", app.blnSortOrderDesc).apply();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 	    }
 	}
 	

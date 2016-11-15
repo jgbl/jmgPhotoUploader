@@ -41,5 +41,6 @@
     <string name="AccountNotFound">Account not found!</string>
     <string name="Message">Message</string>
     <string name="Local">Local</string>
+    <string name="action_sortorder">reverse sort order</string>
 
 </resources>
