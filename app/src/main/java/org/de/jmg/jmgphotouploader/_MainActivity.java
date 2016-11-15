@@ -527,7 +527,9 @@ public class _MainActivity extends Activity
 	        case R.id.action_refresh:
 				try
 				{
+					savePrefs();
 					app.ppa = null;
+					app.BMList.clear();
 					loadmedia();
 					return true;
 				}

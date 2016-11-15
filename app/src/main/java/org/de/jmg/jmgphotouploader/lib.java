@@ -389,6 +389,10 @@ public class lib
         boolean blnFolderItemLockInc = false;
         try
         {
+            final _MainActivity Main = (_MainActivity) context;
+            final JMPPPApplication app = (JMPPPApplication) Main.getApplication();
+            final PhotoFolderAdapter ppa = app.ppa;
+
             if (getFolderItemLock++ > 1)
             {
                 getFolderItemLock--;
@@ -399,9 +403,9 @@ public class lib
                 blnFolderItemLockInc = true;
             }
             if (folder.equalsIgnoreCase("One Drive")) folder = "/";
-            String queryString = "me/skydrive/files" + folder + "?sort_by=name";
+            String queryString = "me/skydrive/files" + folder + "?sort_by=name" + ((app.blnSortOrderDesc) ? "&sort_order=descending" : "");
             if (imgFolder != null && imgFolder.id != null)
-                queryString = imgFolder.id + "/files" + "?sort_by=name";
+                queryString = imgFolder.id + "/files" + "?sort_by=name" + ((app.blnSortOrderDesc) ? "&sort_order=descending" : "");
             //Latch = new CountDownLatch(1);
             final String finalfolder = folder;
 
@@ -428,9 +432,6 @@ public class lib
                 @Override
                 public void onComplete(LiveOperation operation)
                 {
-                    final _MainActivity Main = (_MainActivity) context;
-                    final JMPPPApplication app = (JMPPPApplication) Main.getApplication();
-                    final PhotoFolderAdapter ppa = app.ppa;
                     int lastFolderID = -1;
                     int lastFileID = -1;
                     try
@@ -736,6 +737,9 @@ public class lib
         {
             if (lib.getClientGoogle(context) != null)
             {
+                final _MainActivity Main = (_MainActivity) context;
+                final JMPPPApplication app = (JMPPPApplication) Main.getApplication();
+                final PhotoFolderAdapter ppa = app.ppa;
                 PhotoParent.setName(context.getString(R.string.photos));
                 PhotoParent.setId("000");
                 PhotoParent.setMimeType("application/vnd.google-apps.folder");
@@ -825,7 +829,7 @@ public class lib
                                     }
                                 }
                                 if (!request.getSpaces().contains("photos") && !finalisPhotoFolder)
-                                    request.setOrderBy("folder,name");
+                                    request.setOrderBy("folder,name" + ((app.blnSortOrderDesc) ? " desc" : ""));
                                 do
                                 {
                                     result = request.execute();
@@ -900,9 +904,6 @@ public class lib
                     @Override
                     protected void onPostExecute(List<com.google.api.services.drive.model.File> result)
                     {
-                        final _MainActivity Main = (_MainActivity) context;
-                        final JMPPPApplication app = (JMPPPApplication) Main.getApplication();
-                        final PhotoFolderAdapter ppa = app.ppa;
                         int lastFolderID = -1;
                         int lastFileID = -1;
 
@@ -1257,12 +1258,14 @@ public class lib
                                                     if (lastItem.type.equals(ImgFolder.Type.Dropbox))
                                                     {
                                                         int compare = Item.FileName.compareTo(lastItem.FileName);
+                                                        compare *= (app.blnSortOrderDesc) ? -1 : 1;
                                                         if (compare < 0)
                                                         {
                                                             for (int ii = lib.BMList.size() - 1; ii >= 0; ii--)
                                                             {
                                                                 lastItem = lib.BMList.get(ii);
                                                                 compare = Item.FileName.compareTo(lastItem.FileName);
+                                                                compare *= (app.blnSortOrderDesc) ? -1 : 1;
                                                                 if (compare >= 0)
                                                                 {
                                                                     lib.BMList.add(ii + 1, Item);
@@ -1334,12 +1337,14 @@ public class lib
                                                     if (lastItem.type.equals(ImgFolder.Type.Dropbox) && !lastItem.Name.equals("/") & !lastItem.Name.equals("Dropbox"))
                                                     {
                                                         int compare = F.Name.compareTo(lastItem.Name);
+                                                        compare *= (app.blnSortOrderDesc) ? -1 : 1;
                                                         if (compare < 0)
                                                         {
                                                             for (int ii = countFolders - 1; ii > 0; ii--)
                                                             {
                                                                 lastItem = ppa.rows.get(position + ii);
                                                                 compare = F.Name.compareTo(lastItem.Name);
+                                                                compare *= (app.blnSortOrderDesc) ? -1 : 1;
                                                                 if (compare >= 0)
                                                                 {
                                                                     ppa.rows.add(position + ii + 1, F);
