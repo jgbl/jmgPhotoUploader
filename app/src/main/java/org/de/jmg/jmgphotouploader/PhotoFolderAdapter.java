@@ -262,73 +262,83 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
     {
         // Recycle a previous view if provided:
         //lib.LastgroupPosition= groupPosition;
-        View view = convertView;
-        boolean blnNew = false;
-        // If no recycled view, inflate a new view as a simple expandable list item 1:
-        if (view == null)
+        if (groupPosition < rows.size())
         {
-            Object tempVar = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            LayoutInflater inflater = (LayoutInflater) ((tempVar instanceof LayoutInflater) ? tempVar : null);
-            view = inflater.inflate(android.R.layout.simple_expandable_list_item_1, null);
-            blnNew = true;
-        }
+            View view = convertView;
+            boolean blnNew = false;
+            // If no recycled view, inflate a new view as a simple expandable list item 1:
+            if (view == null)
+            {
+                Object tempVar = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater inflater = (LayoutInflater) ((tempVar instanceof LayoutInflater) ? tempVar : null);
+                view = inflater.inflate(android.R.layout.simple_expandable_list_item_1, null);
+                blnNew = true;
+            }
 
-        // Grab the produce object ("vegetables", "fruits", etc.) at the group position:
-        ImgFolder imgFolder = rows.get(groupPosition);
+            // Grab the produce object ("vegetables", "fruits", etc.) at the group position:
+            ImgFolder imgFolder = rows.get(groupPosition);
 
-        // Get the built-in first text view and insert the group name ("Vegetables", "Fruits", etc.):
-        TextView textView = (TextView) view.findViewById(android.R.id.text1);
-        if (blnNew)
-        {
-            int size = (lib.getScreenSize(context).x < lib.getScreenSize(context).y ? lib.getScreenSize(context).x : lib.getScreenSize(context).y);
-            int newSize = (size / 30);
-            if (newSize > textView.getTextSize())
-                textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, newSize);
-        }
-        if (imgFolder.type == ImgFolder.Type.OneDriveAlbum)
-        {
-            textView.setTextColor(Color.CYAN);
-            if (isExpanded == false && imgFolder.items != null && imgFolder.items.size() == 0 && imgFolder.Name == "/" && imgFolder.fetched == false)
+            // Get the built-in first text view and insert the group name ("Vegetables", "Fruits", etc.):
+            TextView textView = (TextView) view.findViewById(android.R.id.text1);
+            if (blnNew)
             {
-                imgFolder.fetched = false;
-                imgFolder.Name = "One Drive";
+                int size = (lib.getScreenSize(context).x < lib.getScreenSize(context).y ? lib.getScreenSize(context).x : lib.getScreenSize(context).y);
+                int newSize = (size / 30);
+                if (newSize > textView.getTextSize())
+                    textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, newSize);
             }
-        }
-        else if (imgFolder.type == ImgFolder.Type.OneDriveFolder)
-        {
-            textView.setTextColor(Color.GRAY);
-        }
-        else if (imgFolder.type == ImgFolder.Type.Google)
-        {
-            textView.setTextColor(Color.GREEN);
-            if (isExpanded == false && imgFolder.items != null && imgFolder.items.size() == 0 && imgFolder.Name == "/" && imgFolder.fetched == false)
+            if (imgFolder.type == ImgFolder.Type.OneDriveAlbum)
             {
-                imgFolder.fetched = false;
-                imgFolder.Name = "Google Drive";
+                textView.setTextColor(Color.CYAN);
+                if (isExpanded == false && imgFolder.items != null && imgFolder.items.size() == 0 && imgFolder.Name == "/" && imgFolder.fetched == false)
+                {
+                    imgFolder.fetched = false;
+                    imgFolder.Name = "One Drive";
+                }
             }
-        }
-        else if (imgFolder.type == Type.Dropbox)
-        {
-            textView.setTextColor(Color.parseColor("#ffa500"));
-            if (isExpanded == false && imgFolder.items != null && imgFolder.items.size() == 0 && imgFolder.Name == "/" && imgFolder.fetched == false)
+            else if (imgFolder.type == ImgFolder.Type.OneDriveFolder)
             {
-                imgFolder.fetched = false;
-                imgFolder.Name = "Dropbox";
+                textView.setTextColor(Color.GRAY);
             }
+            else if (imgFolder.type == ImgFolder.Type.Google)
+            {
+                textView.setTextColor(Color.GREEN);
+                if (isExpanded == false && imgFolder.items != null && imgFolder.items.size() == 0 && imgFolder.Name == "/" && imgFolder.fetched == false)
+                {
+                    imgFolder.fetched = false;
+                    imgFolder.Name = "Google Drive";
+                }
+            }
+            else if (imgFolder.type == Type.Dropbox)
+            {
+                textView.setTextColor(Color.parseColor("#ffa500"));
+                if (isExpanded == false && imgFolder.items != null && imgFolder.items.size() == 0 && imgFolder.Name == "/" && imgFolder.fetched == false)
+                {
+                    imgFolder.fetched = false;
+                    imgFolder.Name = "Dropbox";
+                }
+            }
+            else
+            {
+                textView.setTextColor(Color.WHITE);
+                if (isExpanded == false && imgFolder.items != null && imgFolder.items.size() == 0 && imgFolder.Name == "/" && imgFolder.fetched == false)
+                {
+                    imgFolder.fetched = false;
+                    imgFolder.Name = context.getString(R.string.Local);
+                }
+            }
+            textView.setText(imgFolder.Name);
+            return view;
         }
         else
         {
-            textView.setTextColor(Color.WHITE);
-            if (isExpanded == false && imgFolder.items != null && imgFolder.items.size() == 0 && imgFolder.Name == "/" && imgFolder.fetched == false)
-            {
-                imgFolder.fetched = false;
-                imgFolder.Name = context.getString(R.string.Local);
-            }
-        }
-        textView.setText(imgFolder.Name);
 
+            Hier dürfte das Programm nie hinkommen !
+                lib.setgstatus("groupPosition " + groupPosition + " not found!");
+            return null;
+        }
         //if (blnNew) textView.setTextSize(lib.convertFromDp(context.getApplicationContext(), textView.getTextSize()));
-        return view;
+
     }
 
     @Override
@@ -1114,7 +1124,8 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                             catch (Throwable ex)
                             {
                                 ex.printStackTrace();
-                                lib.ShowToast(context, context.getString(R.string.Couldnotload) + " " + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage());
+                                this.ex = ex;
+                                this.msg += context.getString(R.string.Couldnotload) + " " + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + "\n";
                             }
                         }
                         catch (Throwable e)
@@ -1355,7 +1366,8 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                 catch (Throwable ex)
                                 {
                                     ex.printStackTrace();
-                                    lib.ShowToast(context, context.getString(R.string.Couldnotload) + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage());
+                                    this.ex = ex;
+                                    this.msg += context.getString(R.string.Couldnotload) + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + "\n";
                                 }
                                 if (bMap != null)
                                 {
@@ -1363,7 +1375,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                 }
                                 else
                                 {
-                                    lib.ShowToast(context, getS(R.string.Couldnotload) + pItem.FileName);
+                                    this.msg += getS(R.string.Couldnotload) + pItem.FileName + "\n";
                                 }
                                 if (input != null)
                                 {
@@ -1381,7 +1393,8 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                             catch (Throwable ex)
                             {
                                 //resultTextView.setText("Error downloading picture: " + ex.getMessage());
-                                lib.ShowToast(context, context.getString(R.string.Couldnotload) + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
+                                this.ex = ex;
+                                this.msg += context.getString(R.string.Couldnotload) + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)) + "\n";
                             }
                             finally
                             {
@@ -1433,6 +1446,8 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
     {
         ImgListItem pItem;
         ImageView pImage;
+        Throwable ex;
+        String msg;
 
         public LoadThumbnailTask(final ImgListItem pItem, final ImageView pImage)
         {
@@ -1455,6 +1470,10 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
         protected void onCancelled()
         {
             listThumbTasks.remove(this);
+            if (this.msg != null)
+            {
+                lib.ShowToast(context, this.msg);
+            }
         }
 
         @Override
@@ -1462,6 +1481,10 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
         {
             try
             {
+                if (this.msg != null)
+                {
+                    lib.ShowToast(context, this.msg);
+                }
                 if (bMap != null)
                 {
                     if (ItemExists(pImage, pItem))
@@ -1587,7 +1610,9 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                 catch (Throwable ex)
                                 {
                                     ex.printStackTrace();
-                                    lib.ShowToast(context, context.getString(R.string.Couldnotload) + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage());
+                                    this.ex = ex;
+                                    this.msg += context.getString(R.string.Couldnotload) + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + "\n";
+
                                 }
                                 if (bMap != null)
                                 {
@@ -1595,7 +1620,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                 }
                                 else
                                 {
-                                    lib.ShowToast(context, getS(R.string.Couldnotload) + pItem.FileName);
+                                    this.msg += getS(R.string.Couldnotload) + pItem.FileName + "\n";
                                 }
                                 if (input != null)
                                 {
@@ -1613,7 +1638,9 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                             catch (Throwable ex)
                             {
                                 //resultTextView.setText("Error downloading picture: " + ex.getMessage());
-                                lib.ShowToast(context, context.getString(R.string.Couldnotload) + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
+                                this.ex = ex;
+                                this.msg += context.getString(R.string.Couldnotload) + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)) + "\n";
+
                             }
                             finally
                             {
