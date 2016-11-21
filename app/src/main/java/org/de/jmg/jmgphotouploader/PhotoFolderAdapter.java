@@ -63,6 +63,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -1128,7 +1129,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                             {
                                 ex.printStackTrace();
                                 this.ex = ex;
-                                this.msg += context.getString(R.string.Couldnotload) + " " + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + "\n";
+                                this.msg += context.getString(R.string.Couldnotload) + " " + pItem.FileName + " " + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + "\n";
                             }
                         }
                         catch (Throwable e)
@@ -1370,7 +1371,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                 {
                                     ex.printStackTrace();
                                     this.ex = ex;
-                                    this.msg += context.getString(R.string.Couldnotload) + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + "\n";
+                                    this.msg += context.getString(R.string.Couldnotload) + pItem.FileName + " " + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + "\n";
                                 }
                                 if (bMap != null)
                                 {
@@ -1393,11 +1394,15 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                     }
                                 }
                             }
+                            catch (InterruptedException ex)
+                            {
+
+                            }
                             catch (Throwable ex)
                             {
                                 //resultTextView.setText("Error downloading picture: " + ex.getMessage());
                                 this.ex = ex;
-                                this.msg += context.getString(R.string.Couldnotload) + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)) + "\n";
+                                this.msg += context.getString(R.string.Couldnotload) + pItem.FileName + " " + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)) + "\n";
                             }
                             finally
                             {
@@ -1439,7 +1444,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
         catch (Throwable ex)
         {
             //resultTextView.setText("Error downloading picture: " + ex.getMessage());
-            lib.ShowToast(context, context.getString(R.string.Couldnotload) + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
+            lib.ShowToast(context, context.getString(R.string.Couldnotload) + pItem.FileName + " " + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
         }
     }
 
@@ -1473,7 +1478,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
         protected void onCancelled()
         {
             listThumbTasks.remove(this);
-            if (this.msg != null)
+            if (this.msg != null && !(this.ex != null && (this.ex instanceof InterruptedException || this.ex instanceof InterruptedIOException)))
             {
                 lib.ShowToast(context, this.msg);
             }
@@ -1484,7 +1489,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
         {
             try
             {
-                if (this.msg != null)
+                if (this.msg != null && !(this.ex != null && (this.ex instanceof InterruptedException || this.ex instanceof InterruptedIOException)))
                 {
                     lib.ShowToast(context, this.msg);
                 }
@@ -1614,7 +1619,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                                 {
                                     ex.printStackTrace();
                                     this.ex = ex;
-                                    this.msg += context.getString(R.string.Couldnotload) + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + "\n";
+                                    this.msg += context.getString(R.string.Couldnotload) + pItem.FileName + " " + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + "\n";
 
                                 }
                                 if (bMap != null)
@@ -1642,7 +1647,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                             {
                                 //resultTextView.setText("Error downloading picture: " + ex.getMessage());
                                 this.ex = ex;
-                                this.msg += context.getString(R.string.Couldnotload) + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)) + "\n";
+                                this.msg += context.getString(R.string.Couldnotload) + pItem.FileName + " " + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)) + "\n";
 
                             }
                             finally
@@ -1686,7 +1691,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
         catch (Throwable ex)
         {
             //resultTextView.setText("Error downloading picture: " + ex.getMessage());
-            lib.ShowToast(context, context.getString(R.string.Couldnotload) + pItem.FileName + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
+            lib.ShowToast(context, context.getString(R.string.Couldnotload) + pItem.FileName + " " + context.getString(R.string.Error) + ex.getClass().getName() + " " + ex.getMessage() + (lib.getCauses(ex)));
         }
     }
 
