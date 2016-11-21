@@ -244,10 +244,12 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
     }
 
     // Return the number of produce ("vegetables", "fruitimport com.microsoft.live.LiveOperationException;s", "herbs") objects:
+    private int _lastGroupCount;
     @Override
     public int getGroupCount()
     {
-        return rows.size();
+        _lastGroupCount = rows.size();
+        return _lastGroupCount;
     }
 
     @Override
@@ -326,8 +328,8 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
         else
         {
 
-            lib.setgstatus("groupPosition " + groupPosition + " not found!");
-            return null;
+            lib.setgstatus("groupPosition " + groupPosition + " not found! LastGroupCount: " + _lastGroupCount);
+            //return null;
         }
         return view;
 
@@ -355,9 +357,16 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
     public int getChildrenCount(int groupPosition)
     {
         // Return the number of children (produce item objects) in the group (produce object):
-        ImgFolder Folder = rows.get(groupPosition);
-        GetFolderItems(Folder, groupPosition);
-        return Folder.items.size();
+        if (groupPosition < rows.size())
+        {
+            ImgFolder Folder = rows.get(groupPosition);
+            GetFolderItems(Folder, groupPosition);
+            return Folder.items.size();
+        }
+        else
+        {
+            return 0;
+        }
     }
 
     private static class ItemParams
@@ -1852,23 +1861,14 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                     Folder.items = lib.BMList;
                 }
 
-                else if (Folder.fetched == false)
+                else if (Folder == myApp.LocalFolder && Folder.fetched == false)
                 {
                     myApp.BMList = new java.util.ArrayList<ImgFolder>();
-                    Thread T = new Thread(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            Folder.fetched = true;
-                            Folder.expanded = true;
-                            ((_MainActivity) context).getLocalFolders();
-                        }
-                    });
-                    T.start();
+                    ((_MainActivity) context).getLocalFolders();
+                    Folder.fetched = true;
+                    Folder.expanded = true;
                     try
                     {
-                        T.join(25000);
                         lib.setgstatus("items: " + myApp.BMList.size());
                         int countFolders = 0;
                         boolean blnChanged = false;
@@ -1899,6 +1899,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                         }
                         if (blnChanged)
                         {
+                            notifyDataSetChanged();
                             for (int i = 1; i < rows.size(); i++)
                             {
                                 if (rows.get(i).expanded)

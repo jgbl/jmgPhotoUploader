@@ -808,6 +808,7 @@ public class lib
                         FileList result = null;
                         List<com.google.api.services.drive.model.File> L = null;
                         List<com.google.api.services.drive.model.File> resfirst = new ArrayList<com.google.api.services.drive.model.File>();
+                        List<com.google.api.services.drive.model.File> resNotInPhotos = new ArrayList<com.google.api.services.drive.model.File>();
                         List<com.google.api.services.drive.model.File> res = null;
                         try
                         {
@@ -818,6 +819,7 @@ public class lib
                                         .setFields("files,kind,nextPageToken")
                                         .setQ(finalQueryString)
                                         .setSpaces((finalQueryString != null) ? "drive" : "photos");
+
                                 if (finalfirstrun && i == 1)
                                 {
                                     request.setPageSize(1);
@@ -829,7 +831,10 @@ public class lib
                                     }
                                 }
                                 if (!request.getSpaces().contains("photos") && !finalisPhotoFolder)
+                                {
                                     request.setOrderBy("folder,name" + ((app.blnSortOrderDesc) ? " desc" : ""));
+                                }
+
                                 do
                                 {
                                     result = request.execute();
@@ -844,14 +849,18 @@ public class lib
                                                 //f.setDescription("photo");
                                                 if (f.getParents() != null)
                                                 {
-                                                    PhotoFolder doppelt !
                                                     final com.google.api.services.drive.model.File parent = client.files().get(f.getParents().get(0)).execute();
                                                     PhotoParent = parent;
                                                     GooglePhotoFolderID = PhotoParent.getId();
                                                     resfirst.add(parent);
                                                     break;
                                                 }
+                                                else
+                                                {
+                                                    //resNotInPhotos.add(res.get(ii));
+                                                }
                                             }
+
                                         }
                                         if (i == 0) L = res;
                                     }
@@ -882,7 +891,10 @@ public class lib
                                 while (!(finalfirstrun && i == 1) && request.getPageToken() != null && request.getPageToken().length() > 0);
                                 if (!finalfirstrun) break;
                             }
-                            if (resfirst.size() == 0) resfirst.add(PhotoParent);
+                            if (resfirst.size() == 0)
+                            {
+                                resfirst.add(PhotoParent);
+                            }
                             if (finalfirstrun && L != null)
                             {
                                 L.addAll(resfirst);
