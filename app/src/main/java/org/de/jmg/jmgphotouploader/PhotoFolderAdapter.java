@@ -1863,6 +1863,16 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 
                 else if (Folder == myApp.LocalFolder && Folder.fetched == false)
                 {
+                    try
+                    {
+                        lib.GetThumbnailsLocal(context, Folder.Name, Folder, GroupPosition, ((_MainActivity) context).lv);
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+
+                    /*
                     myApp.BMList = new java.util.ArrayList<ImgFolder>();
                     ((_MainActivity) context).getLocalFolders();
                     Folder.fetched = true;
@@ -1937,7 +1947,9 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                         e.printStackTrace();
                     }
 
+                */
                 }
+
             }
         }
 

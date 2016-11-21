@@ -214,7 +214,12 @@ public class _MainActivity extends Activity
 				String sql = "INSERT INTO Services ('Name','URL','package') VALUES('Photobucket','http://photobucket.com','com.photobucket.android')";
 				lib.dbpp.DataBase.execSQL(sql);
 			}
-		}
+            if (c.getCount() < 8)
+            {
+                String sql = "INSERT INTO Services ('Name','URL','package') VALUES('Google+','https://plus.google.com','com.google.android.apps.plus')";
+                lib.dbpp.DataBase.execSQL(sql);
+            }
+        }
 		catch (Throwable ex)
 		{
 			System.out.println(ex.getMessage());
@@ -242,10 +247,10 @@ public class _MainActivity extends Activity
 			String[] selectionArgs = new String[]{};
 			String[] projection = new String[]{MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.Media.BUCKET_ID};
 			Cursor mediaCursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, sort);
-			if (mediaCursor != null) lib.GetThumbnails(this, false, mediaCursor, app.BMList);
+            if (mediaCursor != null) lib.GetThumbnails(this, false, mediaCursor, app.BMList, true);
 
 			mediaCursor = getContentResolver().query(MediaStore.Images.Media.INTERNAL_CONTENT_URI, projection, selection, selectionArgs, sort);
-			if (mediaCursor != null) lib.GetThumbnails(this, true, mediaCursor, app.BMList);
+            if (mediaCursor != null) lib.GetThumbnails(this, true, mediaCursor, app.BMList, true);
 
 		}
 		finally

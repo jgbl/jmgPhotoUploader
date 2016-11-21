@@ -27,14 +27,12 @@ import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import com.dropbox.core.DbxException;
-import com.dropbox.core.DbxWebAuth;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.MediaInfo;
 import com.dropbox.core.v2.files.Metadata;
-import com.google.api.client.repackaged.com.google.common.base.Throwables;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
 import com.microsoft.live.LiveAuthListener;
@@ -42,7 +40,6 @@ import com.microsoft.live.LiveConnectClient;
 import com.microsoft.live.LiveOperation;
 import com.microsoft.live.LiveOperationException;
 import com.microsoft.live.LiveOperationListener;
-import com.microsoft.live.test.util.DownloadAsyncRunnable;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -53,11 +50,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-
-import static com.dropbox.core.android.AuthActivity.result;
 
 //import android.runtime.*;
 
@@ -218,14 +212,14 @@ public class lib
     }
 
 
-    public static void GetThumbnails(Activity context, boolean Internal, android.database.Cursor mediaCursor, java.util.ArrayList<ImgFolder> BMList)
+    public static void GetThumbnails(Activity context, boolean Internal, android.database.Cursor mediaCursor, java.util.ArrayList<ImgFolder> BMList, Boolean dontCheckLock)
     {
         boolean blnFolderItemLockInc = false;
         final JMPPPApplication app = (JMPPPApplication) context.getApplication();
         //int lastFileID = -1;
         try
         {
-            if (getFolderItemLock++ > 1)
+            if (getFolderItemLock++ > 1 && !dontCheckLock)
             {
                 getFolderItemLock--;
                 return;
@@ -675,8 +669,8 @@ public class lib
                                         final String size = oneDriveItem.optString("size");
                                         final android.net.Uri auri = android.net.Uri.parse(uri);
                                         BMList.add(new ImgListItem(context, id, 0, itemName, auri, uri, ImgFolder.Type.OneDriveAlbum, size));
-					                    /*
-					                    String queryString = "me/skydrive/" + itemName + "/files";//?filter=folders,albums";
+                                        /*
+                                        String queryString = "me/skydrive/" + itemName + "/files";//?filter=folders,albums";
 					    	            //Latch = new CountDownLatch(1);
 					    	            try {
 											LiveOperation LiveOp2 = client.get(queryString);
@@ -730,6 +724,7 @@ public class lib
     public static int getFolderItemLock = 0;
     public static com.google.api.services.drive.model.File PhotoParent = new com.google.api.services.drive.model.File();
     private static String GooglePhotoFolderID = "000";
+
     public static void GetThumbnailsGoogle(final Activity context, String folder, final ImgFolder imgFolder, final int GroupPosition, final ExpandableListView lv) throws LiveOperationException, InterruptedException, IOException
     {
         boolean blnFolderItemLockInc = false;
@@ -1100,6 +1095,163 @@ public class lib
                 };
                 task.execute();
             }
+        }
+        catch (Throwable ex)
+        {
+            if (blnFolderItemLockInc) getFolderItemLock--;
+            lib.ShowException(context, ex);
+        }
+    }
+
+    public static void GetThumbnailsLocal(final Activity context, String folder, final ImgFolder imgFolder, final int pGroupPosition, final ExpandableListView lv) throws Exception
+    {
+        boolean blnFolderItemLockInc = false;
+        try
+        {
+            final _MainActivity Main = (_MainActivity) context;
+            final JMPPPApplication app = (JMPPPApplication) Main.getApplication();
+            final PhotoFolderAdapter ppa = app.ppa;
+            if (getFolderItemLock++ > 1)
+            {
+                getFolderItemLock--;
+                return;
+            }
+            else
+            {
+                blnFolderItemLockInc = true;
+            }
+
+            if (folder.equalsIgnoreCase(context.getString((R.string.Local)))) folder = "/";
+
+            AsyncTask<Void, Void, java.util.ArrayList<ImgFolder>> task = new AsyncTask<Void, Void, java.util.ArrayList<ImgFolder>>()
+            {
+
+                @Override
+                protected void onPreExecute()
+                {
+                    mProgress = new ProgressDialog(context);
+                    mProgress.setMessage(context.getString(R.string.gettingData));
+                    mProgress.show();
+                }
+
+                @Override
+                protected java.util.ArrayList<ImgFolder> doInBackground(Void... params)
+                {
+                    java.util.ArrayList<ImgFolder> BMList = new java.util.ArrayList<ImgFolder>();
+                    try
+                    {
+                        String selection = "";
+                        String sort = MediaStore.Images.Media.BUCKET_DISPLAY_NAME + "," + MediaStore.MediaColumns.DATA;
+                        if (app.blnSortOrderDesc) sort += " DESC";
+                        String[] selectionArgs = new String[]{};
+                        String[] projection = new String[]{MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.Media.BUCKET_ID};
+                        Cursor mediaCursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, selection, selectionArgs, sort);
+                        if (mediaCursor != null)
+                            lib.GetThumbnails(context, false, mediaCursor, BMList, true);
+
+                        mediaCursor = context.getContentResolver().query(MediaStore.Images.Media.INTERNAL_CONTENT_URI, projection, selection, selectionArgs, sort);
+                        if (mediaCursor != null)
+                            lib.GetThumbnails(context, true, mediaCursor, BMList, true);
+                        return BMList;
+                    }
+                    catch (Throwable e)
+                    {
+                        e.printStackTrace();
+                        return BMList;
+                    }
+
+
+                }
+
+                @Override
+                protected void onPostExecute(java.util.ArrayList<ImgFolder> result)
+                {
+                    int lastFolderID = -1;
+                    int GroupPosition = pGroupPosition;
+
+                    try
+                    {
+
+                        if (result != null)
+                        {
+                            lib.setgstatus("items: " + result.size());
+                            int countFolders = 0;
+                            boolean blnChanged = false;
+
+                            for (ImgFolder F : result)
+                            {
+                                countFolders++;
+                                app.ppa.rows.add(countFolders, F);
+                                blnChanged = true;
+                                if (!app.lastFolderfound && app.lastProvider != null)
+                                {
+                                    if (F.type.equals(ImgFolder.Type.Local) && F.type.toString().equals(app.lastProvider))
+                                    {
+                                        if (app.lastPath != null)
+                                        {
+                                            if (app.lastPath.startsWith(F.Name) && F.expanded == false)
+                                            {
+                                                //F.expanded = true;
+                                                lastFolderID = countFolders;
+                                                if (app.lastPath.equals(F.Name))
+                                                    app.lastFolderfound = true;
+                                            }
+                                        }
+
+                                    }
+                                }
+                            }
+                            if (blnChanged)
+                            {
+                                app.ppa.notifyDataSetChanged();
+                                for (int i = 1; i < app.ppa.rows.size(); i++)
+                                {
+                                    if (app.ppa.rows.get(i).expanded)
+                                    {
+                                        lv.expandGroup(i);
+                                    }
+                                    else
+                                    {
+                                        lv.collapseGroup(i);
+                                    }
+                                }
+                                app.ppa.notifyDataSetChanged();
+                                if (lastFolderID > -1)
+                                {
+                                    //getFolderItemLock--;
+                                    //mProgress.hide();
+                                    //mProgress.dismiss();
+                                    lv.expandGroup(lastFolderID);
+                                    GroupPosition = lastFolderID;
+                                }
+
+                                if (app.lastFilePosition > -1)
+                                {
+                                    lv.setSelectedChild(GroupPosition, app.lastFilePosition, true);
+                                    app.lastFilePosition = -1;
+                                }
+
+                                imgFolder.Name = "/";
+                            }
+
+                        }
+
+                    }
+                    catch (Throwable ex)
+                    {
+                        ShowException(context, ex);
+                    }
+                    finally
+                    {
+                        getFolderItemLock--;
+                        mProgress.hide();
+                        mProgress.dismiss();
+                        if (app.latchExpand != null) app.latchExpand.countDown();
+                    }
+                }
+            };
+            task.execute();
+
         }
         catch (Throwable ex)
         {
