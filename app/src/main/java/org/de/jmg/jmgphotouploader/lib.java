@@ -844,6 +844,7 @@ public class lib
                                                 //f.setDescription("photo");
                                                 if (f.getParents() != null)
                                                 {
+                                                    PhotoFolder doppelt !
                                                     final com.google.api.services.drive.model.File parent = client.files().get(f.getParents().get(0)).execute();
                                                     PhotoParent = parent;
                                                     GooglePhotoFolderID = PhotoParent.getId();

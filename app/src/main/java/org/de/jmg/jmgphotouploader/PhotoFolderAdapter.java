@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.StrictMode;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -35,7 +34,6 @@ import android.widget.TextView;
 
 import com.dropbox.core.DbxDownloader;
 import com.dropbox.core.DbxException;
-import com.dropbox.core.DbxWebAuth;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ThumbnailFormat;
@@ -43,7 +41,6 @@ import com.dropbox.core.v2.files.ThumbnailSize;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
-import com.google.api.client.repackaged.com.google.common.base.Throwables;
 import com.google.api.services.drive.Drive;
 import com.microsoft.live.LiveAuthClient;
 import com.microsoft.live.LiveAuthException;
@@ -59,12 +56,10 @@ import org.de.jmg.jmgphotouploader.Controls.ZoomExpandableListview;
 import org.de.jmg.jmgphotouploader.ImgFolder.Type;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,8 +68,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -262,18 +255,19 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
     {
         // Recycle a previous view if provided:
         //lib.LastgroupPosition= groupPosition;
+        View view = convertView;
+        boolean blnNew = false;
+        // If no recycled view, inflate a new view as a simple expandable list item 1:
+        if (view == null)
+        {
+            Object tempVar = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) ((tempVar instanceof LayoutInflater) ? tempVar : null);
+            view = inflater.inflate(android.R.layout.simple_expandable_list_item_1, null);
+            blnNew = true;
+        }
         if (groupPosition < rows.size())
         {
-            View view = convertView;
-            boolean blnNew = false;
-            // If no recycled view, inflate a new view as a simple expandable list item 1:
-            if (view == null)
-            {
-                Object tempVar = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                LayoutInflater inflater = (LayoutInflater) ((tempVar instanceof LayoutInflater) ? tempVar : null);
-                view = inflater.inflate(android.R.layout.simple_expandable_list_item_1, null);
-                blnNew = true;
-            }
+
 
             // Grab the produce object ("vegetables", "fruits", etc.) at the group position:
             ImgFolder imgFolder = rows.get(groupPosition);
@@ -328,15 +322,15 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                 }
             }
             textView.setText(imgFolder.Name);
-            return view;
         }
         else
         {
 
-            Hier dürfte das Programm nie hinkommen !
-                lib.setgstatus("groupPosition " + groupPosition + " not found!");
+            lib.setgstatus("groupPosition " + groupPosition + " not found!");
             return null;
         }
+        return view;
+
         //if (blnNew) textView.setTextSize(lib.convertFromDp(context.getApplicationContext(), textView.getTextSize()));
 
     }
@@ -1074,8 +1068,8 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
 
             try
             {
-				/*
-				mProgress = new ProgressDialog(context);
+                /*
+                mProgress = new ProgressDialog(context);
 ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).lv;				mProgress.setTitle("Download");
 				mProgress.setMessage("Downloading Image");
 				mProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -2794,6 +2788,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
         return sfile;
 
     }
+
     private Uri ShareBitmapShare(Bitmap mBitmap, String name) throws IOException
     {
         File sfile = getTempFile(name, ".jpg");
