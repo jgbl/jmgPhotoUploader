@@ -311,8 +311,9 @@ public class lib
                 if (BMList.isEmpty())
                 {
                     //this.Resources.GetDrawable(Resource.Drawable.P1040598)
-                    ImgFolder Folder1 = new ImgFolder("Test1", ImgFolder.Type.Local);
-                    ImgFolder Folder2 = new ImgFolder("Test2", ImgFolder.Type.Local);
+                    /*
+                    ImgFolder Folder1 = new ImgFolder("/Test1", ImgFolder.Type.Local);
+                    ImgFolder Folder2 = new ImgFolder("/Test2", ImgFolder.Type.Local);
                     BMList.add(Folder1);
                     BMList.add(Folder2);
                     for (int i = 1; i <= 10; i++)
@@ -324,6 +325,7 @@ public class lib
                         newItem2.setImg(BitmapFactory.decodeResource(context.getResources(), R.drawable.res2small));
                         Folder2.items.add(newItem2);
                     }
+                    */
                 }
             }
         }

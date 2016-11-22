@@ -916,8 +916,13 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                                     CursorItem = lib.dbpp.DataBase.query("Files", null, "URI=?", new String[]{uri}, null, null, null);
                                 }
                                 String Service = Cursor.getString(Cursor.getColumnIndex("Name"));
-                                CheckBox cb;
-                                if (isNewView)
+                                CheckBox cb = null;
+                                if (!isNewView)
+                                {
+                                    lib.setgstatus("GetChildview Find Checkbox");
+                                    cb = (CheckBox) view.findViewById(Cursor.getInt(Cursor.getColumnIndex("_id")));
+                                }
+                                if (isNewView || cb == null)
                                 {
                                     lib.setgstatus("GetChildview Create CheckBox");
                                     cb = new CheckBox(context);
@@ -959,10 +964,11 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                                 }
                                 else
                                 {
-                                    lib.setgstatus("GetChildview Find Checkbox");
-                                    cb = (CheckBox) view.findViewById(Cursor.getInt(Cursor.getColumnIndex("_id")));
-                                    cb.setTag(null);
-                                    cb.setChecked(false);
+                                    if (cb != null)
+                                    {
+                                        cb.setTag(null);
+                                        cb.setChecked(false);
+                                    }
                                 }
                                 lib.setgstatus("GetChildview Set Checked");
                                 if (CursorItem != null && CursorItem.moveToFirst())

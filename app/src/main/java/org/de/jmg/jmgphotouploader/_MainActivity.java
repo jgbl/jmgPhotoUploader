@@ -105,16 +105,7 @@ public class _MainActivity extends Activity
 			}
 			else
 			{
-				setContentView(R.layout.activity_main);
-
-				lv = new ZoomExpandableListview(this); //FindViewById<ExpandableListView> (Resource.Id.lvItems);
-				this.addContentView(lv, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
-
-				lv.setChoiceMode(ExpandableListView.CHOICE_MODE_MULTIPLE);
-				lv.setClickable(true);
-				lv.setFocusable(true);
-				lv.setFocusableInTouchMode(true);
-
+				initDisplay();
 				//lv.setOnChildClickListener(lv_ChildClick);
 
 				loadmedia();
@@ -131,7 +122,19 @@ public class _MainActivity extends Activity
 		
 	}
 
+	private void initDisplay()
+	{
+		setContentView(R.layout.activity_main);
 
+		lv = new ZoomExpandableListview(this); //FindViewById<ExpandableListView> (Resource.Id.lvItems);
+		this.addContentView(lv, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
+
+		lv.setChoiceMode(ExpandableListView.CHOICE_MODE_MULTIPLE);
+		lv.setClickable(true);
+		lv.setFocusable(true);
+		lv.setFocusableInTouchMode(true);
+
+	}
 	private void initDB(JMPPPApplication app)
 	{
 		if (app.dbpp != null)
@@ -371,6 +374,7 @@ public class _MainActivity extends Activity
 			if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 				// Permission granted.
 				try {
+					initDisplay();
 					loadmedia();
 				}
 				catch (Throwable e)
