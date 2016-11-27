@@ -399,6 +399,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
     }
 
     public android.database.Cursor ServiceCursor;
+    public int CountVisible = 0;
 
     private OnLongClickListener ImgOnLongClickListener = new OnLongClickListener()
     {
@@ -876,12 +877,22 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                         lib.dbpp.DataBase.execSQL("INSERT INTO Services ('Name','URL','package') VALUES('Pinterest','pinterest.com','com.pinterest')");
                     }
                 } while (Cursor.getCount() < 4);
+                boolean first = true;
+                CountVisible = 0;
+                while ((first) ? (Cursor.moveToFirst()) : (Cursor.moveToNext()))
+                {
+                    first = false;
+                    if (Cursor.getString(Cursor.getColumnIndex("visible")).equalsIgnoreCase("true"))
+                    {
+                        this.CountVisible++;
+                    }
+                }
             }
             else
             {
                 Cursor = ServiceCursor;
             }
-            if (Cursor.getCount() > 0)
+            if (Cursor.getCount() > 0 && CountVisible > 0)
             {
                 boolean first = true;
                 lib.setgstatus("GetChildview enumerate Services");
@@ -935,7 +946,7 @@ public class PhotoFolderAdapter extends BaseExpandableListAdapter implements Liv
                                     cb.setTextSize(TypedValue.COMPLEX_UNIT_PX, lib.convertFromDp(context.getApplicationContext(), 14.0f));
                                     //cb.SetPadding (1,1,1,1);//(5, 26, 5, 5);
                                     cb.setGravity(Gravity.CENTER_VERTICAL);
-                                    float Weight = 0.49f / Cursor.getCount();
+                                    float Weight = 0.49f / CountVisible;
                                     int size = (int) ((lib.getScreenSize(context).x * 0.35f) / Cursor.getCount());
                                     LinearLayout.LayoutParams L = new LinearLayout.LayoutParams(size, ViewGroup.LayoutParams.WRAP_CONTENT, Weight);
                                     //noinspection WrongConstant

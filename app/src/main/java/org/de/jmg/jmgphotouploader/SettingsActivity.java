@@ -51,7 +51,7 @@ public class SettingsActivity extends Activity {
 			{
 				do {
 		        	Cursor = lib.dbpp.query("Select * FROM Services");
-					app.ppa.ServiceCursor = Cursor;
+					//app.ppa.ServiceCursor = Cursor;
 					if (Cursor.getCount() == 3){
 						try{
 							lib.dbpp.DataBase.execSQL ("ALTER TABLE Services ADD COLUMN 'package' VARCHAR");
@@ -67,7 +67,7 @@ public class SettingsActivity extends Activity {
 			else
 			{
 				Cursor = lib.dbpp.query("Select * FROM Services");
-				app.ppa.ServiceCursor = Cursor;
+				//app.ppa.ServiceCursor = Cursor;
 			}
 			if (Cursor.getCount() > 0)
 			{
@@ -295,7 +295,7 @@ public class SettingsActivity extends Activity {
 					app.dbpp = lib.dbpp;
 				}
 				Cursor = lib.dbpp.query("Select * FROM Services");
-				app.ppa.ServiceCursor = Cursor;
+				//app.ppa.ServiceCursor = Cursor;
 				for (int i = 1; i < layout.getChildCount(); i++)
 				{
 					TableRow  r = (TableRow)layout.getChildAt(i);

@@ -395,6 +395,7 @@ public class _MainActivity extends Activity
 		app.ppa.context = this;
 		app.ppa.rows = app.BMList;
 		app.ppa.ServiceCursor = null;
+		app.ppa.CountVisible = 0;
 		lv.setAdapter(app.ppa);
 		lv.setOnScrollListener(app.ppa.onScrollListener);
 	}
@@ -845,7 +846,16 @@ public class _MainActivity extends Activity
     private void refreshPhotos()
     {
     	app.ppa = null;
-		SetPPA();
-    }
+		app.BMList = new java.util.ArrayList<ImgFolder>();
+		try
+		{
+			loadmedia();
+		}
+		catch (Throwable throwable)
+		{
+			throwable.printStackTrace();
+		}
+		//SetPPA();
+	}
 	
 }

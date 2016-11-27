@@ -1924,10 +1924,17 @@ public class lib
                 Name = info.loadLabel(context.getPackageManager()).toString();
                 URL = "http://www.google.de";
                 Package = s;
-                String sql = "INSERT INTO Services ('Name','URL','package', 'visible') VALUES('"
-                        + Name + "','" + URL + "','" + Package + "', false)";
+                String sql = "INSERT INTO Services ('Name','URL','package','visible') VALUES('"
+                        + Name + "','" + URL + "','" + Package + "', \"false\")";
                 System.out.print(sql);
-                lib.dbpp.DataBase.execSQL(sql);
+                try
+                {
+                    lib.dbpp.DataBase.execSQL(sql);
+                }
+                catch (Throwable ex)
+                {
+                    ex.printStackTrace();
+                }
             }
             else
             {
