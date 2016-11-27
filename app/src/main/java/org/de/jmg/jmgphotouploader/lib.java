@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,6 +21,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
+import android.support.annotation.AnyRes;
+import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.webkit.MimeTypeMap;
@@ -1856,6 +1859,92 @@ public class lib
 
         //context.startActivity(intent);
         context.startActivity(Intent.createChooser(intent, "Share With"));
+    }
+
+    /**
+     * get uri to drawable or any other resource type if u wish
+     *
+     * @param context    - context
+     * @param drawableId - drawable res id
+     * @return - uri
+     */
+    public static final Uri getUriToDrawable(@NonNull Context context, @AnyRes int drawableId)
+    {
+        Uri imageUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE +
+                "://" + context.getResources().getResourcePackageName(drawableId)
+                + '/' + context.getResources().getResourceTypeName(drawableId)
+                + '/' + context.getResources().getResourceEntryName(drawableId));
+        return imageUri;
+    }
+
+    public static void getContentProviders(Context context, android.net.Uri uri)
+    {
+
+        String urlToShare = getRealPathFromURI((Activity) context, uri);
+        File F = new File(urlToShare);
+        Uri URI = uri;
+        if (F.exists())
+        {
+            URI = Uri.fromFile(F);
+            //URI = Uri.parse("file://" + F.getAbsolutePath());
+        }
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        //intent.setDataAndType(Uri.parse(urlToShare), "image/*");
+        if (F.getPath().toLowerCase().endsWith(".jpg") || F.getPath().toLowerCase().endsWith(".jpeg"))
+        {
+            intent.setType("image/jpeg");
+        }
+        else
+        {
+            intent.setType("image/*");
+        }
+        intent.putExtra(Intent.EXTRA_TEXT, F.getName());
+        intent.putExtra(Intent.EXTRA_SUBJECT, F.getName());
+        intent.putExtra(Intent.EXTRA_TITLE, F.getName());
+
+        intent.putExtra(Intent.EXTRA_STREAM, URI);  //optional//use this when you want to send an image
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        //intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        // See if official app is found
+
+        String Name = "";
+        String URL = "";
+        String Package = "";
+
+        java.util.List<ResolveInfo> matches = context.getPackageManager().queryIntentActivities(intent, 0);
+        for (ResolveInfo info : matches)
+        {
+            String s = info.activityInfo.packageName;
+            System.out.print(s);
+            Cursor c = lib.dbpp.query("Select * FROM Services WHERE package LIKE '%" + s + "%'");
+            if (c.getCount() <= 0)
+            {
+                //Name = info.activityInfo.name;
+                Name = info.loadLabel(context.getPackageManager()).toString();
+                URL = "http://www.google.de";
+                Package = s;
+                String sql = "INSERT INTO Services ('Name','URL','package', 'visible') VALUES('"
+                        + Name + "','" + URL + "','" + Package + "', false)";
+                System.out.print(sql);
+                lib.dbpp.DataBase.execSQL(sql);
+            }
+            else
+            {
+                System.out.print(s);
+            }
+
+
+        }
+
+		/*
+        if(c.getString(c.getColumnIndex("Name")).equals("Photobucket"))
+	    {
+			intent.setPackage("");
+	    }
+	    */
+        // As fallback, launch sharer.php in a browser
+        //context.startActivity(intent);}
     }
 
     public static void SharePictureOnInstagram(Context context, android.net.Uri uri)

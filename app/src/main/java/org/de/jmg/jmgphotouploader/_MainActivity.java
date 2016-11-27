@@ -222,7 +222,9 @@ public class _MainActivity extends Activity
                 String sql = "INSERT INTO Services ('Name','URL','package') VALUES('Google+','https://plus.google.com','com.google.android.apps.plus')";
                 lib.dbpp.DataBase.execSQL(sql);
             }
-        }
+
+			lib.getContentProviders(this, lib.getUriToDrawable(this, R.drawable.res));
+		}
 		catch (Throwable ex)
 		{
 			System.out.println(ex.getMessage());
