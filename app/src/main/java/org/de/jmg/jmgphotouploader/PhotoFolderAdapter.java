@@ -1756,7 +1756,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 
                         Folder.Name = "Google Drive";
                         lib.BMList = new java.util.ArrayList<ImgListItem>();
-                        ((_MainActivity) context).StartLoginGoogle(Folder);
+                        ((_MainActivity) context).StartLoginGoogle(Folder, false);
                     }
                     else
                     {
@@ -1795,7 +1795,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
 
                         Folder.Name = "Dropbox";
                         lib.BMList = new java.util.ArrayList<ImgListItem>();
-                        ((_MainActivity) context).StartLoginDropbox(Folder);
+                        ((_MainActivity) context).StartLoginDropbox(Folder, false);
                     }
                     else
                     {
@@ -1826,7 +1826,7 @@ ZoomExpandableListview lv = (ZoomExpandableListview) ((_MainActivity) context).l
                         //CountDownLatch Latch = new CountDownLatch(1);
                         //lib.Latch= Latch;
                         lib.BMList = new java.util.ArrayList<ImgListItem>();
-                        ((_MainActivity) context).StartLoginLive(Folder);
+                        ((_MainActivity) context).StartLoginLive(Folder, false);
                         //context.finish();
                     }
                     else

@@ -41,4 +41,7 @@
     <string name="Message">Nachricht</string>
     <string name="Local">Lokal</string>
     <string name="action_sortorder">Sortierreihenfolge umdrehen</string>
+    <string name="action_resetLive">Live Account zurücksetzen</string>
+    <string name="action_resetGoogle">Google Account zurücksetzen</string>
+    <string name="action_resetDropbox">Dropbox Account zurücksetzen</string>
 </resources>

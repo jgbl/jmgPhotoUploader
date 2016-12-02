@@ -19,4 +19,17 @@
     <item android:id="@+id/action_resetdatabase"
           android:title="@string/action_resetdatabase"
           app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_resetLive"
+        android:title="@string/action_resetLive"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_resetGoogle"
+        android:title="@string/action_resetGoogle"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_resetDropbox"
+        android:title="@string/action_resetDropbox"
+        app:showAsAction="never"/>
+
 </menu>

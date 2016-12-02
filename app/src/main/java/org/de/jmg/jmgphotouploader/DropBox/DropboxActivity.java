@@ -8,7 +8,6 @@ import com.dropbox.core.android.Auth;
 
 import org.de.jmg.jmgphotouploader.JMPPPApplication;
 
-
 /**
  * Base class for Activities that require auth tokens
  * Will redirect to auth flow if needed
@@ -30,6 +29,12 @@ public abstract class DropboxActivity extends Activity {
         } else {
             initAndLoadData(accessToken);
         }
+    }
+
+    public void resetAccount()
+    {
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        prefs.edit().putString("dropbox-access-token", null).commit();
     }
 
     private void initAndLoadData(String accessToken) {

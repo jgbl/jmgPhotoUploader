@@ -553,12 +553,40 @@ public class _MainActivity extends Activity
 				app.blnSortOrderDesc = app.blnSortOrderDesc ^ true;
 				getPreferences(MODE_PRIVATE).edit().putBoolean("SortOrderDesc", app.blnSortOrderDesc).apply();
 				return true;
-			default:
+            case R.id.action_resetDropbox:
+                collapseProvider(app.DropboxFolder);
+                app.setDropboxClient(null);
+                lib.setClientDropbox(null);
+                StartLoginDropbox(app.DropboxFolder, true);
+                return true;
+            case R.id.action_resetGoogle:
+                collapseProvider(app.GoogleFolder);
+                app.setGoogleDriveClient(null);
+                lib.setClientGoogle(null);
+                StartLoginGoogle(app.GoogleFolder, true);
+                return true;
+            case R.id.action_resetLive:
+                collapseProvider(app.OneDriveFolder);
+                app.setAuthClient(null);
+                app.setConnectClient(null);
+                lib.setClient(null);
+                StartLoginLive(app.OneDriveFolder, true);
+                return true;
+            default:
 				return super.onOptionsItemSelected(item);
 	    }
 	}
-	
-	private void resetdatabase()
+
+    private void collapseProvider(ImgFolder Folder)
+    {
+        if (Folder.fetched && Folder.Name.equalsIgnoreCase("/"))
+        {
+            int i = app.ppa.rows.indexOf(Folder);
+            if (i >= 0) lv.collapseGroup(i);
+        }
+    }
+
+    private void resetdatabase()
 	{
 		try
 		{
@@ -661,39 +689,45 @@ public class _MainActivity extends Activity
 	}
 
 	private boolean _liveLock = false;
-	public void StartLoginLive(ImgFolder OneDrive)
-	{
+
+    public void StartLoginLive(ImgFolder OneDrive, boolean reset)
+    {
 		if (_liveLock) return;
 		_liveLock = true;
 		app.LoginClosed=false;
 		app.OneDriveFolder = OneDrive;
 		Intent LoginLiveIntent = new Intent(this, LoginLiveActivity.class);
 		LoginLiveIntent.putExtra("GroupPosition", lib.LastgroupPosition);
-		this.startActivityForResult(LoginLiveIntent, LoginLiveActivity.requestCode);
+        LoginLiveIntent.putExtra("reset", reset);
+        this.startActivityForResult(LoginLiveIntent, LoginLiveActivity.requestCode);
 	}
 
 	private boolean _GoogleLock = false;
-	public void StartLoginGoogle(ImgFolder Google)
-	{
+
+    public void StartLoginGoogle(ImgFolder Google, boolean reset)
+    {
 		if (_GoogleLock) return;
 		_GoogleLock = true;
 		app.LoginGoogleClosed=false;
 		app.GoogleFolder = Google;
 		Intent LoginIntent = new Intent(this, LoginGoogleActivity.class);
 		LoginIntent.putExtra("GroupPosition", lib.LastgroupPosition);
-		this.startActivityForResult(LoginIntent, LoginGoogleActivity.requestCode);
+        LoginIntent.putExtra("reset", reset);
+        this.startActivityForResult(LoginIntent, LoginGoogleActivity.requestCode);
 	}
 
 	private boolean _DBLock = false;
-	public void StartLoginDropbox(ImgFolder Dropbox)
-	{
+
+    public void StartLoginDropbox(ImgFolder Dropbox, boolean reset)
+    {
 		if (_DBLock) return;
 		_DBLock = true;
 		app.LoginDropboxClosed=false;
 		app.DropboxFolder = Dropbox;
 		Intent LoginIntent = new Intent(this, DropBoxUserActivity.class);
 		LoginIntent.putExtra("GroupPosition", lib.LastgroupPosition);
-		this.startActivityForResult(LoginIntent, DropBoxUserActivity.requestCode);
+        LoginIntent.putExtra("reset", reset);
+        this.startActivityForResult(LoginIntent, DropBoxUserActivity.requestCode);
 	}
 	
 	private void openSettings()
@@ -783,33 +817,47 @@ public class _MainActivity extends Activity
 			_liveLock = false;
 			if(resultCode == Activity.RESULT_OK && lib.getClient(this) != null) {
 				final int GroupPosition = data.getExtras().getInt("GroupPosition");
-				try {
-					lib.GetThumbnailsOneDrive(this, "/", app.OneDriveFolder, GroupPosition, _MainActivity.this.lv);
-					//if (app.OneDriveFolder != null) app.OneDriveFolder.fetched = true;
-				} catch (LiveOperationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+                final boolean reset = data.getExtras().getBoolean("reset");
+                if (!reset)
+                {
+                    try
+                    {
+                        lib.GetThumbnailsOneDrive(this, "/", app.OneDriveFolder, GroupPosition, _MainActivity.this.lv);
+                        //if (app.OneDriveFolder != null) app.OneDriveFolder.fetched = true;
+                    }
+                    catch (LiveOperationException e)
+                    {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    catch (InterruptedException e)
+                    {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
 		}
 		else if (requestCode == LoginGoogleActivity.requestCode)
 		{
 			_GoogleLock = false;
 			if (resultCode == Activity.RESULT_OK && lib.getClientGoogle(this) != null) {
 				final int GroupPosition = data.getExtras().getInt("GroupPosition");
+                final boolean reset = data.getExtras().getBoolean("reset");
+                if (!reset)
+                {
+                    try
+                    {
+                        lib.GetThumbnailsGoogle(this, "/", app.GoogleFolder, GroupPosition, _MainActivity.this.lv);
+                        //if (app.GoogleFolder != null) app.GoogleFolder.fetched = true;
+                    }
+                    catch (Throwable e)
+                    {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
 
-				try {
-					lib.GetThumbnailsGoogle(this, "/", app.GoogleFolder, GroupPosition, _MainActivity.this.lv);
-					//if (app.GoogleFolder != null) app.GoogleFolder.fetched = true;
-				}
-				catch (Throwable e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			}
 
 		}
@@ -818,17 +866,22 @@ public class _MainActivity extends Activity
 			_DBLock = false;
 			if (resultCode == Activity.RESULT_OK && lib.getClientDropbox(this) != null) {
 				final int GroupPosition = data.getExtras().getInt("GroupPosition");
+                final boolean reset = data.getExtras().getBoolean("reset");
 
-				try {
-					lib.GetThumbnailsDropbox(this, "/", app.DropboxFolder, GroupPosition, _MainActivity.this.lv);
-					//if (app.DropboxFolder != null) app.DropboxFolder.fetched = true;
-				}
-				catch (Throwable e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+                if (!reset)
+                {
+                    try
+                    {
+                        lib.GetThumbnailsDropbox(this, "/", app.DropboxFolder, GroupPosition, _MainActivity.this.lv);
+                        //if (app.DropboxFolder != null) app.DropboxFolder.fetched = true;
+                    }
+                    catch (Throwable e)
+                    {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
 
 		}
 

@@ -27,11 +27,13 @@ public class DropBoxUserActivity extends DropboxActivity {
 
     public static int requestCode = 9991;
     private int GroupPosition;
-
+    private boolean reset;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         GroupPosition = getIntent().getExtras().getInt("GroupPosition");
+        reset = getIntent().getExtras().getBoolean("reset");
+        if (reset) this.resetAccount();
         setContentView(R.layout.activity_user);
 
         //Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
@@ -96,6 +98,7 @@ public class DropBoxUserActivity extends DropboxActivity {
                 ((TextView) findViewById(R.id.type_text)).setText(result.getAccountType().name());
                 Intent i = new Intent();
                 i.putExtra("GroupPosition", GroupPosition);
+                i.putExtra("reset", reset);
                 if (result.getAccountType().name() != null)
                 {
                     JMPPPApplication app = (JMPPPApplication) getApplication();
@@ -128,6 +131,7 @@ public class DropBoxUserActivity extends DropboxActivity {
             {
                 Intent ii = new Intent();
                 ii.putExtra("GroupPosition", GroupPosition);
+                ii.putExtra("reset", reset);
                 DropBoxUserActivity.this.setResult(Activity.RESULT_CANCELED, ii);
                 DropBoxUserActivity.this.finish();
             }

@@ -24,7 +24,8 @@ public class LoginLiveActivity extends Activity implements LiveAuthListener
 {
 
     private LiveAuthClient auth;
-    private int GroupPosition; 
+    private int GroupPosition;
+    private boolean reset;
     private JMPPPApplication mApp;
     private Button _btnLogin;
     private Button _btnClose;
@@ -49,12 +50,14 @@ public class LoginLiveActivity extends Activity implements LiveAuthListener
             _btnClose = (Button)findViewById(R.id.btnClose);
             _btnLogin.setVisibility(View.INVISIBLE);
             _btnClose.setVisibility(View.INVISIBLE);
+            reset = getIntent().getExtras().getBoolean("reset");
+            if (reset) this.resetAccount();
             auth = new LiveAuthClient(this, secrets.LoginLive);
-
+            if (reset) auth.logout(this);
             mApp.setAuthClient(auth);
                     
             GroupPosition = getIntent().getExtras().getInt("GroupPosition");
-            
+
             /*
             LinearLayout layout = (LinearLayout)this.findViewById(R.id.login); // (context);  
             Button b = new Button(this); //FindViewById<ExpandableListView> (Resource.Id.lvItems);
@@ -134,6 +137,12 @@ public class LoginLiveActivity extends Activity implements LiveAuthListener
         }
     }
 
+    public void resetAccount()
+    {
+        SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
+        prefs.edit().putString("ONE_DRIVE_REFRESH_TOKEN_KEY", null).commit(); // save it to shared preferences on first login
+
+    }
     private void LoginLive() throws Throwable
     {
 		final Iterable<String> scopes = Arrays.asList("wl.signin", "wl.basic", "wl.skydrive", "wl.offline_access" );
@@ -193,6 +202,7 @@ public class LoginLiveActivity extends Activity implements LiveAuthListener
         }
         Intent i = new Intent();
         i.putExtra("GroupPosition", GroupPosition);
+        i.putExtra("reset", reset);
         //i.putExtra("client", client);
         LoginLiveActivity.this.session = session;
         LoginLiveActivity.this.setResult(Activity.RESULT_OK, i);

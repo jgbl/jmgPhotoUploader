@@ -72,7 +72,7 @@ public class LoginGoogleActivity extends Activity
     private static final String[] SCOPES = {DriveScopes.DRIVE_READONLY, DriveScopes.DRIVE_METADATA_READONLY, DriveScopes.DRIVE_PHOTOS_READONLY}; //, "https://picasaweb.google.com/data/"};
     private JMPPPApplication mApp;
     private int GroupPosition;
-
+    private boolean reset;
     /**
      *  * Create the main activity.
      *  * @param savedInstanceState previously saved instance data.
@@ -82,6 +82,8 @@ public class LoginGoogleActivity extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         GroupPosition = getIntent().getExtras().getInt("GroupPosition");
+        reset = getIntent().getExtras().getBoolean("reset");
+        if (reset) this.resetAccount();
         mApp = (JMPPPApplication) getApplication();
         if (mApp.LoginGoogleClosed)
         {
@@ -187,6 +189,11 @@ public class LoginGoogleActivity extends Activity
         }
     }
 
+
+    public void resetAccount()
+    {
+        getPreferences(Context.MODE_PRIVATE).edit().putString(PREF_ACCOUNT_NAME, null).commit();
+    }
     /**
      *  * Attempts to set the account used with the API credentials. If an account
      *  * name was previously saved it will use that one; otherwise an account
@@ -526,6 +533,7 @@ public class LoginGoogleActivity extends Activity
             //mApp.setPicasaClient(mPicasa);
             Intent i = new Intent();
             i.putExtra("GroupPosition", GroupPosition);
+            i.putExtra("reset", reset);
             //i.putExtra("client", client);
             LoginGoogleActivity.this.setResult(Activity.RESULT_OK, i);
             CloseActivity();
@@ -559,6 +567,7 @@ public class LoginGoogleActivity extends Activity
             }
             Intent i = new Intent();
             i.putExtra("GroupPosition", GroupPosition);
+            i.putExtra("reset", reset);
             LoginGoogleActivity.this.setResult(Activity.RESULT_CANCELED, i);
             if (blnClose) CloseActivity();
         }
@@ -568,6 +577,7 @@ public class LoginGoogleActivity extends Activity
     {
         Intent i = new Intent();
         i.putExtra("GroupPosition", GroupPosition);
+        i.putExtra("reset", reset);
         LoginGoogleActivity.this.setResult(Activity.RESULT_CANCELED, i);
         CloseActivity();
     }
