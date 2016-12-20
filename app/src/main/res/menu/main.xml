@@ -31,5 +31,9 @@
         android:id="@+id/action_resetDropbox"
         android:title="@string/action_resetDropbox"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_showPrivacyPolicy"
+        android:title="@string/action_showPrivacyPolicy"
+        app:showAsAction="never"/>
 
 </menu>

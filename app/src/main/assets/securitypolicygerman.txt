@@ -1,0 +1,6 @@
+Datenschutzerklärung JMGPhotoUploader
+
+Diese Anwendung speichert order verarbeitet keine personenbezogenen Daten.
+Alle Account informationen, die beim Anmelden bei OneDrive, Google Drive oder Dropbox eingegeben werden,
+werden nicht von JMGPhotuploader verarbeitet, sondern bei den jeweiligen Diensten. JMGPhotouploader
+speichert nur einen  "access token", mit dem er sich beim erneuten Start wieder anmelden kann.

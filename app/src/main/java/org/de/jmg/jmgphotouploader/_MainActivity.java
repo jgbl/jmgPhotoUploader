@@ -36,6 +36,9 @@ import com.microsoft.live.LiveOperationException;
 import com.microsoft.live.LiveStatus;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
 import java.util.prefs.Preferences;
 
@@ -61,8 +64,17 @@ public class _MainActivity extends Activity
 	protected void onCreate(Bundle bundle)
 	{
 		super.onCreate(bundle);
-		try
-		{
+        try
+        {
+            AcceptLicenseAndPP(getPreferences(MODE_PRIVATE));
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            finish();
+        }
+        try
+        {
             try
             {
                 String[] tmpFiles = lib.getStringArrayFromPrefs(getPreferences(MODE_PRIVATE), "tempFiles");
@@ -333,6 +345,35 @@ public class _MainActivity extends Activity
                 app.latchExpand = null;
             }
             if (app.lastPath.equals("/")) app.lastFolderfound = true;
+
+        }
+    }
+
+    private void AcceptLicenseAndPP(SharedPreferences prefs) throws IOException
+    {
+        boolean blnLicenseAccepted = prefs.getBoolean("LicenseAccepted", false);
+        if (!blnLicenseAccepted)
+        {
+            InputStream is = this.getAssets().open("LICENSE");
+            java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+            String strLicense = s.hasNext() ? s.next() : "";
+            s.close();
+            is.close();
+            lib.yesnoundefined res = (lib.ShowMessageYesNo(this,
+                    strLicense,
+                    getString(R.string.license),
+                    true));
+
+            lib.yesnoundefined res2 = lib.AcceptPrivacyPolicy(this, Locale.getDefault());
+
+            if (res == lib.yesnoundefined.yes && res2 == lib.yesnoundefined.yes)
+            {
+                prefs.edit().putBoolean("LicenseAccepted", true).commit();
+            }
+            else
+            {
+                finish();
+            }
 
         }
     }

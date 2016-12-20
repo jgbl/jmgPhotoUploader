@@ -44,4 +44,8 @@
     <string name="action_resetLive">Live Account zurücksetzen</string>
     <string name="action_resetGoogle">Google Account zurücksetzen</string>
     <string name="action_resetDropbox">Dropbox Account zurücksetzen</string>
+    <string name="action_showPrivacyPolicy">Datenschutzerklärung</string>
+    <string name="license">I accept the following license</string>
+    <string name="PrivacyPolicy">privacy policy</string>
+    <string name="question">question</string>
 </resources>

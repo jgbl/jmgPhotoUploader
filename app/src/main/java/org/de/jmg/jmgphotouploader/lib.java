@@ -19,14 +19,19 @@ import android.graphics.PointF;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.support.annotation.AnyRes;
 import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.Gravity;
 import android.webkit.MimeTypeMap;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dropbox.core.DbxException;
@@ -51,6 +56,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
@@ -2220,4 +2226,128 @@ public class lib
     {
         Client.login(activity, scopes, listener);
     }
+
+    public static yesnoundefined AcceptPrivacyPolicy(Context context, Locale L) throws IOException
+    {
+        InputStream is;
+        if ((L == Locale.GERMAN) || (L == Locale.GERMANY))
+        {
+            is = context.getAssets().open("PrivacyPolicyDe");
+        }
+        else
+        {
+            is = context.getAssets().open("PrivacyPolicy");
+        }
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        String strPrivacyPolicy = s.hasNext() ? s.next() : "";
+        s.close();
+        is.close();
+        lib.yesnoundefined res2 = (lib.ShowMessageYesNo(context,
+                strPrivacyPolicy,
+                context.getString(R.string.PrivacyPolicy),
+                true));
+        return res2;
+    }
+
+    public enum yesnoundefined
+    {
+        yes, no, undefined
+    }
+
+    public static Handler YesNoHandler;
+
+    private static yesnoundefined DialogResultYes = yesnoundefined.undefined;
+    private static DialogInterface.OnClickListener listenerYesNo = new DialogInterface.OnClickListener()
+    {
+
+        @Override
+        public void onClick(DialogInterface dialog, int which)
+        {
+            switch (which)
+            {
+                case DialogInterface.BUTTON_POSITIVE:
+                    // Yes button clicked
+                    DialogResultYes = yesnoundefined.yes;
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+                    // No button clicked
+                    DialogResultYes = yesnoundefined.no;
+                    break;
+            }
+            if (YesNoHandler != null) YesNoHandler.sendMessage(YesNoHandler.obtainMessage());
+        }
+    };
+
+
+    public static yesnoundefined ShowMessageYesNo(Context context,
+                                                  String msg, String title, boolean center)
+    {
+        // System.Threading.SynchronizationContext.Current.Post(new
+        // System.Threading.SendOrPostCallback(DelShowException),new
+        // ExStateInfo(context, ex));
+        if (libString.IsNullOrEmpty(title)) title = context.getString(R.string.question);
+        try
+        {
+            if (YesNoHandler == null)
+            {
+                YesNoHandler = new Handler()
+                {
+                    @Override
+                    public void handleMessage(Message mesg)
+                    {
+                        //throw new MessageException();
+                    }
+                };
+            }
+
+            DialogResultYes = yesnoundefined.undefined;
+            AlertDialog.Builder A = new AlertDialog.Builder(context);
+            A.setPositiveButton(context.getString(R.string.yes), listenerYesNo);
+            A.setNegativeButton(context.getString(R.string.no), listenerYesNo);
+            A.setMessage(msg);
+            A.setTitle(title);
+            AlertDialog dlg = A.create();
+            dlg.setOnDismissListener(new DialogInterface.OnDismissListener()
+            {
+                @Override
+                public void onDismiss(DialogInterface dialog)
+                {
+                    throw new MessageException();
+                }
+            });
+
+            dlg.show();
+            OpenDialogs.add(dlg);
+            if (center)
+            {
+                TextView messageView = (TextView) dlg.findViewById(android.R.id.message);
+                messageView.setGravity(Gravity.CENTER);
+            }
+            try
+
+            {
+                Looper.loop();
+            }
+            catch (Exception e2)
+            {
+                // Looper.myLooper().quit();
+                YesNoHandler = null;
+                if (dlg.isShowing())
+                {
+                    dlg.setOnDismissListener(null);
+                    dlg.dismiss();
+                }
+                removeDlg(dlg);
+                dlg = null;
+                if (!(e2 instanceof MessageException)) throw e2;
+            }
+        }
+        catch (Exception ex)
+        {
+            ShowException(context, ex);
+        }
+        return DialogResultYes;
+    }
+
 }

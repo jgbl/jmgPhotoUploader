@@ -1,0 +1,6 @@
+Privacy Polcy JMGPhotoUploader
+
+This app does not save or process any user data.
+All data entered for login to OneDrive or Google Drive or Dropbox are not processed by this app,
+but by the services themselves. JMGPhotoUploader saves only accesstokens for login after restarting
+the application.
