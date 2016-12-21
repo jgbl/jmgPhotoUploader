@@ -451,14 +451,24 @@ public class _MainActivity extends Activity
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		super.onSaveInstanceState(savedInstanceState);
 		savePrefs();
-		if (lib.OpenDialogs != null)
+		try
 		{
 			for (DialogInterface dlg : lib.OpenDialogs)
 			{
-				dlg.dismiss();
+				try
+				{
+					dlg.dismiss();
+				}
+				catch (Throwable eex)
+				{
+					eex.printStackTrace();
+				}
 			}
 		}
-		lib.OpenDialogs.clear();
+		catch (Throwable ex)
+		{
+			ex.printStackTrace();
+		}
 	}
 	@Override
 	public void onResume() {
