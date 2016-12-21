@@ -47,7 +47,7 @@
     <string name="action_resetDropbox">reset dropbox account</string>
     <string name="action_showPrivacyPolicy">privacy policy</string>
     <string name="license">I accept the following license</string>
-    <string name="PrivacyPolicy">privacy policy</string>
+    <string name="PrivacyPolicy">I accept the privacy policy</string>
     <string name="question">question</string>
     <string name="yes">yes</string>
     <string name="no">no</string>
