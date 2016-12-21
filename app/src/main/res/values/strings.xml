@@ -49,5 +49,7 @@
     <string name="license">I accept the following license</string>
     <string name="PrivacyPolicy">privacy policy</string>
     <string name="question">question</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
 
 </resources>

@@ -2158,7 +2158,7 @@ public class lib
         {
             ShowException(context, ex);
         }
-        return DialogResultYes;
+        return blnDialogResultYes;
     }
 
     public static void ShowToast(Context context, String msg)
@@ -2168,7 +2168,7 @@ public class lib
         T.show();
     }
 
-    private static boolean DialogResultYes = false;
+    private static boolean blnDialogResultYes = false;
     private static DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener()
     {
 
@@ -2179,12 +2179,12 @@ public class lib
             {
                 case DialogInterface.BUTTON_POSITIVE:
                     //Yes button clicked
-                    DialogResultYes = true;
+                    blnDialogResultYes = true;
                     break;
 
                 case DialogInterface.BUTTON_NEGATIVE:
                     //No button clicked
-                    DialogResultYes = false;
+                    blnDialogResultYes = false;
                     break;
             }
         }
@@ -2227,16 +2227,16 @@ public class lib
         Client.login(activity, scopes, listener);
     }
 
-    public static yesnoundefined AcceptPrivacyPolicy(Context context, Locale L) throws IOException
+    public static yesnoundefined AcceptPrivacyPolicy(Context context, Locale L) throws Throwable
     {
         InputStream is;
-        if ((L == Locale.GERMAN) || (L == Locale.GERMANY))
+        if ((L.equals(Locale.GERMAN)) || (L.equals(Locale.GERMANY)))
         {
-            is = context.getAssets().open("PrivacyPolicyDe");
+            is = context.getAssets().open("securitypolicygerman.txt");
         }
         else
         {
-            is = context.getAssets().open("PrivacyPolicy");
+            is = context.getAssets().open("securitypolicy.txt");
         }
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
         String strPrivacyPolicy = s.hasNext() ? s.next() : "";
@@ -2245,7 +2245,7 @@ public class lib
         lib.yesnoundefined res2 = (lib.ShowMessageYesNo(context,
                 strPrivacyPolicy,
                 context.getString(R.string.PrivacyPolicy),
-                true));
+                false));
         return res2;
     }
 
@@ -2254,9 +2254,18 @@ public class lib
         yes, no, undefined
     }
 
+    public static yesnoundefined DialogResultYes = yesnoundefined.undefined;
     public static Handler YesNoHandler;
+    public static ArrayList<DialogInterface> OpenDialogs = new ArrayList<>();
 
-    private static yesnoundefined DialogResultYes = yesnoundefined.undefined;
+    public static void removeDlg(DialogInterface dlg)
+    {
+        if (OpenDialogs.contains(dlg))
+        {
+            OpenDialogs.remove(dlg);
+        }
+    }
+
     private static DialogInterface.OnClickListener listenerYesNo = new DialogInterface.OnClickListener()
     {
 
@@ -2278,6 +2287,11 @@ public class lib
             if (YesNoHandler != null) YesNoHandler.sendMessage(YesNoHandler.obtainMessage());
         }
     };
+
+    public static class MessageException extends RuntimeException
+    {
+
+    }
 
 
     public static yesnoundefined ShowMessageYesNo(Context context,

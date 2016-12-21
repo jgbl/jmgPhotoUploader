@@ -2,6 +2,7 @@ package org.de.jmg.jmgphotouploader;
 
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.DataSetObserver;
@@ -68,8 +69,8 @@ public class _MainActivity extends Activity
         {
             AcceptLicenseAndPP(getPreferences(MODE_PRIVATE));
         }
-        catch (IOException e)
-        {
+		catch (Throwable e)
+		{
             e.printStackTrace();
             finish();
         }
@@ -349,8 +350,8 @@ public class _MainActivity extends Activity
         }
     }
 
-    private void AcceptLicenseAndPP(SharedPreferences prefs) throws IOException
-    {
+	private void AcceptLicenseAndPP(SharedPreferences prefs) throws Throwable
+	{
         boolean blnLicenseAccepted = prefs.getBoolean("LicenseAccepted", false);
         if (!blnLicenseAccepted)
         {
@@ -364,7 +365,11 @@ public class _MainActivity extends Activity
                     getString(R.string.license),
                     true));
 
-            lib.yesnoundefined res2 = lib.AcceptPrivacyPolicy(this, Locale.getDefault());
+			lib.yesnoundefined res2 = lib.yesnoundefined.undefined;
+			if (res == lib.yesnoundefined.yes)
+			{
+				res2 = lib.AcceptPrivacyPolicy(this, Locale.getDefault());
+			}
 
             if (res == lib.yesnoundefined.yes && res2 == lib.yesnoundefined.yes)
             {
@@ -372,8 +377,10 @@ public class _MainActivity extends Activity
             }
             else
             {
-                finish();
+				prefs.edit().putBoolean("LicenseAccepted", false).commit();
+				finish();
             }
+
 
         }
     }
@@ -444,6 +451,14 @@ public class _MainActivity extends Activity
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		super.onSaveInstanceState(savedInstanceState);
 		savePrefs();
+		if (lib.OpenDialogs != null)
+		{
+			for (DialogInterface dlg : lib.OpenDialogs)
+			{
+				dlg.dismiss();
+			}
+		}
+		lib.OpenDialogs.clear();
 	}
 	@Override
 	public void onResume() {
@@ -613,7 +628,28 @@ public class _MainActivity extends Activity
                 lib.setClient(null);
                 StartLoginLive(app.OneDriveFolder, true);
                 return true;
-            default:
+			case R.id.action_showPrivacyPolicy:
+				lib.yesnoundefined dresult = lib.yesnoundefined.undefined;
+				try
+				{
+					dresult = lib.AcceptPrivacyPolicy(this, Locale.getDefault());
+					SharedPreferences prefs = this.getPreferences(MODE_PRIVATE);
+					if (dresult == lib.yesnoundefined.yes)
+					{
+						prefs.edit().putBoolean("LicenseAccepted", true).commit();
+					}
+					else
+					{
+						prefs.edit().putBoolean("LicenseAccepted", false).commit();
+						finish();
+					}
+				}
+				catch (Throwable throwable)
+				{
+					throwable.printStackTrace();
+				}
+				return true;
+			default:
 				return super.onOptionsItemSelected(item);
 	    }
 	}
